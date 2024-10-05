@@ -1,0 +1,161 @@
+
+.smallCardWithShadow {
+  padding: 12px;
+}
+
+.table-responsive {
+  overflow-x: auto;
+}
+
+.mat-header-cell,
+.mat-cell {
+  padding: 8px 12px;
+  font-size: 12px;
+}
+
+img.rounded {
+  width: 40px;
+  height: auto;
+}
+
+.f-s-12 {
+  font-size: 12px;
+}
+
+.f-s-10 {
+  font-size: 10px;
+}
+
+
+.m-l-8 {
+  margin-left: 8px;
+}
+
+.p-l-0 {
+  padding-left: 0;
+}
+
+
+mat-progress-bar {
+  height: 8px;
+}
+
+
+@media (max-width: 768px) {
+  .mat-header-cell,
+  .mat-cell {
+    padding: 6px 8px;
+    font-size: 10px;
+  }
+
+  .mat-card-title {
+    font-size: 14px;
+  }
+}
+.card-container {
+  display: flex;
+  gap: 20px;
+  align-items: center;
+  justify-content: center; 
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 15px;
+  }
+}
+
+// ---------------------------------------------------
+.blue-card,
+.white-card {
+  padding: 20px;
+  border-radius: 12px;
+  position: relative;
+  overflow: hidden;
+  
+  @media (max-width: 768px) {
+    width: 80%; 
+  }
+}
+
+.blue-card {
+  background-color: #007bff;
+  color: #ffffff;
+  width: 100%; 
+
+  .content {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    height: 100%;
+  }
+
+  .title {
+    font-size: 24px;
+    font-weight: 700;
+  }
+
+  .price {
+    font-size: 20px;
+    font-weight: 600;
+    margin: 10px 0;
+  }
+
+  .eiffel-icon {
+    position: absolute;
+    bottom: 10px;
+    right: 20px;
+    width: 80px;
+    height: auto;
+    opacity: 0.8;
+  }
+}
+
+// ---------------------------------------------------
+.white-card {
+  background-color: #f9f9f9;
+  width: 100%;
+  text-align: center;
+
+  .count-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .count {
+    font-size: 48px;
+    font-weight: 700;
+    margin: 0;
+  }
+
+  .description {
+    font-size: 16px;
+    color: #333;
+    margin-top: 10px;
+  }
+}
+
+
+@media (max-width: 768px) {
+  .blue-card .title,
+  .white-card .description {
+    font-size: 20px;
+  }
+
+  .blue-card .price,
+  .white-card .count {
+    font-size: 24px;
+  }
+
+  .card-container {
+    gap: 15px; 
+  }
+}
+
+
+.mat-mdc-menu-item mat-mdc-focus-indicator {
+  margin: 0;
+  padding: 8px 0;
+  outline: 0;
+  display: flex;
+}

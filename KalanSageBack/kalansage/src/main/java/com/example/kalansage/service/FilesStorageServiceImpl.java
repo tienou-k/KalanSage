@@ -9,6 +9,7 @@ import org.springframework.core.io.UrlResource;
 import org.springframework.stereotype.Service;
 import org.springframework.util.FileSystemUtils;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
@@ -28,7 +29,9 @@ public class FilesStorageServiceImpl implements FilesStorageService {
     @Override
     public void init() {
         try {
-            Files.createDirectory(root);
+            if (!Files.exists(root)) {
+                Files.createDirectories(root);
+            }
         } catch (IOException e) {
             throw new RuntimeException("Could not initialize folder for upload!");
         }
@@ -83,7 +86,14 @@ public class FilesStorageServiceImpl implements FilesStorageService {
 
         FileInfo fileInfo = new FileInfo();
         fileInfo.setNom(file.getOriginalFilename());
-        fileInfo.setUrl(targetLocation.toUri().toString());
+
+        // Set the URL to be accessed via HTTP
+        String fileDownloadUri = ServletUriComponentsBuilder.fromCurrentContextPath()
+                .path("/images/")
+                .path(file.getOriginalFilename())
+                .toUriString();
+
+        fileInfo.setUrl(fileDownloadUri);
 
         return fileInfoRepository.save(fileInfo);
     }

@@ -1,0 +1,47 @@
+.live-session-container {
+  padding: 20px;
+
+  .header-container {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 20px;
+
+    .start-live-button {
+      display: flex;
+      align-items: center;
+    }
+  }
+
+  .image-container {
+    text-align: center;
+    margin-bottom: 20px;
+
+    .empty-image {
+      max-width: 100%;
+      height: auto;
+    }
+  }
+
+  .smallCardWithShadow {
+    padding: 20px;
+    border: 1px solid rgba(128, 128, 128, 0.137);
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.034);
+  }
+
+  .table-responsive {
+    overflow-x: auto;
+
+    .responsive-table {
+      width: 100%;
+    }
+  }
+
+  mat-header-cell, mat-cell {
+    text-align: left;
+  }
+
+  .mat-icon-button {
+    margin-right: 8px;
+  }
+}

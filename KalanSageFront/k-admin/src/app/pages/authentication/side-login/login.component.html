@@ -1,0 +1,62 @@
+<div class="login-container">
+  <div class="login-logo">
+     <img
+          src="./assets/images/logos/logo_origin.png"
+          class="align-middle m-7"
+          alt="KalanSage Logo" />
+  </div>
+
+  <form [formGroup]="loginForm" (ngSubmit)="onLogin()">
+    <!-- Email Field -->
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Email</mat-label>
+      <input
+        matInput
+        placeholder="adama@gmail.com"
+        formControlName="email"
+        type="email"
+        required
+      />
+      <mat-error *ngIf="loginForm.get('email')?.invalid">
+        Veuillez entrer un e-mail valide
+      </mat-error>
+    </mat-form-field>
+
+    <!-- Password Field -->
+    <mat-form-field appearance="outline" class="full-width">
+      <mat-label>Mot de passe</mat-label>
+      <input
+        matInput
+        placeholder="************"
+        formControlName="password"
+        [type]="showPassword ? 'text' : 'password'"
+        required
+      />
+      <button
+        mat-icon-button
+        matSuffix
+        (click)="togglePasswordVisibility()"
+        aria-label="Toggle password visibility"
+        type="button"
+      >
+        <mat-icon>{{ showPassword ? 'visibility' : 'visibility_off' }}</mat-icon>
+      </button>
+      <mat-error *ngIf="loginForm.get('password')?.invalid">
+        Veuillez entrer un mot de passe
+      </mat-error>
+    </mat-form-field>
+
+    <!-- Submit Button -->
+    <button mat-raised-button color="primary" class="full-width login" type="submit">
+      Se connecter
+    </button>
+  </form>
+
+  <!-- Additional Links -->
+  <div class="additional-links">
+    <a mat-button href="#">Mot de passe oublié ?</a>
+    <p>
+      Vous n'avez pas de compte ? <a mat-button href="#">Créer un compte</a>
+    </p>
+  </div>
+</div>

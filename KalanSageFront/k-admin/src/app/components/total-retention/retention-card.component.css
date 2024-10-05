@@ -1,0 +1,45 @@
+/* Styling for the card */
+.retention-card {
+  border-radius: 12px;
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
+  background-color: #ffffff;
+  width: 250px;
+  height: 250px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Card title styling */
+.card-title {
+  text-align: left;
+  font-size: 16px;
+  font-weight: bold;
+  margin-bottom: 20px;
+}
+
+/* Circular progress container */
+.ret-progress-container {
+  width: 150px;
+  height: 150px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+ mat-progress-spinner .ret-progress-container {
+background: #ff4081;
+}
+
+/* Position the background and foreground spinners */
+.background-spinner,
+.foreground-spinner {
+  position: absolute;
+}
+
+/* Percentage text inside the circular progress */
+.circle-text {
+  position: absolute;
+  font-size: 24px;
+  font-weight: bold;
+  color: #ff4081;
+}

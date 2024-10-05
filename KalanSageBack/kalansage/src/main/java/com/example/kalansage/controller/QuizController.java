@@ -8,7 +8,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/api/quiz")
+@RequestMapping("/api/admins/quiz")
 public class QuizController {
     @Autowired
     private QuizService quizService;

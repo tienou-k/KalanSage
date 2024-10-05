@@ -1,0 +1,95 @@
+<div class="header">
+  <h2 class="dialog-title">Création d'un module</h2>
+  <button mat-icon-button class="close-icon" (click)="onClose()">
+    <mat-icon>close</mat-icon>
+  </button>
+</div>
+<form [formGroup]="moduleForm" class="module-form">
+  <div class="form-container">
+    <!-- Image Upload Section -->
+    <div class="image-upload">
+      <label class="section-label">Couverture du module</label>
+      <div class="image-dropzone">
+        <input type="file" (change)="onFileSelected($event)" />
+        <div class="upload-text">
+          <mat-icon color="accent">image</mat-icon>
+          <p>
+            Glisser déposer ici, ou
+            <span class="select-text">Sélectionner</span>
+          </p>
+          <small>Support JPG et PNG</small>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Side Input Fields -->
+    <div class="right-side">
+      <mat-form-field appearance="outline" class="input-field">
+        <mat-label>Titre</mat-label>
+        <input matInput formControlName="title" required />
+        <mat-error
+          *ngIf="
+            moduleForm.get('title')?.hasError('required') &&
+            moduleForm.get('title')?.touched
+          "
+        >
+          Le titre est requis.
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="input-field">
+        <mat-label>Catégorie</mat-label>
+        <input matInput formControlName="category" required />
+        <mat-error
+          *ngIf="
+            moduleForm.get('category')?.hasError('required') &&
+            moduleForm.get('category')?.touched
+          "
+        >
+          La catégorie est requise.
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <!-- Description and Price Section -->
+    <div class="bottom-section">
+      <div class="bottom-section">
+        <mat-form-field appearance="outline" class="description-field">
+          <mat-label>Description</mat-label>
+          <textarea
+            matInput
+            formControlName="description"
+            rows="5"
+            required
+          ></textarea>
+          <mat-error
+            *ngIf="
+              moduleForm.get('description')?.hasError('required') &&
+              moduleForm.get('description')?.touched
+            "
+          >
+            Une description est requise.
+          </mat-error>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="input-field">
+          <mat-label>Prix</mat-label>
+          <input matInput formControlName="price" type="number" required />
+          <mat-error
+            *ngIf="
+              moduleForm.get('price')?.hasError('required') &&
+              moduleForm.get('price')?.touched
+            "
+          >
+            Le prix est requis.
+          </mat-error>
+        </mat-form-field>
+      </div>
+
+      <div class="dialog-actions">
+        <button class="button submit" (click)="onCreate()">Créer</button>
+        <button class="button reset" (click)="onReset()">Reset</button>
+      </div>
+    </div>
+  </div>
+</form>

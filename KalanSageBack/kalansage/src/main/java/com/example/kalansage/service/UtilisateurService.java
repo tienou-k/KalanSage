@@ -8,9 +8,11 @@ import java.util.List;
 import java.util.Optional;
 
 public interface UtilisateurService {
+
+
     Utilisateur seConnecter(String username, String motDePasse);
 
-    void seDeconnecter();
+    void seDeconnecter(String token);
 
     Utilisateur creerCompte(Utilisateur utilisateur);
 
@@ -27,4 +29,7 @@ public interface UtilisateurService {
     List<Utilisateur> listerUtilisateurs();
 
     void recevoirNotification(Long id, Notification notification);
+
+    Utilisateur findByEmail(String currentUserEmail);
+
 }

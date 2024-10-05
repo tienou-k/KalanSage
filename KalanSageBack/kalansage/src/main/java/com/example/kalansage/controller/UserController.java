@@ -56,9 +56,10 @@ public class UserController {
         if (!"USER".equalsIgnoreCase(nomRole)) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Vous ne pouvez pas être un ADMIN !");
         }
+
         Optional<Role> userRole = roleRepository.findRoleByNomRole("USER");
         if (userRole.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Le rôle 'USER' n'existe pas. Veuillez contacter un administrateur ");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Le rôle 'USER' n'existe pas. Veuillez contacter un administrateur.");
         }
 
         Optional<User> existingUser = userRepository.findByEmail(email);
@@ -66,7 +67,7 @@ public class UserController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Un utilisateur avec cet email existe déjà.");
         }
 
-        // Sauvegarder le fichier via FileService
+        // Save the file
         FileInfo fileInfo = filesStorageService.saveFile(file);
 
         // Create the new user

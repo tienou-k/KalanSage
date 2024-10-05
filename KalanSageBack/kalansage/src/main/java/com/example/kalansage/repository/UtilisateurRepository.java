@@ -18,6 +18,4 @@ public interface UtilisateurRepository extends JpaRepository<Utilisateur, Long> 
     Optional<Utilisateur> findByEmailOrUsername(String email, String username);
 
     List<Utilisateur> findByRole(Role role);
-
-
 }

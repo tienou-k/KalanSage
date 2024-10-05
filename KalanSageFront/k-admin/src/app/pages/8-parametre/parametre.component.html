@@ -1,0 +1,82 @@
+<div class="parametre-container">
+  <!-- Profile Picture Upload -->
+  <div class="profile-picture-container test" (click)="onUploadClick()">
+    <div class="profile-picture">
+      <img
+        *ngIf="profileImageUrl; else defaultIcon"
+        [src]="profileImageUrl"
+        alt="Profile Picture"
+        class="profile-img"
+      />
+      <ng-template #defaultIcon>
+        <div class="default-placeholder"></div>
+      </ng-template>
+    </div>
+    <!--  -->
+    <div class="edit-icon">
+      <mat-icon>camera_alt</mat-icon>
+    </div>
+  <input type="file" #fileInput (change)="onFileSelected($event)" hidden />
+</div>
+<!--  -->
+
+  <!-- User Details Form -->
+  <form [formGroup]="userForm" class="user-details-form">
+    <div class="form-group">
+      <mat-form-field appearance="outline">
+        <mat-label>Nom et Prénom</mat-label>
+        <input matInput formControlName="fullName" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Email</mat-label>
+        <input matInput formControlName="email" />
+      </mat-form-field>
+    </div>
+
+    <div class="form-group">
+      <mat-form-field appearance="outline">
+        <mat-label>Numéro de téléphone</mat-label>
+        <input matInput formControlName="phone" type="tel" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Adresse</mat-label>
+        <input matInput formControlName="address" />
+      </mat-form-field>
+    </div>
+
+    <div class="form-group">
+      <mat-form-field appearance="outline">
+        <mat-label>Nouveau rôle</mat-label>
+        <input matInput formControlName="role" />
+      </mat-form-field>
+    </div>
+
+    <!-- Change Password Section -->
+<div class="change-password-section">
+  <button class="passchange" (click)="togglePasswordChange()">
+    Changer le mot de passe
+  </button>
+  <div *ngIf="showPasswordChange" class="password-fields">
+    <mat-form-field appearance="outline" class="password-field">
+      <mat-label>Mot de passe actuel</mat-label>
+      <input matInput formControlName="currentPassword" type="password" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="password-field">
+      <mat-label>Nouveau mot de passe</mat-label>
+      <input matInput formControlName="newPassword" type="password" />
+    </mat-form-field>
+  </div>
+</div>
+
+    <!-- Action Buttons -->
+    <div class="action-buttons">
+      <button class="button submit" (click)="onSave()">
+        Enregistrer
+      </button>
+      <button class="button annuler" (click)="onCancel()">Annuler</button>
+    </div>
+  </form>
+</div>

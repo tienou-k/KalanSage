@@ -1,0 +1,34 @@
+.login-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  padding: 20px;
+}
+
+.login-logo img {
+  width: 150px;
+  margin-bottom: 20px;
+}
+
+.full-width {
+  width: 100%;
+  margin-bottom: 20px;
+
+}
+
+.additional-links {
+  margin-top: 20px;
+  text-align: center;
+}
+
+button {
+  width: 100%;
+  height: 50px;
+}
+.mat-mdc-raised-button:not(:disabled){
+  background: var(--primary-color);
+  border-radius: 5px;
+  color: #fff;
+}

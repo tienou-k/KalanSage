@@ -1,0 +1,76 @@
+<div class="dashboard-container">
+  <!-- Top Cards Section -->
+  <div class="top-cards">
+    <mat-card class="dashboard-card user-card">
+      <mat-card-title>Enregistrés</mat-card-title>
+      <div class="card-content">
+        <div class="one">
+          <mat-icon class="card-icon">person</mat-icon>
+          <h3>Users</h3>
+        </div>
+        <div class="card-value">{{ userCount }}</div>
+      </div>
+    </mat-card>
+    
+    <mat-card class="dashboard-card pro-card">
+      <mat-card-title>Enregistrés</mat-card-title>
+      <div class="card-content">
+        <div class="one">
+          <mat-icon class="card-icon">business</mat-icon>
+          <h3>Abonnement Pro</h3>
+        </div>
+        <div class="card-value">{{ abonnementCount }}</div>
+      </div>
+    </mat-card>
+    
+    <mat-card class="dashboard-card partners-card">
+      <mat-card-title>Enregistrés</mat-card-title>
+      <div class="card-content">
+        <div class="one">
+          <mat-icon class="card-icon">event</mat-icon>
+          <h3>Partenaires</h3>
+        </div>
+        <div class="card-value">{{ partnerCount }}</div>
+      </div>
+    </mat-card>
+  </div>
+
+  <!-- Bottom Section -->
+  <div class="bottom-section">
+    <!-- Left: Popular Courses Table -->
+    <mat-card class="table-card">
+      <mat-card-title>Top 5 des cours populaires</mat-card-title>
+      <table mat-table [dataSource]="courses">
+        <ng-container matColumnDef="titre">
+          <th mat-header-cell *matHeaderCellDef>Nom</th>
+          <td mat-cell *matCellDef="let course">{{ course.name }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="inscris">
+          <th mat-header-cell *matHeaderCellDef>Inscris</th>
+          <td mat-cell *matCellDef="let course">{{ course.inscris }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="review">
+          <th mat-header-cell *matHeaderCellDef>Review</th>
+          <td mat-cell *matCellDef="let course">
+            <span class="review">{{ course.review }}</span>
+          </td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+      </table>
+    </mat-card>
+
+    <!-- Right: Retention Rate -->
+    <mat-card class="retention-card">
+      <mat-card-title>Taux de rétention</mat-card-title>
+      <div class="retention-content">
+        <div class="retention-circle">
+          <div class="percentage">45%</div>
+        </div>
+      </div>
+    </mat-card>
+  </div>
+</div>

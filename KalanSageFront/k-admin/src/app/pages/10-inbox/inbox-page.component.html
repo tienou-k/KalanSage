@@ -1,0 +1,72 @@
+<div class="inbox-container">
+  <!-- Left Side: Chat List -->
+  <div class="chat-list-container">
+    <div class="header">
+      <h2>Messages</h2>
+      <mat-icon class="more-icon">more_vert</mat-icon>
+    </div>
+    <mat-form-field appearance="outline" class="search-bar">
+      <mat-icon matPrefix>search</mat-icon>
+      <input matInput placeholder="Search by chats and people" />
+    </mat-form-field>
+
+    <div class="chat-list">
+      <mat-card
+        class="chat-item"
+        *ngFor="let chat of chatList; let i = index"
+        (click)="selectChat(i)"
+        [ngClass]="{ selected: selectedChatIndex === i }"
+      >
+        <div class="chat-avatar">
+          <img *ngIf="chat.avatar" [src]="chat.avatar" class="avatar-img" />
+          <mat-icon *ngIf="!chat.avatar" class="avatar-placeholder"
+            >person</mat-icon
+          >
+        </div>
+        <div class="chat-details">
+          <h4>{{ chat.name }}</h4>
+          <p>{{ chat.message }}</p>
+        </div>
+        <div class="chat-meta">
+          <span class="chat-time">{{ chat.time }}</span>
+          <span class="unread-count" *ngIf="chat.unreadCount">{{
+            chat.unreadCount
+          }}</span>
+        </div>
+      </mat-card>
+    </div>
+  </div>
+
+  <!-- Right Side: Chat Content -->
+ <div class="chat-messages">
+    <div *ngFor="let message of selectedChat?.messages" class="message-item" [ngClass]="{'sent': message.sent}">
+      <p class="message-text">{{ message.text }}</p>
+      <span class="message-time">{{ message.time }}</span>
+    </div>
+  </div>
+
+    <div class="chat-messages">
+      <div
+        *ngFor="let message of selectedChat?.messages"
+        class="message-item"
+        [ngClass]="{ sent: message.sent }"
+      >
+        <p class="message-text">{{ message.text }}</p>
+        <span class="message-time">{{ message.time }}</span>
+      </div>
+    </div>
+
+    <!-- Message Input -->
+    <div class="message-input-container">
+      <mat-form-field appearance="outline" class="message-input">
+        <mat-icon class="icon">attach_file</mat-icon>
+        <input
+          matInput
+          placeholder="Ecrit un message"
+          [(ngModel)]="newMessage"
+        />
+        <mat-icon class="icon">message</mat-icon>
+        <mat-icon class="icon">emoji_emotions</mat-icon>
+      </mat-form-field>
+    </div>
+  </div>

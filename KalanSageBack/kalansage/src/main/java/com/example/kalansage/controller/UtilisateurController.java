@@ -7,6 +7,7 @@ import com.example.kalansage.repository.FileInfoRepository;
 import com.example.kalansage.repository.RoleRepository;
 import com.example.kalansage.repository.UtilisateurRepository;
 import com.example.kalansage.service.UtilisateurService;
+import com.example.kalansage.service.UtilisateurServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,10 +22,13 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/admins/utilisateurs")
+@PreAuthorize("hasRole('ADMIN')")
 public class UtilisateurController {
 
     @Autowired
     private UtilisateurService utilisateurService;
+    @Autowired
+    private UtilisateurServiceImpl utilisateurServiceimpl;
     @Autowired
     private FileInfoRepository fileInfoRepository;
     @Autowired
@@ -34,6 +38,14 @@ public class UtilisateurController {
     @Autowired
     private PasswordEncoder passwordEncoder;
 
+
+    // ------------------------count utilisateurs ------------------------
+
+    @GetMapping("/count")
+    public ResponseEntity<Long> getUserCount() {
+        long count = utilisateurServiceimpl.countUsers();
+        return ResponseEntity.ok(count);
+    }
 
     // --------------cherche un utilisateur par id---------------------------------------------
     @GetMapping("/par-id/{id}")

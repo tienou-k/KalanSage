@@ -1,0 +1,11 @@
+
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.current-user {
+  margin-right: 10px;
+  font-weight: bold;
+}

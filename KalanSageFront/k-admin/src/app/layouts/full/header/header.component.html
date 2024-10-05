@@ -1,0 +1,74 @@
+<mat-toolbar class="topbar">
+  <!-- Mobile Menu -->
+  <button
+    *ngIf="!showToggle"
+    mat-mini-fab
+    color="inherit"
+    (click)="toggleMobileNav.emit()"
+    class="d-flex justify-content-center"
+  >
+    <i
+      class="iconify icon-20 d-flex"
+      data-icon="solar:hamburger-menu-line-duotone"
+    ></i>
+  </button>
+
+  <!--  -->
+  <span class="flex-1-auto"></span>
+  <button
+    mat-mini-fab
+    color="inherit"
+    aria-label="Notifications"
+    class="d-flex justify-content-center"
+  >
+    <span matBadge="1" matBadgeOverlap="false" matBadgeSize="small">
+      <i class="iconify icon-20 d-flex" data-icon="solar:bell-line-duotone"></i>
+    </span>
+  </button>
+
+  <!-- Display Current User's Name -->
+  <span class="current-user">{{ userName }}</span>
+
+  <!-- Profile Image and Menu -->
+  <button
+    mat-fab
+    extended
+    color="inherit"
+    [matMenuTriggerFor]="profilemenu"
+    aria-label="Profile"
+    class="d-flex justify-content-center profile-btn-dd"
+  >
+    <img
+      [src]="profileImageUrl"
+      alt="User Profile Image"
+      class="rounded-circle object-cover icon-35 profile-dd"
+      width="35"
+    />
+  </button>
+
+  <mat-menu #profilemenu="matMenu" class="topbar-dd cardWithShadow">
+    <button mat-menu-item (click)="navigateToProfile()">
+      <mat-icon class="d-flex align-items-center">
+        <i data-icon="solar:shield-user-line-duotone" class="iconify icon-22"></i>
+      </mat-icon>
+      Mon Profile
+    </button>
+    <button mat-menu-item>
+      <mat-icon class="d-flex align-items-center">
+        <i data-icon="solar:user-id-line-duotone" class="iconify icon-22"></i>
+      </mat-icon>
+      Mon Compte
+    </button>
+
+    <div class="p-x-12 m-t-12">
+      <button
+        mat-stroked-button
+        color="primary"
+        class="w-100"
+        (click)="logout()"
+      >
+        Deconnexion
+      </button>
+    </div>
+  </mat-menu>
+</mat-toolbar>

@@ -2,6 +2,8 @@ package com.example.kalansage.controller;
 
 import com.example.kalansage.model.JwtResponse;
 import com.example.kalansage.model.LoginRequest;
+import com.example.kalansage.model.Utilisateur;
+import com.example.kalansage.repository.UtilisateurRepository;
 import com.example.kalansage.service.CustomUserDetailsService;
 import com.example.kalansage.service.UtilisateurService;
 import com.example.kalansage.util.JwtUtil;
@@ -10,15 +12,18 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/auth")
+@CrossOrigin(origins = "")
 public class AuthenticationController {
 
     @Autowired
@@ -29,6 +34,8 @@ public class AuthenticationController {
 
     @Autowired
     private UtilisateurService utilisateurService;
+    @Autowired
+    private UtilisateurRepository utilisateurRepository;
 
     @Autowired
     private JwtUtil jwtUtil;
@@ -37,31 +44,48 @@ public class AuthenticationController {
     public ResponseEntity<?> createAuthenticationToken(@RequestBody LoginRequest authRequest) {
         try {
             authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getMotDePasse())
+                    new UsernamePasswordAuthenticationToken(authRequest.getEmail(), authRequest.getMotDePasse())
             );
-            final UserDetails userDetails = customUserDetailsService.loadUserByUsername(authRequest.getUsername());
-            final String jwt = jwtUtil.generateToken(userDetails);
-            return ResponseEntity.ok().body(new JwtResponse(jwt, "Login successful! Welcome to " + userDetails.getUsername() + "!"));
+            final UserDetails userDetails = customUserDetailsService.loadUserByUsername(authRequest.getEmail());
+            // Extract the role from the user details
+            String role = userDetails.getAuthorities().iterator().next().getAuthority();
+            // Generate the JWT token including the role
+            final String jwt = jwtUtil.generateToken(userDetails, role);
+            return ResponseEntity.ok().body(new JwtResponse(jwt, role));
         } catch (AuthenticationException e) {
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Mot de passe ou Username incorrect");
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Mot de passe ou email incorrect");
         } catch (Exception e) {
-
-            e.printStackTrace();
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erreur lors de l'authentification! .");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erreur lors de l'authentification!");
         }
     }
 
-    //------------------------utilisateru se deconnecter----------------------------------------
+
+    @GetMapping("/profil")
+    public ResponseEntity<?> getProfile() {
+        // Get the currently authenticated user
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentUserEmail = authentication.getName();
+        // Fetch the user from the service using email
+        Utilisateur user = utilisateurService.findByEmail(currentUserEmail);
+        if (user != null) {
+            return ResponseEntity.ok(user);
+        } else {
+            return ResponseEntity.badRequest().body("User not found");
+        }
+    }
+
     @PostMapping("/se-deconnecter")
-    public ResponseEntity<String> seDeconnecter() {
+    public ResponseEntity<Map<String, String>> seDeconnecter(@RequestHeader("Authorization") String token) {
+        Map<String, String> response = new HashMap<>();
         try {
-            utilisateurService.seDeconnecter();
-            return ResponseEntity.ok("Deconnexion 🥺 ! Triste de voir parti si tot");
+            String jwtToken = token.replace("Bearer ", "");
+            utilisateurService.seDeconnecter(jwtToken);
+            response.put("message", "Déconnexion 🥺 ! Triste de vous voir partir si tôt.");
+            return ResponseEntity.ok(response);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Please try again.");
+            response.put("message", "Une erreur s'est produite. Veuillez réessayer.");
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
 
 }
-

@@ -1,0 +1,68 @@
+<div class="live-session-container">
+  <!-- Start New Live Button -->
+  <div class="header-container">
+    <button mat-raised-button color="primary" class="start-live-button" (click)="startLive()">
+      <mat-icon>videocam</mat-icon>
+      Start New Live
+    </button>
+  </div>
+
+  <!-- Image Section (Optional) -->
+  <div class="image-container">
+    <img src="assets/empty-live-sessions.png" alt="No Live Sessions" class="empty-image" />
+  </div>
+
+  <!-- Table Section -->
+  <mat-card class="smallCardWithShadow">
+    <div class="table-responsive">
+      <table mat-table [dataSource]="dataSource" class="w-100 responsive-table">
+        
+        <!-- Session Title Column -->
+        <ng-container matColumnDef="title">
+          <th mat-header-cell *matHeaderCellDef class="f-w-500">Titre Session</th>
+          <td mat-cell *matCellDef="let element">{{ element.title }}</td>
+        </ng-container>
+
+        <!-- Host Column -->
+        <ng-container matColumnDef="host">
+          <th mat-header-cell *matHeaderCellDef class="f-w-500">Animé par</th>
+          <td mat-cell *matCellDef="let element">{{ element.host }}</td>
+        </ng-container>
+
+        <!-- Participants Column -->
+        <ng-container matColumnDef="participants">
+          <th mat-header-cell *matHeaderCellDef class="f-w-500">Participants</th>
+          <td mat-cell *matCellDef="let element">{{ element.participants }}</td>
+        </ng-container>
+
+        <!-- Actions Column -->
+        <ng-container matColumnDef="actions">
+          <th mat-header-cell *matHeaderCellDef class="f-w-500">Actions</th>
+          <td mat-cell *matCellDef="let element">
+            <button mat-icon-button [matMenuTriggerFor]="actionMenu">
+              <mat-icon>more_vert</mat-icon>
+            </button>
+            <mat-menu #actionMenu="matMenu">
+              <button mat-menu-item (click)="viewDetails(element)">
+                <mat-icon>info</mat-icon> Details
+              </button>
+              <button mat-menu-item (click)="saveSession(element)">
+                <mat-icon>save</mat-icon> Save
+              </button>
+              <button mat-menu-item (click)="deleteSession(element)">
+                <mat-icon>delete</mat-icon> Delete
+              </button>
+            </mat-menu>
+          </td>
+        </ng-container>
+
+        <!-- Table Header and Rows -->
+        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+      </table>
+    </div>
+
+    <!-- Paginator -->
+    <mat-paginator [length]="dataSource.data.length" [pageSize]="5" aria-label="Select page"></mat-paginator>
+  </mat-card>
+</div>

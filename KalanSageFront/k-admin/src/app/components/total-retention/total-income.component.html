@@ -1,0 +1,34 @@
+<mat-card class="retention-card shadow-none bg-light-accent">
+  <mat-card-content>
+    <!-- Card Title -->
+    <div class="card-title">
+      <span class="title-text">Taux de rétention</span>
+    </div>
+
+    <!-- Circular Progress Container -->
+    <div class="ret-progress-container">
+      <!-- Background Spinner (Full Circle) -->
+      <mat-progress-spinner
+        mode="determinate"
+        [value]="100"
+        diameter="150"
+        strokeWidth="19"
+        color="background"
+        class="background-spinner"
+      ></mat-progress-spinner>
+
+      <!-- Foreground Spinner (Actual Value) -->
+      <mat-progress-spinner
+        mode="determinate"
+        [value]="retentionValue"
+        diameter="150"
+        strokeWidth="19"
+        color="accent"
+        class="foreground-spinner"
+      ></mat-progress-spinner>
+
+      <!-- Percentage Text in the Center -->
+      <div class="circle-text">{{ retentionValue }}%</div>
+    </div>
+  </mat-card-content>
+</mat-card>

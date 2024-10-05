@@ -3,6 +3,7 @@ package com.example.kalansage.service;
 import com.example.kalansage.exception.UsernameNotFoundException;
 import com.example.kalansage.model.Utilisateur;
 import com.example.kalansage.repository.UtilisateurRepository;
+import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -18,35 +19,32 @@ public class CustomUserDetailsService implements UserDetailsService {
     @Autowired
     private UtilisateurRepository utilisateurRepository;
 
+
+    @SneakyThrows
     @Override
-    public UserDetails loadUserByUsername(String username) {
-        Optional<Utilisateur> utilisateurOptional = utilisateurRepository.findByUsername(username);
+    public UserDetails loadUserByUsername(String email) {
+        System.out.println("Attempting to find user with email: " + email);
+        Optional<Utilisateur> utilisateurOptional = utilisateurRepository.findByEmail(email); // Use the correct method
 
         if (utilisateurOptional.isPresent()) {
             Utilisateur utilisateur = utilisateurOptional.get();
 
-            // Vérifiez si l'utilisateur a un ID valide
+            // Verify if the user has a valid ID
             Long userId = utilisateur.getId();
             if (userId == null) {
-                try {
-                    throw new UsernameNotFoundException("L'ID de l'utilisateur pour " + username + " n'est pas présent dans la base de données.");
-                } catch (UsernameNotFoundException e) {
-                    throw new RuntimeException(e);
-                }
+                throw new UsernameNotFoundException("L'ID de l'utilisateur pour " + email + " n'est pas présent dans la base de données.");
             }
 
             String role = "ROLE_" + utilisateur.getRole().getNomRole();
             return new org.springframework.security.core.userdetails.User(
-                    utilisateur.getUsername(),
+                    utilisateur.getEmail(),
                     utilisateur.getMotDePasse(),
                     Collections.singletonList(new SimpleGrantedAuthority(role))
             );
         } else {
-            try {
-                throw new UsernameNotFoundException("Vous cherchez un fantôme on dirait : " + username);
-            } catch (UsernameNotFoundException e) {
-                throw new RuntimeException(e);
-            }
+            System.out.println("Attempting to find user with email: " + email);
+            throw new UsernameNotFoundException("Utilisateur non trouvé avec l'adresse e-mail: " + email);
         }
     }
+
 }

@@ -1,0 +1,27 @@
+
+@use '@angular/material' as mat;
+@include mat.core();
+
+$MaterialM-theme: mat.define-theme((
+  color: (
+    theme-type: light,
+    primary: mat.$azure-palette,
+    tertiary: mat.$blue-palette,
+  ),
+  density: (
+    scale: 0,
+  )
+));
+
+html, body { 
+    height: 100%; 
+}
+body { 
+    margin: 0; 
+    font-family: Roboto, "Helvetica Neue", sans-serif; 
+}
+
+:root{
+    --primary-color: #194860;
+    --secondary-color: #ED6A19;
+}

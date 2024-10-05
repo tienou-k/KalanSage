@@ -6,6 +6,7 @@ import com.example.kalansage.service.LeconsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,6 +24,7 @@ public class LeconsController {
 
 
     @PostMapping("/creer-lecon")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> creerModule(@RequestBody Lecons lecons) {
         if (!isAdmin()) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Seuls les ADMIN peuvent créer des Lecons.");
@@ -32,6 +34,7 @@ public class LeconsController {
 
 
     @PutMapping("/modifier-lecon/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> modifierModule(@PathVariable Long id, @RequestBody Lecons lecons) {
         if (!isAdmin()) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Seuls les ADMIN peuvent modifier des Lecons");
@@ -41,6 +44,7 @@ public class LeconsController {
 
     // Delete a module (ADMIN only)
     @DeleteMapping("/supprimer-lecon/{id}")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<?> supprimerModule(@PathVariable Long id) {
         if (!isAdmin()) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Seuls les ADMIN peuvent supprimer des Lecons.");

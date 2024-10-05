@@ -1,0 +1,58 @@
+<div class="notification-page-container">
+  <!-- Left Side: Notification List -->
+  <div class="notification-list-container">
+    <!-- Empty State -->
+    <div *ngIf="notifications.length === 0" class="empty-state">
+      <mat-icon>notifications_off</mat-icon>
+      <p>Aucune notification pour le moment</p>
+    </div>
+
+    <!-- Notification List -->
+    <div *ngIf="notifications.length > 0">
+      <mat-card 
+        class="notification-card" 
+        *ngFor="let notification of notifications; let i = index" 
+        (click)="selectNotification(i)"
+        [ngClass]="{'selected': selectedNotificationIndex === i}"
+      >
+        <div class="notification-content">
+          <img [src]="notification.senderImg" alt="Sender Image" class="sender-img" />
+          <div class="notification-details">
+            <h4 class="notification-title">{{ notification.title }}</h4>
+            <!-- <p class="notification-message">{{ notification.message }}</p> -->
+            <span class="notification-time">{{ notification.time }}</span>
+          </div>
+          <!-- Actions Button -->
+          <button mat-icon-button [matMenuTriggerFor]="menu" aria-label="More actions">
+            <mat-icon>more_vert</mat-icon>
+          </button>
+          <mat-menu #menu="matMenu">
+            <button mat-menu-item (click)="viewDetails(i)">
+              <mat-icon>visibility</mat-icon>
+              <span>View Details</span>
+            </button>
+            <button mat-menu-item (click)="deleteNotification(i)">
+              <mat-icon>delete</mat-icon>
+              <span>Delete</span>
+            </button>
+          </mat-menu>
+        </div>
+      </mat-card>
+    </div>
+  </div>
+
+  <!-- Right Side: Notification Details -->
+  <div class="notification-details-container">
+    <ng-container *ngIf="selectedNotification">
+      <h3>{{ selectedNotification.title }}</h3>
+      <img [src]="selectedNotification.senderImg" alt="Sender Image" class="detail-img" />
+      <p>{{ selectedNotification.message }}</p>
+      <span class="notification-time">{{ selectedNotification.time }}</span>
+    </ng-container>
+
+    <!-- Placeholder for no selection -->
+    <div *ngIf="!selectedNotification" class="no-selection">
+      <p>Sélectionnez une notification pour voir les détails</p>
+    </div>
+  </div>
+</div>

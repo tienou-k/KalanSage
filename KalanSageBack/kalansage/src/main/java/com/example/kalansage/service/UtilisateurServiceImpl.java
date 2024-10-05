@@ -2,9 +2,11 @@ package com.example.kalansage.service;
 
 import com.example.kalansage.exception.UsernameNotFoundException;
 import com.example.kalansage.model.Utilisateur;
+import com.example.kalansage.repository.TokenBlacklistRepository;
 import com.example.kalansage.repository.UtilisateurRepository;
 import jakarta.persistence.EntityManager;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import javax.management.Notification;
@@ -16,11 +18,13 @@ public class UtilisateurServiceImpl implements UtilisateurService {
 
 
     private final UtilisateurRepository utilisateurRepository;
+    private final TokenBlacklistRepository tokenBlacklistRepository;
 
     @Autowired
-    public UtilisateurServiceImpl(UtilisateurRepository utilisateurRepository,
+    public UtilisateurServiceImpl(UtilisateurRepository utilisateurRepository, TokenBlacklistRepository tokenBlacklistRepository,
                                   EntityManager entityManager) {
         this.utilisateurRepository = utilisateurRepository;
+        this.tokenBlacklistRepository = tokenBlacklistRepository;
     }
 
     @Override
@@ -61,10 +65,10 @@ public class UtilisateurServiceImpl implements UtilisateurService {
     }
 
     @Override
-    public void seDeconnecter() {
-
+    public void seDeconnecter(String token) {
+        tokenBlacklistRepository.addToken(token);
+        SecurityContextHolder.clearContext();
     }
-
 
     @Override
     public Optional<Utilisateur> getUtilisateur(String Nom) {
@@ -98,5 +102,12 @@ public class UtilisateurServiceImpl implements UtilisateurService {
         // Implement notification handling logic here
     }
 
+    public Utilisateur findByEmail(String email) {
+        return utilisateurRepository.findByEmail(email).orElse(null);
+    }
 
+
+    public long countUsers() {
+        return utilisateurRepository.count();
+    }
 }

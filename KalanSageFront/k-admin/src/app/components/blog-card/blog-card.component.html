@@ -1,0 +1,58 @@
+<div class="row justify-content-center">
+  @for(cardimg of cardimgs; track cardimg.mat_card_title) {
+  <div class="col-lg-4">
+    <mat-card class="cardWithShadow position-relative overflow-hidden">
+      <div class="position-relative">
+        <div
+          class="card-overlay h-100 d-flex align-items-end justify-content-end"
+        ></div>
+      </div>
+
+      <mat-card-content class="p-y-24">
+        <div class="user-category">
+          <div class="m-b-20">
+            <img src="" class="rounded-circle" width="40" />
+          </div>
+          <span class="f-s-12 m-y-16 f-w-600 p-x-8 p-y-4 bg-light rounded-pill">
+            Enregistrés
+          </span>
+        </div>
+        <!--  -->
+
+        <div class="container">
+          <div class="left">
+            <mat-card-title class="m-t-20 text-hover-primary cursor-pointer">
+              <div class="d-flex align-items-left justify-content-start m-t-24">
+                <div class="d-flex align-items-center">
+                  <span class="m-l-2 f-s-16 d-flex align-items-left">
+                    <mat-icon> {{ cardimg.iconName }}</mat-icon>
+                  </span>
+                </div>
+              </div>
+              <a class="hover-text">
+                {{ cardimg.mat_card_title }}
+              </a>
+            </mat-card-title>
+          </div>
+
+          <!-- Progress Spinner Section -->
+          <div class="m-t-20 right-container">
+            <mat-progress-spinner
+              mode="determinate"
+              [value]="cardimg.progressValue"
+              [color]="cardimg.progressColor"
+              diameter="70"
+              strokeWidth="8"
+            >
+            </mat-progress-spinner>
+            <span class="progress-number m-l-2">{{
+              cardimg.progressValue
+            }}</span>
+          </div>
+        </div>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  }
+</div>
