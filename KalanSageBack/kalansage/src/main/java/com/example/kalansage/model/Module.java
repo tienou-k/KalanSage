@@ -2,7 +2,6 @@ package com.example.kalansage.model;
 
 import com.example.kalansage.model.userAction.Test;
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
@@ -32,14 +31,6 @@ public class Module {
     @JoinColumn(name = "categorie_id", nullable = false)
     @JsonBackReference
     private Categorie categorie;
-
-
-    // Relation between Modules and Utilisateur
-    @ManyToMany
-    @EqualsAndHashCode.Exclude
-    @ToString.Exclude
-    @JsonIgnore
-    private Set<User> usersInscris = new HashSet<>();
 
 
     @OneToMany(mappedBy = "modules", cascade = CascadeType.ALL, fetch = FetchType.LAZY)

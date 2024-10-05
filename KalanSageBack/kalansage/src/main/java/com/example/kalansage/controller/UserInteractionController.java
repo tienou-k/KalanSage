@@ -1,19 +1,26 @@
 package com.example.kalansage.controller;
 
 import com.example.kalansage.model.Evaluation;
+import com.example.kalansage.model.Module;
 import com.example.kalansage.model.userAction.*;
+import com.example.kalansage.service.ModuleServiceImpl;
 import com.example.kalansage.service.UserInteractionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
-@RequestMapping("/api/user-interaction")
+@RequestMapping("/api/user")
 public class UserInteractionController {
 
     @Autowired
     private UserInteractionService userInteractionService;
+    @Autowired
+    private ModuleServiceImpl moduleServiceimpl;
 
     // Take a quiz
     @PostMapping("/take-quiz/{userId}/{quizId}")
@@ -85,7 +92,7 @@ public class UserInteractionController {
     }
 
     // Enroll in a course
-    @PostMapping("/enroll-module/{userId}/{moduleId}")
+    @PostMapping("/inscrisModule/{userId}/{moduleId}")
     public ResponseEntity<UserModule> enrollInCourse(
             @PathVariable Long userId,
             @PathVariable Long moduleId) {
@@ -98,15 +105,14 @@ public class UserInteractionController {
     }
 
     // Subscribe to an abonnement
-    @PostMapping("/subscribe-abonnement/{userId}/{abonnementId}")
-    public ResponseEntity<UserAbonnement> subscribeToAbonnement(
-            @PathVariable Long userId,
-            @PathVariable Long abonnementId) {
+    @PostMapping("/abonnement/{userId}/{abonnementId}")
+    @PreAuthorize("hasRole('USER')")
+    public ResponseEntity<?> enrollUserInModule(@PathVariable Long userId, @PathVariable Long moduleId) {
         try {
-            UserAbonnement userAbonnement = userInteractionService.sAbonner(userId, abonnementId);
-            return ResponseEntity.ok(userAbonnement);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+            UserModule userModule = moduleServiceimpl.inscrireAuModule(userId, moduleId);
+            return ResponseEntity.ok(userModule);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 
@@ -121,6 +127,12 @@ public class UserInteractionController {
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
+    }
+
+    @GetMapping("/top5")
+    public ResponseEntity<List<Module>> getTop5Modules() {
+        List<Module> topModules = moduleServiceimpl.getTop5Modules();
+        return ResponseEntity.ok(topModules);
     }
 
     // Submit a course evaluation

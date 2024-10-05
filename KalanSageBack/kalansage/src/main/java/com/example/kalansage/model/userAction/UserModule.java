@@ -20,8 +20,8 @@ public class UserModule {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @Temporal(TemporalType.DATE)
-    @Column(name = "enrollment_date", nullable = false)
-    private Date setDateInscription;
+    @Column(name = "inscription_date")
+    private Date dateInscription;
     @Column(name = "is_completed", nullable = false)
     private boolean isCompleted;
     @Temporal(TemporalType.DATE)
@@ -37,9 +37,6 @@ public class UserModule {
     @ManyToOne
     @JoinColumn(name = "modules_id", nullable = false)
     private Module modules;
-
-
-    public void setDateInscription(Date date) {
-    }
+    
 }
 

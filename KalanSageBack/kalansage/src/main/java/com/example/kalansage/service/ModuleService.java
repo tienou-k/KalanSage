@@ -2,6 +2,7 @@ package com.example.kalansage.service;
 
 import com.example.kalansage.dto.ModulesDTO;
 import com.example.kalansage.model.Module;
+import com.example.kalansage.model.userAction.UserModule;
 
 import java.util.List;
 import java.util.Optional;
@@ -30,4 +31,7 @@ public interface ModuleService {
     List<Module> getModulePrix(Long prix);
 
 
+    UserModule inscrireAuModule(Long userId, Long moduleId);
+
+    List<Module> getTop5Modules();
 }

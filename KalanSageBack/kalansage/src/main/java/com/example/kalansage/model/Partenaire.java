@@ -21,13 +21,13 @@ public class Partenaire {
     private Long idPartenaire;
 
     private String nomPartenaire;
-    private String logoPartenaire;
     private Date dateAjoute;
     private String typePartenaire;
     private String adresse;
     private String emailContact;
     private String numeroContact;
     private String descriptionPartenariat;
+    private boolean status;
 
     @ElementCollection
     private List<String> certificationsAccordees;

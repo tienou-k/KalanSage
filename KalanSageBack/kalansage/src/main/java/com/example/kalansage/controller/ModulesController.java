@@ -3,9 +3,11 @@ package com.example.kalansage.controller;
 
 import com.example.kalansage.dto.ModulesDTO;
 import com.example.kalansage.model.Module;
+import com.example.kalansage.model.userAction.UserModule;
 import com.example.kalansage.repository.CategorieRepository;
 import com.example.kalansage.repository.ModuleRepository;
 import com.example.kalansage.service.ModuleService;
+import com.example.kalansage.service.ModuleServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,6 +30,8 @@ public class ModulesController {
 
     @Autowired
     private CategorieRepository categorieRepository;
+    @Autowired
+    private ModuleServiceImpl moduleServiceimpl;
 
 
     @PostMapping("/creer-module")
@@ -84,5 +88,22 @@ public class ModulesController {
     @GetMapping("/list-modules")
     public ResponseEntity<List<ModulesDTO>> listerModules() {
         return ResponseEntity.ok(modulesservice.listerModule());
+    }
+
+    @PostMapping("/inscris-module/{userId}/{moduleId}")
+
+    public ResponseEntity<?> enrollUserInModule(@PathVariable Long userId, @PathVariable Long moduleId) {
+        try {
+            UserModule userModule = moduleServiceimpl.inscrireAuModule(userId, moduleId);
+            return ResponseEntity.ok(userModule);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
+    }
+
+    @GetMapping("/top5")
+    public ResponseEntity<List<Module>> getTop5Modules() {
+        List<Module> topModules = moduleServiceimpl.getTop5Modules();
+        return ResponseEntity.ok(topModules);
     }
 }

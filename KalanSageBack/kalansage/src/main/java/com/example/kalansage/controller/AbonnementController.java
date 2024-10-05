@@ -4,6 +4,7 @@ package com.example.kalansage.controller;
 import com.example.kalansage.dto.AbonnementDTO;
 import com.example.kalansage.model.Abonnement;
 import com.example.kalansage.service.AbonnementService;
+import com.example.kalansage.service.UserInteractionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -20,6 +21,8 @@ public class AbonnementController {
 
     @Autowired
     private AbonnementService abonnementService;
+    @Autowired
+    private UserInteractionService userInteractionService;
 
     @PostMapping("/creer-abonnement")
     @PreAuthorize("hasRole('ADMIN')")
@@ -71,6 +74,11 @@ public class AbonnementController {
         return ResponseEntity.ok(abonnementService.listerAbonnements());
     }
 
+    @GetMapping("/count")
+    public ResponseEntity<Long> getAbonnementCount() {
+        long count = userInteractionService.countAbonnements();
+        return ResponseEntity.ok(count);
+    }
 
     private boolean isAdmin() {
         String currentUserRole = SecurityContextHolder.getContext().getAuthentication().getAuthorities().iterator().next().getAuthority();

@@ -37,31 +37,34 @@
 
   <!-- Bottom Section -->
   <div class="bottom-section">
-    <!-- Left: Popular Courses Table -->
+    <!--  -->
     <mat-card class="table-card">
-      <mat-card-title>Top 5 des cours populaires</mat-card-title>
-      <table mat-table [dataSource]="courses">
-        <ng-container matColumnDef="titre">
-          <th mat-header-cell *matHeaderCellDef>Nom</th>
-          <td mat-cell *matCellDef="let course">{{ course.name }}</td>
-        </ng-container>
+    <mat-card-title>Top 5 des modules populaires</mat-card-title>
+    <table mat-table [dataSource]="topModules">
+      <!--  -->
+      <ng-container matColumnDef="titre">
+        <th mat-header-cell *matHeaderCellDef>Nom</th>
+        <td mat-cell *matCellDef="let module">{{ module.titre }}</td>
+      </ng-container>
 
-        <ng-container matColumnDef="inscris">
-          <th mat-header-cell *matHeaderCellDef>Inscris</th>
-          <td mat-cell *matCellDef="let course">{{ course.inscris }}</td>
-        </ng-container>
+      <!--  -->
+      <ng-container matColumnDef="inscris">
+        <th mat-header-cell *matHeaderCellDef>Inscris</th>
+        <td mat-cell *matCellDef="let module">{{ module.inscris }}</td>
+      </ng-container>
 
-        <ng-container matColumnDef="review">
-          <th mat-header-cell *matHeaderCellDef>Review</th>
-          <td mat-cell *matCellDef="let course">
-            <span class="review">{{ course.review }}</span>
-          </td>
-        </ng-container>
+      <!--  -->
+      <ng-container matColumnDef="review">
+        <th mat-header-cell *matHeaderCellDef>Review</th>
+        <td mat-cell *matCellDef="let module">
+          <span class="review">{{ module.review }}</span>
+        </td>
+      </ng-container>
 
-        <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-        <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
-      </table>
-    </mat-card>
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+    </table>
+  </mat-card>
 
     <!-- Right: Retention Rate -->
     <mat-card class="retention-card">

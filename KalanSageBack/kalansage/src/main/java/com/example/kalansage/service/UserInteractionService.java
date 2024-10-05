@@ -186,12 +186,22 @@ public class UserInteractionService {
         if (user.isEmpty() || abonnement.isEmpty()) {
             throw new IllegalArgumentException("Utilisateur ou Abonnement introuvable.");
         }
+        // Check if the user is already subscribed to this abonnement
+        Optional<UserAbonnement> existingSubscription = userAbonnementRepository.findByUser_IdAndAbonnement_IdAbonnement(userId, abonnementId);
+        if (existingSubscription.isPresent()) {
+            throw new IllegalStateException("Vous avez déjà cet abonnement ! 💪.");
+        }
         UserAbonnement userAbonnement = new UserAbonnement();
         userAbonnement.setUser(user.get());
         userAbonnement.setAbonnement(abonnement.get());
         userAbonnement.setStartDate(new Date());
 
         return userAbonnementRepository.save(userAbonnement);
+    }
+
+
+    public long countAbonnements() {
+        return userAbonnementRepository.count();
     }
 
     // Gérer l'obtention d'un badge

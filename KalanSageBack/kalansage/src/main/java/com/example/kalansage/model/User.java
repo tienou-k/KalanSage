@@ -1,6 +1,7 @@
 package com.example.kalansage.model;
 
 import com.example.kalansage.model.userAction.ParticipantLive;
+import com.example.kalansage.model.userAction.UserModule;
 import com.example.kalansage.model.userAction.UserPoints;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
@@ -29,8 +30,8 @@ public class User extends Utilisateur {
     private List<Abonnement> abonnementUser = new ArrayList<>();
 
     //---------------------Utilisateur module-----------------------------------------
-    @ManyToMany
-    private Set<Module> modulesSuivis = new HashSet<>();
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<UserModule> userModules = new HashSet<>();
 
     //---------------------Utilisateur evaluation-----------------------------------------
     @ManyToMany

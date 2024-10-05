@@ -51,6 +51,7 @@ public class SecurityConfig {
 
                         // Admin endpoints
                         .requestMatchers("/api/admins/**").hasAuthority("ROLE_ADMIN")
+                        .requestMatchers("/api/admins/partenaires/**").hasAuthority("ROLE_ADMIN")
                         .requestMatchers("/api/categories/creer-categorie").hasAuthority("ROLE_ADMIN")
                         .requestMatchers("/api/modules/").hasAuthority("ROLE_ADMIN")
                         .requestMatchers("/api/lecons/").hasAuthority("ROLE_ADMIN")
@@ -58,7 +59,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/forums/**").hasAuthority("ROLE_ADMIN")
                         // User endpoints
                         .requestMatchers("/api/users/list-users", "/api/users/modifier-user").hasAnyAuthority("ROLE_USER", "ROLE_ADMIN")
-                        .requestMatchers("/api/user-interaction").hasAuthority("ROLE_USER")
+                        .requestMatchers("/api/user").hasRole("USER")
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(exception -> exception.authenticationEntryPoint(jwtAuthenticationEntryPoint))

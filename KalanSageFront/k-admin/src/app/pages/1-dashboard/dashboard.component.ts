@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { MaterialModule } from 'src/app/material.module';
 import { DashboardService } from 'src/app/services/dashboard.service';
+import {ModuleService} from 'src/app/services/modules.service'
 
 interface Modules {
   name: string;
@@ -16,19 +17,23 @@ interface Modules {
   styleUrls: ['./dashboard.component.scss'],
 })
 export class DashboardComponent implements OnInit {
+  topModules: any[] = [];
   displayedColumns: string[] = ['titre', 'inscris', 'review'];
   courses: Modules[] = [];
   userCount: number = 0;
   abonnementCount: number = 0;
   partnerCount: number = 0;
 
-  constructor(private dashboardService: DashboardService) {}
+  constructor(
+    private dashboardService: DashboardService,
+    private moduleService: ModuleService
+  ) {}
 
   ngOnInit(): void {
+    this.fetchTopModules();
     this.fetchUserCount();
     this.fetchAbonnementCount();
     this.fetchPartnerCount();
-    this.fetchTopCourses();
   }
 
   fetchUserCount(): void {
@@ -64,13 +69,14 @@ export class DashboardComponent implements OnInit {
     );
   }
 
-  fetchTopCourses(): void {
-    this.dashboardService.getTopCourses().subscribe(
-      (courses) => {
-        this.courses = courses;
+  fetchTopModules(): void {
+    this.moduleService.getTop5Modules().subscribe(
+      (modules) => {
+        // Assuming the backend returns an array of modules with 'titre', 'inscris', and 'review'
+        this.topModules = modules;
       },
       (error) => {
-        console.error('Failed to fetch top courses:', error);
+        console.error('Failed to fetch top modules:', error);
       }
     );
   }
