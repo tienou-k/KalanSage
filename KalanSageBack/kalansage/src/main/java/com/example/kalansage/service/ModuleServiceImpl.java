@@ -87,14 +87,20 @@ public class ModuleServiceImpl implements ModuleService {
 
 
     @Override
-    public Module modifierModule(Long id, Module updatedModule) {
+    public Module modifierModule(Long id, ModulesDTO updatedModule) {
+        // Retrieve the existing module
         Module existingModule = moduleRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Module not found"));
+        Categorie categorie = categorieRepository.findByNomCategorie(updatedModule.getNomCategorie())
+                .orElseThrow(() -> new ResourceNotFoundException("Categorie not found"));
+
+        // Update the module fields
         existingModule.setTitre(updatedModule.getTitre());
         existingModule.setDescription(updatedModule.getDescription());
         existingModule.setPrix(updatedModule.getPrix());
-        existingModule.setCategorie(updatedModule.getCategorie());
+        existingModule.setCategorie(categorie); // Set the Categorie object, not a string
 
+        // Save the updated module
         return moduleRepository.save(existingModule);
     }
 
@@ -123,7 +129,7 @@ public class ModuleServiceImpl implements ModuleService {
     // Helper method to map Cours to CoursDTO
     private ModulesDTO mapToModuleDTO(Module Module) {
         ModulesDTO ModuleDTO = new ModulesDTO();
-        ModuleDTO.setId(Module.getIdModule());
+        ModuleDTO.setId(Module.getId());
         ModuleDTO.setTitre(Module.getTitre());
         ModuleDTO.setDescription(Module.getDescription());
         ModuleDTO.setPrix(Module.getPrix());

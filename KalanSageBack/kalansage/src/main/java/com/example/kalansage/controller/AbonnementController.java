@@ -3,6 +3,8 @@ package com.example.kalansage.controller;
 
 import com.example.kalansage.dto.AbonnementDTO;
 import com.example.kalansage.model.Abonnement;
+import com.example.kalansage.model.User;
+import com.example.kalansage.repository.AbonnementRepository;
 import com.example.kalansage.service.AbonnementService;
 import com.example.kalansage.service.UserInteractionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,9 +25,11 @@ public class AbonnementController {
     private AbonnementService abonnementService;
     @Autowired
     private UserInteractionService userInteractionService;
+    @Autowired
+    private AbonnementRepository abonnementRepository;
 
     @PostMapping("/creer-abonnement")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<?> creerAbonnement(@RequestBody AbonnementDTO abonnementDTO) {
         try {
             Abonnement newAbonnement = abonnementService.creerAbonnement(abonnementDTO);
@@ -78,6 +82,21 @@ public class AbonnementController {
     public ResponseEntity<Long> getAbonnementCount() {
         long count = userInteractionService.countAbonnements();
         return ResponseEntity.ok(count);
+    }
+
+    @GetMapping("/most-subscribed")
+    public ResponseEntity<Abonnement> getMostSubscribedAbonnement() {
+        Abonnement mostSubscribed = userInteractionService.findMostSubscribedAbonnement();
+        if (mostSubscribed == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+        return ResponseEntity.ok(mostSubscribed);
+    }
+
+    @GetMapping("/users")
+    public ResponseEntity<List<User>> getAbonnementUsers() {
+        List<User> abonnementUsers = userInteractionService.getAbonnementUsers();
+        return ResponseEntity.ok(abonnementUsers);
     }
 
     private boolean isAdmin() {

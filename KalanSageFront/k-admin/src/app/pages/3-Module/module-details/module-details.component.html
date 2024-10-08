@@ -1,0 +1,114 @@
+<div class="course-header">
+  <div class="course-header-left">
+    <!--  -->
+    <div class="arrow-head">
+      <button mat-icon-button (click)="goBack()" class="back-button">
+        <mat-icon>arrow_back</mat-icon>
+      </button>
+      <div>{{ moduleDetails.nomCategorie }}</div>
+    </div>
+
+    <!--  -->
+    <h2>{{ moduleDetails.titre }}</h2>
+    <div class="course-info">
+      <span>{{ studentCount }} <span class="text-info">Apprenants</span></span>
+      <span>{{ leconCount }}<span class="text-info">Leçons</span></span>
+      <span>{{ quizCount }} <span class="text-info">Quiz</span></span>
+    </div>
+  </div>
+  <!--  -->
+  <div class="course-header-right">
+    <img src="assets/course-image.png" alt="Course Image" />
+    <div class="price">
+      <span class="original-price" *ngIf="moduleDetails.originalPrice"
+        >${{ moduleDetails.prix }}</span
+      >
+      <span class="discounted-price">${{ moduleDetails.prix }}</span>
+      <button mat-raised-button color="primary" (click)="startCourse()">
+        Start Now
+      </button>
+    </div>
+  </div>
+</div>
+
+<mat-tab-group
+  [(selectedIndex)]="selectedTabIndex"
+  (selectedIndexChange)="onTabChange($event)"
+>
+  <mat-tab label="Aperçu Général">
+    <div class="overview">
+      <p>{{ moduleDetails.description }}</p>
+    </div>
+  </mat-tab>
+
+  <mat-tab label="Curriculum">
+    <div class="curriculum">
+      <img
+        src="assets/certificate.png"
+        alt="Certificate"
+        class="certificate-image"
+      />
+    </div>
+  </mat-tab>
+<!--  -->
+  <mat-tab label="Leçons">
+  <div class="lessons">
+    <div *ngIf="lecons.length === 0" class="no-lessons-message">
+      Pas de leçon pour ce module.
+    </div>
+
+    <div *ngFor="let lesson of lecons; let i = index" class="lesson-item">
+      <h3 (click)="toggleLessonContent(i)" style="cursor: pointer">
+        {{ lesson.titre }}
+        <mat-icon>{{
+          selectedLessonIndex === i ? "expand_less" : "expand_more"
+        }}</mat-icon>
+      </h3>
+
+      <!-- Show lesson content if selected -->
+      <div *ngIf="selectedLessonIndex === i">
+        <!-- Check if the lesson has a video content -->
+        <div *ngIf="lesson.videoUrl; else noVideo">
+          <p>Cliquer pour afficher la vidéo</p>
+          <button mat-button color="primary" (click)="playVideo(lesson.videoUrl)">
+            <mat-icon>play_circle_filled</mat-icon> Play Video
+          </button>
+        </div>
+
+        <ng-template #noVideo>
+          <p>Aucun contenu vidéo disponible pour cette leçon.</p>
+        </ng-template>
+
+        <!-- Lock/unlock icon logic -->
+        <mat-icon>
+          {{
+            isAdmin || moduleDetails.prix <= 0
+              ? "check_circle"
+              : lesson.completed
+              ? "check_circle"
+              : "lock"
+          }}
+        </mat-icon>
+      </div>
+    </div>
+  </div>
+</mat-tab>
+  <!--  -->
+  <mat-tab label="Reviews">
+    <div class="reviews">
+      <h3>Commentaires</h3>
+      <div class="rating">
+        <span class="overall-rating">{{ moduleDetails.evaluation }}</span>
+        <!-- Add rating stars here -->
+      </div>
+      <div
+        *ngFor="let evaluation of moduleDetails.evaluation"
+        class="review-item"
+      >
+        <h4>{{ evaluation.name }}</h4>
+        <p>{{ evaluation.comment }}</p>
+        <span>{{ evaluation.date }}</span>
+      </div>
+    </div>
+  </mat-tab>
+</mat-tab-group>

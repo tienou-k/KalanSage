@@ -9,9 +9,10 @@ import { ModuleComponent } from './pages/3-Module/module.component';
 import { AbonnementComponent } from './pages/2-abonnement/abonnement.component';
 import { ParametreComponent } from './pages/8-parametre/parametre.component';
 import { LiveComponent } from './pages/7-live/live.component';
-import { PartenaireComponnet } from './pages/6-partenaire/partenaire.component';
+import { PartenaireComponent } from './pages/6-partenaire/partenaire.component';
 import { LoginComponent } from './pages/authentication/side-login/login.component';
 import { AuthGuard } from './services/auth-guard.service';
+import { ModuleDetailComponent } from './pages/3-Module/module-details/module-details.component';
 
 export const routes: Routes = [
   {
@@ -54,13 +55,18 @@ export const routes: Routes = [
         canActivate: [AuthGuard],
       },
       {
+        path: 'modules/:id',
+        component: ModuleDetailComponent,
+        canActivate: [AuthGuard],
+      },
+      {
         path: 'abonnement',
         component: AbonnementComponent,
         canActivate: [AuthGuard],
       },
       {
         path: 'partenaire',
-        component: PartenaireComponnet,
+        component: PartenaireComponent,
         canActivate: [AuthGuard],
       },
       {

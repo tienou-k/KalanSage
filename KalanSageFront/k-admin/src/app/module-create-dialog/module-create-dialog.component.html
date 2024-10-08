@@ -1,9 +1,12 @@
 <div class="header">
-  <h2 class="dialog-title">Création d'un module</h2>
+  <h2 class="dialog-title">
+    {{ editMode ? "Modification du module" : "Création d'un module" }}
+  </h2>
   <button mat-icon-button class="close-icon" (click)="onClose()">
     <mat-icon>close</mat-icon>
   </button>
 </div>
+<!--  -->
 <form [formGroup]="moduleForm" class="module-form">
   <div class="form-container">
     <!-- Image Upload Section -->
@@ -37,9 +40,21 @@
         </mat-error>
       </mat-form-field>
 
+      <!-- Category Selection Field -->
       <mat-form-field appearance="outline" class="input-field">
         <mat-label>Catégorie</mat-label>
-        <input matInput formControlName="category" required />
+        <mat-select formControlName="category" required>
+          <mat-option
+            *ngFor="let category of categories"
+            [value]="category.nomCategorie"
+          >
+            {{ category.nomCategorie }}
+          </mat-option>
+          <!-- Option to add new category -->
+          <mat-option (click)="openAddCategoryDialog()"
+            >+ Ajouter une nouvelle catégorie</mat-option
+          >
+        </mat-select>
         <mat-error
           *ngIf="
             moduleForm.get('category')?.hasError('required') &&
@@ -49,10 +64,38 @@
           La catégorie est requise.
         </mat-error>
       </mat-form-field>
-    </div>
 
-    <!-- Description and Price Section -->
-    <div class="bottom-section">
+      <!-- Dialog for adding new category -->
+      <ng-template #addCategoryDialog>
+        <div class="categorieBox">
+          <h5>Ajouter une nouvelle catégorie</h5>
+          <!-- Category Name Input -->
+          <mat-form-field>
+            <mat-label>Nom Catégorie</mat-label>
+            <input
+              matInput
+              [(ngModel)]="newCategoryName"
+              [ngModelOptions]="{ standalone: true }"
+            />
+          </mat-form-field>
+          <!-- Category Description Input -->
+          <mat-form-field>
+            <mat-label>Description</mat-label>
+            <input
+              matInput
+              [(ngModel)]="newCategoryDescription"
+              [ngModelOptions]="{ standalone: true }"
+            />
+          </mat-form-field>
+          <div class="actions">
+            <button mat-raised-button (click)="addNewCategory()">
+              Ajouter
+            </button>
+            <button mat-button (click)="closeCategoryDialog()">Annuler</button>
+          </div>
+        </div>
+      </ng-template>
+      <!-- Description and Price Section -->
       <div class="bottom-section">
         <mat-form-field appearance="outline" class="description-field">
           <mat-label>Description</mat-label>
@@ -84,12 +127,17 @@
             Le prix est requis.
           </mat-error>
         </mat-form-field>
-      </div>
 
-      <div class="dialog-actions">
-        <button class="button submit" (click)="onCreate()">Créer</button>
-        <button class="button reset" (click)="onReset()">Reset</button>
+        <div class="dialog-actions">
+          <button class="button submit" (click)="onCreate()">
+            {{ editMode ? "Modifier" : "Créer" }}
+          </button>
+          <button class="button reset" (click)="onReset()">
+            Réinitialiser
+          </button>
+        </div>
       </div>
+      <!-- </div> -->
     </div>
   </div>
 </form>

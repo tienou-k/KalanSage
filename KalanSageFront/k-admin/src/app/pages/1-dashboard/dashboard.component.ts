@@ -1,7 +1,9 @@
 import { Component, OnInit } from '@angular/core';
 import { MaterialModule } from 'src/app/material.module';
-import { DashboardService } from 'src/app/services/dashboard.service';
+import { UserService } from 'src/app/services/users.service';
 import {ModuleService} from 'src/app/services/modules.service'
+import { AbonnementService } from '../../services/abonnement.service';
+import { PartenaireService } from 'src/app/services/partenaire.service';
 
 interface Modules {
   name: string;
@@ -25,8 +27,10 @@ export class DashboardComponent implements OnInit {
   partnerCount: number = 0;
 
   constructor(
-    private dashboardService: DashboardService,
-    private moduleService: ModuleService
+    private userService: UserService,
+    private abonnementService: AbonnementService,
+    private moduleService: ModuleService,
+    private partenaireService: PartenaireService
   ) {}
 
   ngOnInit(): void {
@@ -37,7 +41,7 @@ export class DashboardComponent implements OnInit {
   }
 
   fetchUserCount(): void {
-    this.dashboardService.getUserCount().subscribe(
+    this.userService.getUserCount().subscribe(
       (count) => {
         this.userCount = count;
       },
@@ -48,7 +52,7 @@ export class DashboardComponent implements OnInit {
   }
 
   fetchAbonnementCount(): void {
-    this.dashboardService.getAbonnementCount().subscribe(
+    this.abonnementService.getAbonnementCount().subscribe(
       (count) => {
         this.abonnementCount = count;
       },
@@ -59,7 +63,7 @@ export class DashboardComponent implements OnInit {
   }
 
   fetchPartnerCount(): void {
-    this.dashboardService.getPartnerCount().subscribe(
+    this.partenaireService.countPartenaires().subscribe(
       (count) => {
         this.partnerCount = count;
       },

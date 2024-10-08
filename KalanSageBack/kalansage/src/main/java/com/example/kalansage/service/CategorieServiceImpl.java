@@ -67,6 +67,6 @@ public class CategorieServiceImpl implements CategorieService {
     public void removeCourseFromCategorie(Long categorieId, Long courseId) {
         // methode pour enlever un cours de la categorie
         categorieRepository.findById(categorieId)
-                .ifPresent(categorie -> categorie.getModules().removeIf(cours -> cours.getIdModule().equals(courseId)));
+                .ifPresent(categorie -> categorie.getModules().removeIf(cours -> cours.getId().equals(courseId)));
     }
 }

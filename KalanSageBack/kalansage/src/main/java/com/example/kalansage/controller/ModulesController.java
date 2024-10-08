@@ -2,10 +2,13 @@ package com.example.kalansage.controller;
 
 
 import com.example.kalansage.dto.ModulesDTO;
+import com.example.kalansage.model.Lecons;
 import com.example.kalansage.model.Module;
 import com.example.kalansage.model.userAction.UserModule;
 import com.example.kalansage.repository.CategorieRepository;
+import com.example.kalansage.repository.LeconsRepository;
 import com.example.kalansage.repository.ModuleRepository;
+import com.example.kalansage.service.LeconsService;
 import com.example.kalansage.service.ModuleService;
 import com.example.kalansage.service.ModuleServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,41 +32,46 @@ public class ModulesController {
     private ModuleRepository modulesRepository;
 
     @Autowired
+    private LeconsRepository leconsRepository;
+    @Autowired
+    private LeconsService leconsService;
+
+    @Autowired
     private CategorieRepository categorieRepository;
     @Autowired
     private ModuleServiceImpl moduleServiceimpl;
 
 
-    @PostMapping("/creer-module")
     @PreAuthorize("hasRole('ADMIN')")
+    @PostMapping("/creer-module")
     public ResponseEntity<?> creerModule(@RequestBody ModulesDTO modulesDTO) {
-        String currentUserRole = SecurityContextHolder.getContext().getAuthentication().getAuthorities().iterator().next().getAuthority();
-        if (!"ROLE_ADMIN".equalsIgnoreCase(currentUserRole)) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Seuls les ADMIN peuvent créer des module.");
-        }
         try {
-            Module createdModules = modulesservice.creerModule(modulesDTO);
-            return new ResponseEntity<>(createdModules, HttpStatus.CREATED);
+            Module createdModule = modulesservice.creerModule(modulesDTO);
+            return new ResponseEntity<>(createdModule, HttpStatus.CREATED);
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
 
 
-    @PutMapping("/modifier-cour/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
-    public ResponseEntity<?> modifierModule(@PathVariable Long id, @RequestBody Module modules) {
+    @PutMapping("/modifier-module/{id}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ResponseEntity<?> modifierModule(@PathVariable Long id, @RequestBody ModulesDTO modulesDTO) {
         String currentUserRole = SecurityContextHolder.getContext().getAuthentication().getAuthorities().iterator().next().getAuthority();
-
         if (!"ROLE_ADMIN".equalsIgnoreCase(currentUserRole)) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Seuls les ADMIN peuvent modifier des module");
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Seuls les ADMIN peuvent modifier des module.");
         }
-        return new ResponseEntity<>(modulesservice.modifierModule(id, modules), HttpStatus.OK);
+        try {
+            Module modifierModule = modulesservice.modifierModule(id, modulesDTO);
+            return new ResponseEntity<>(modifierModule, HttpStatus.CREATED);
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        }
     }
 
 
     @DeleteMapping("/supprimer-module/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<?> supprimerModule(@PathVariable Long id) {
         String currentUserRole = SecurityContextHolder.getContext().getAuthentication().getAuthorities().iterator().next().getAuthority();
         if (!"ROLE_ADMIN".equalsIgnoreCase(currentUserRole)) {
@@ -106,4 +114,12 @@ public class ModulesController {
         List<Module> topModules = moduleServiceimpl.getTop5Modules();
         return ResponseEntity.ok(topModules);
     }
+
+    @GetMapping("/module/{moduleId}/lecons")
+    public ResponseEntity<List<Lecons>> getLeconsByModule(@PathVariable Long moduleId) {
+        List<Lecons> leconsList = leconsService.findByModule_Id(moduleId);
+        return ResponseEntity.ok(leconsList);
+    }
+
+
 }

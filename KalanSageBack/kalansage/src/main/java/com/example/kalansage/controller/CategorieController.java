@@ -27,7 +27,7 @@ public class CategorieController {
 
 
     @PostMapping("/creer-categorie")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<?> ajouterCategorie(@RequestBody CategorieDTO categorieDTO) {
         try {
             Categorie newCategorie = categorieService.creerCategorie(categorieDTO);
@@ -39,7 +39,7 @@ public class CategorieController {
 
 
     @PutMapping("/modifier-categorie/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<?> modifierCategorie(@PathVariable Long id, @RequestBody Categorie categorie) {
         if (isAdmin()) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Seuls les ADMIN peuvent modifier des cours");
@@ -48,7 +48,7 @@ public class CategorieController {
     }
 
     @DeleteMapping("/supprimer-categorie/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<?> supprimerCategorie(@PathVariable Long id) {
         if (isAdmin()) {
             return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Seuls les ADMIN peuvent supprimer des cours");

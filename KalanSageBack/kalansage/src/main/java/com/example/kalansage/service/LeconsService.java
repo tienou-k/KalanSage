@@ -3,19 +3,20 @@ package com.example.kalansage.service;
 import com.example.kalansage.model.Lecons;
 
 import java.util.List;
-import java.util.Optional;
 
 public interface LeconsService {
 
-    Lecons modifierLecon(Lecons lecons);
+
+    Lecons modifierLecon(Long id, Lecons lecons);
 
     Lecons creerLecon(Lecons lecons);
 
-    void supprimerLecon(Long idLecon);
+    void supprimerLecon(Long id);
 
-    Optional<Lecons> getLecons(Long idLecon);
+
+    Lecons getLeconById(Long id);
+
+    List<Lecons> findByModule_Id(Long moduleId);
 
     List<Lecons> listerLecons();
-
-    Optional<Lecons> getLeconById(Long LeconId);
 }

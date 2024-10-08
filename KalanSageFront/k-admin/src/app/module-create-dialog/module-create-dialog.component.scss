@@ -3,20 +3,20 @@
   margin-bottom: 20px;
   color: #333;
 }
-.header{
+.header {
   display: flex;
   flex-direction: row;
   justify-content: space-evenly;
   align-items: center;
 }
 .module-form {
-  max-width: 700px;
+  // max-width: 700px;
   margin: auto;
   overflow: auto;
   padding: 20px;
   &::-webkit-scrollbar {
-    width: 0; 
-    background: transparent; 
+    width: 0;
+    background: transparent;
   }
   scrollbar-width: none;
   -ms-overflow-style: none;
@@ -78,20 +78,20 @@
   border-radius: 5px;
   border: none;
 }
-.submit{
+.submit {
   background: var(--primary-color);
   color: white;
 }
-.submit:hover{
+.submit:hover {
   background: white;
   border: 2px solid var(--primary-color);
   color: var(--primary-color);
 }
-.reset{
+.reset {
   background: var(--secondary-color);
   color: white;
 }
-.reset:hover{
+.reset:hover {
   background: white;
   color: var(--secondary-color);
   border: 2px solid var(--secondary-color);
@@ -102,4 +102,17 @@
   gap: 16px;
   margin-top: 16px;
   width: 100%;
+}
+.mat-mdc-dialog-surface mdc-dialog__surface {
+  padding: 15px;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+.categorieBox {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 20px;
 }

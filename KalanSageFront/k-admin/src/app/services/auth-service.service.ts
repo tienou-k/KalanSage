@@ -44,7 +44,7 @@ export class AuthService {
         map((response) => {
           const user = {
             token: response.token,
-            role: response.message, 
+            role: response.message,
           };
           localStorage.setItem('currentUser', JSON.stringify(user));
           this.currentUserSubject.next(user);
@@ -116,5 +116,21 @@ export class AuthService {
 
   isLoggedIn(): boolean {
     return !!this.currentUserValue && !!this.currentUserValue.token;
+  }
+
+  // This method checks if the user is an admin
+  isUserAdmin(): boolean {
+    const userRoles = this.getUserRoles(); 
+    return userRoles.includes('ROLE_ADMIN');
+  }
+
+  // Mock method to fetch user roles, replace this with your actual implementation
+  getUserRoles(): string[] {
+    const token = localStorage.getItem('userToken'); 
+    if (token) {
+      const payload = JSON.parse(atob(token.split('.')[1])); 
+      return payload.roles;
+    }
+    return [];
   }
 }

@@ -23,5 +23,4 @@ public interface AbonnementService {
 
     List<Abonnement> listerAbonnements();
 
-
 }

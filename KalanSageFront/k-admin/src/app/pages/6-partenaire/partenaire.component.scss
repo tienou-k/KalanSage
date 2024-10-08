@@ -1,15 +1,16 @@
 .user-table-container {
-  padding: 20px;
+  padding: 10px;
   background: white;
   border-radius: 10px;
   border: 1px solid rgba(128, 128, 128, 0.075);
+  font-size: 14px;
 }
 
 .toolbar {
     background: transparent;
     color: var(--primary-color);
     .module-title {
-      font-size: 24px;
+      font-size: 14px;
       font-weight: bold;
     }
     .spacer {
@@ -36,7 +37,7 @@
 
 
 .table-responsive {
-  overflow-x: auto; /* Add this to handle horizontal overflow */
+  overflow-x: auto; 
 }
 
 .mat-elevation-z8 {
@@ -76,6 +77,6 @@
   }
   
   .mat-elevation-z8 {
-    font-size: 14px; /* Adjust font size for smaller screens */
+    font-size: 14px; 
   }
 }

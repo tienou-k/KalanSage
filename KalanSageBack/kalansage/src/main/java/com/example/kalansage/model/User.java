@@ -4,6 +4,7 @@ import com.example.kalansage.model.userAction.ParticipantLive;
 import com.example.kalansage.model.userAction.UserModule;
 import com.example.kalansage.model.userAction.UserPoints;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -31,6 +32,7 @@ public class User extends Utilisateur {
 
     //---------------------Utilisateur module-----------------------------------------
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private Set<UserModule> userModules = new HashSet<>();
 
     //---------------------Utilisateur evaluation-----------------------------------------

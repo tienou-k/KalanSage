@@ -1,7 +1,6 @@
 // card
 .mat-mdc-card {
   margin-bottom: 24px;
-  
 }
 .mat-mdc-card-header {
   padding: 30px 30px 0;
@@ -9,11 +8,10 @@
 
 .mat-mdc-card-content {
   padding: 0 24px;
-  display: flex;
   justify-items: space-between;
   align-items: center;
 }
-.user-category{
+.user-category {
   position: absolute;
   bottom: 120px;
 }
@@ -22,7 +20,7 @@
   > .mat-mdc-card-content {
     padding: 24px;
     border-bottom: 1px solid $bordertableColor;
-    height: 150px;
+    height: 170px;
   }
 }
 
@@ -43,7 +41,9 @@
 }
 
 .mdc-card__actions {
-  padding: 24px;
+  padding: 0;
+  justify-content: flex-end;
+  align-items: center;
 }
 
 // chip
@@ -66,31 +66,31 @@ html .mat-mdc-chip {
     display: flex;
   }
 }
-// 
+//
 
-.container{
+.container {
   display: flex;
   gap: 10px;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
 }
-.progress-number{
+.progress-number {
   font-size: 20px;
   font-weight: 700;
   position: absolute;
   right: 70px;
 }
- mat-progress-spinner{
+mat-progress-spinner {
   margin: 50px 15px 30px 0px !important;
 }
 .left {
-  flex: 1 auto !important; 
+  flex: 1 auto !important;
 }
 
 .right-container {
   display: flex;
   flex-direction: column;
-  align-items: center; 
+  align-items: center;
   justify-content: center;
 }

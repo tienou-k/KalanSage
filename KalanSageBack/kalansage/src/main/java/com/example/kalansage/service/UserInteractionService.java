@@ -8,15 +8,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class UserInteractionService {
-
-    @Autowired
-    private UserQuizRepository userQuizRepository;
-    @Autowired
-    private QuizRepository quizRepository;
+    
     @Autowired
     private UserTestRepository userTestRepository;
     @Autowired
@@ -45,27 +43,6 @@ public class UserInteractionService {
     @Autowired
     private EvaluationRepository evaluationRepository;
 
-    // Gérer l'interaction avec le quiz
-    public UserQuiz passerQuiz(Long userId, Long quizId, int score) {
-        Optional<User> user = userRepository.findById(userId);
-        Optional<Quiz> quiz = quizRepository.findById(quizId);
-
-        if (user.isPresent() && quiz.isPresent()) {
-            UserQuiz userQuiz = new UserQuiz();
-            userQuiz.setUser(user.get());
-            userQuiz.setQuiz(quiz.get());
-            userQuiz.setScore(score);
-            userQuiz.setDateTentative(new Date());
-
-            return userQuizRepository.save(userQuiz);
-        } else {
-            throw new RuntimeException("Utilisateur ou Quiz introuvable.");
-        }
-    }
-
-    public Optional<UserQuiz> getUserQuiz(Long userQuizId) {
-        return userQuizRepository.findById(userQuizId);
-    }
 
     // Gérer l'interaction avec le test
     public UserTest passerTest(Long userId, Long testId, int score) {
@@ -189,7 +166,7 @@ public class UserInteractionService {
         // Check if the user is already subscribed to this abonnement
         Optional<UserAbonnement> existingSubscription = userAbonnementRepository.findByUser_IdAndAbonnement_IdAbonnement(userId, abonnementId);
         if (existingSubscription.isPresent()) {
-            throw new IllegalStateException("Vous avez déjà cet abonnement ! 💪.");
+            throw new IllegalStateException("Vous avez déjà cet abonnement ! 🤗.");
         }
         UserAbonnement userAbonnement = new UserAbonnement();
         userAbonnement.setUser(user.get());
@@ -267,5 +244,20 @@ public class UserInteractionService {
                     .orElseThrow(() -> new IllegalArgumentException("Badge introuvable."));
             obtenirBadge(userId, badge.getIdBadge());
         }
+    }
+
+    public List<User> getUsersByAbonnement(Long abonnementId) {
+        return userAbonnementRepository.findUsersByAbonnementId(abonnementId);
+    }
+
+    public List<User> getAbonnementUsers() {
+        return userAbonnementRepository.findAll().stream()
+                .map(UserAbonnement::getUser)
+                .collect(Collectors.toList());
+    }
+
+    public Abonnement findMostSubscribedAbonnement() {
+        List<Abonnement> abonnements = userAbonnementRepository.findMostSubscribedAbonnement();
+        return abonnements.isEmpty() ? null : abonnements.get(0);
     }
 }

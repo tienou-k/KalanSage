@@ -1,21 +1,33 @@
 .card-grid-container {
   padding: 20px;
+  color: #fff;
 
   .toolbar {
-    background: transparent;
-    color: #ffffff;
+    display: flex;
+    justify-content: space-between;
+    // background-color: #1e1e1e;
+    color: var(--primary-color);
+    padding: 10px 20px;
+    border-radius: 8px;
+
     .module-title {
       font-size: 24px;
       font-weight: bold;
     }
-    .spacer {
-      flex: 1;
-    }
+
     .add-button {
+      width: 20%;
+      height: 50px;
+      margin: 15px;
+      padding: 5px;
+      font-weight: bold;
+      border-radius: 5px;
+      border: none;
       background-color: var(--primary-color);
-      color: #ffffff;
+      color: #fff;
+
       mat-icon {
-        margin-right: 4px;
+        margin-right: 5px;
       }
     }
   }
@@ -27,61 +39,70 @@
     margin-top: 20px;
   }
 
-  .card {
-    border-radius: 8px;
+  .module-card-content {
+    background-color: #e2dddd50;
+    color: var(--primary-color);
+    border-radius: 12px;
     overflow: hidden;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    transition: transform 0.3s ease;
 
-    img {
+    &:hover {
+      transform: scale(1.05);
+    }
+
+    mat-card-image {
       height: 150px;
       object-fit: cover;
     }
 
     .card-content {
-      padding: 16px;
-      background: #ffffff;
-      color: #000000;
-
-      .date-container {
-        display: flex;
-        align-items: center;
-        mat-icon {
-          margin-right: 8px;
-        }
-        span {
-          font-size: 14px;
-          color: #aaaaaa;
-        }
-      }
+      padding: 15px;
 
       .card-title {
         font-size: 18px;
         font-weight: bold;
-        margin: 8px 0;
+        margin-bottom: 10px;
+      }
+
+      .date-container {
+        display: flex;
+        margin-bottom: 10px;
+
+        mat-icon {
+          font-size: 16px;
+          margin-right: 5px;
+          color: var(--secondary-color);
+        }
       }
 
       .card-description {
         font-size: 14px;
-        color: #dddddd;
+        color: #b0b0b0; 
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
       }
     }
   }
 
   mat-paginator {
     margin-top: 20px;
+    background-color: none;
+    color: var(--primary-color);
+    border-radius: 8px;
+
     .mat-paginator-range-label,
-    .mat-paginator-page-size {
-      color: #ffffff;
+    .mat-paginator-icon {
+      color: #fff;
     }
-    .mat-paginator-navigation {
-      button {
-        color: #ffffff;
-      }
+
+    .mat-paginator-page-size-select {
+      color: #fff;
     }
   }
 }
- .card-content{
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
+.mat-toolbar{
+  background: #fff;
 }

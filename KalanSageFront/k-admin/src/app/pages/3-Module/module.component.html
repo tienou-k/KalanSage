@@ -1,7 +1,7 @@
 <div class="card-grid-container">
-  
+  <!--  -->
   <mat-toolbar class="toolbar">
-    <span class="module-title">Modules</span>
+    <span class="module-title">Listes des Modules</span>
     <span class="spacer"></span>
     <button mat-raised-button color="primary" class="add-button" (click)="openCreateDialog()">
       <mat-icon>add</mat-icon> Ajouter
@@ -10,9 +10,8 @@
 
   <!-- Card Grid -->
   <div class="card-grid">
-    <mat-card *ngFor="let item of pagedItems" class="card module-card-content">
+    <mat-card *ngFor="let item of pagedItems" class="card module-card-content" (click)="openModuleDetails(item.id)">
       <img mat-card-image [src]="item.image" alt="Image" />
-
       <mat-card-content class="card-content">
         <h4 class="card-title">{{ item.titre }}</h4>
         <div class="date-container">
@@ -21,6 +20,23 @@
         </div>
         <p class="card-description">{{ item.description }}</p>
       </mat-card-content>
+      
+      <mat-card-actions>
+      <!-- Stop click propagation to prevent opening the module details -->
+      <button mat-icon-button [matMenuTriggerFor]="menu" (click)="$event.stopPropagation()">
+        <mat-icon>more_vert</mat-icon>
+      </button>
+      <mat-menu #menu="matMenu">
+        <button mat-menu-item (click)="onEditModule(item); $event.stopPropagation()">
+          <mat-icon>edit</mat-icon>
+          <span>Editer</span>
+        </button>
+        <button mat-menu-item (click)="onDeleteModule(item.id); $event.stopPropagation()">
+          <mat-icon>delete</mat-icon>
+          <span>Supprimer</span>
+        </button>
+      </mat-menu>
+    </mat-card-actions>
     </mat-card>
   </div>
 

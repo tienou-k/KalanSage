@@ -43,11 +43,18 @@ import { MatSortModule } from '@angular/material/sort';
 import { MatTableModule } from '@angular/material/table';
 import { ReactiveFormsModule } from '@angular/forms';
 import { TablerIconsModule } from 'angular-tabler-icons';
+import { FormsModule } from '@angular/forms'; 
 
 @NgModule({
   declarations: [],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],
   exports: [
+    FormsModule,
+    MatAutocompleteModule,
+    MatCheckboxModule,
+    MatDatepickerModule,
+    MatFormFieldModule,
+    MatInputModule,
     CommonModule,
     TablerIconsModule,
     MatAutocompleteModule,

@@ -1,77 +1,82 @@
-import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
-import { MatCardModule } from '@angular/material/card';
-import { MatTableModule } from '@angular/material/table';
+import { Component, OnInit } from '@angular/core';
+import { AbonnementService } from 'src/app/services/abonnement.service';
+import { MatTableDataSource } from '@angular/material/table';
 import { MaterialModule } from 'src/app/material.module';
-import { MatIconModule } from '@angular/material/icon';
-import { MatMenuModule } from '@angular/material/menu';
-import { MatButtonModule } from '@angular/material/button';
-
-// Table data interface
-export interface productsData {
-  id: number;
-  uname: string;
-  date: string;
-  client: string;
-  budget: number;
-  priority: string;
-}
-
-const PRODUCT_DATA: productsData[] = [
-  {
-    id: 1,
-    uname: 'Basic',
-    budget: 180,
-    date: '2000-01-01',
-    client: 'Harouna@gmail.com',
-    priority: 'confirmed',
-  },
-  {
-    id: 2,
-    uname: 'Pro',
-    budget: 180,
-    date: '2000-01-01',
-    client: 'Harouna@gmail.com',
-    priority: 'confirmed',
-  },
-  {
-    id: 3,
-    uname: 'Pro',
-    budget: 180,
-    date: '2000-01-01',
-    client: 'Harouna@gmail.com',
-    priority: 'confirmed',
-  },
-  {
-    id: 4,
-    uname: 'Premium',
-    budget: 180,
-    date: '2000-01-01',
-    client: 'Harouna@gmail.com',
-    priority: 'confirmed',
-  },
-];
 
 @Component({
-  selector: 'app-abonnement',
+  selector: 'app-abonnement-dashboard',
   standalone: true,
-  imports: [
-   MaterialModule,
-    CommonModule,
-  ],
+  imports: [MaterialModule],
   templateUrl: './abonnement.component.html',
   styleUrls: ['./abonnement.component.scss'],
 })
-export class AbonnementComponent {
-  // Table columns
+export class AbonnementComponent implements OnInit {
+  abonnementCount: number = 0;
+  mostSubscribedAbonnement: any;
+  dataSource1 = new MatTableDataSource<any>();
   displayedColumns1: string[] = [
     'id',
     'date',
-    'abonnement',
     'client',
+    'abonnement',
     'budget',
     'priority',
     'actions',
   ];
-  dataSource1 = PRODUCT_DATA;
+
+  constructor(private abonnementService: AbonnementService) {}
+
+  ngOnInit(): void {
+    this.fetchAbonnementCount();
+    this.fetchMostSubscribedAbonnement();
+    this.fetchAbonnementUsers();
+  }
+
+  fetchAbonnementCount(): void {
+    this.abonnementService.getAbonnementCount().subscribe(
+      (count) => {
+        this.abonnementCount = count;
+      },
+      (error) => {
+        console.error('Error fetching abonnement count:', error);
+      }
+    );
+  }
+
+  fetchMostSubscribedAbonnement(): void {
+    this.abonnementService.getMostSubscribedAbonnement().subscribe(
+      (abonnement) => {
+        this.mostSubscribedAbonnement = abonnement;
+      },
+      (error) => {
+        console.error('Error fetching most subscribed abonnement:', error);
+        this.mostSubscribedAbonnement = {
+          prix: 0,
+          typeAbonnement: 'N/A',
+        };
+      }
+    );
+  }
+
+  fetchAbonnementUsers(): void {
+    this.abonnementService.getAbonnementUsers().subscribe(
+      (users) => {
+        // Extract the first abonnement from the abonnementUser list for each user
+        this.dataSource1.data = users.map((user) => {
+          const abonnement = user.abonnementUser[0]; // Assuming each user has at least one abonnement
+          return {
+            id: user.id,
+            date: abonnement?.dateExpiration || 'N/A',
+            client: `${user.nom} ${user.prenom}`,
+            typeAbonnement: abonnement?.typeAbonnement || 'N/A',
+            montant: abonnement?.prix || 0,
+            priority: abonnement?.statut ? 'confirmer' : 'annuler', // Set status based on statut
+          };
+        });
+      },
+      (error) => {
+        console.error('Error fetching abonnement users:', error);
+      }
+    );
+  }
 }

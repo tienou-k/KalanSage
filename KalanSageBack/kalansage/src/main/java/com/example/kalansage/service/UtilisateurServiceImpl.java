@@ -106,6 +106,15 @@ public class UtilisateurServiceImpl implements UtilisateurService {
         return utilisateurRepository.findByEmail(email).orElse(null);
     }
 
+    @Override
+    public Optional<Utilisateur> findById(Long id) {
+        return Optional.empty();
+    }
+
+    @Override
+    public Utilisateur save(Utilisateur utilisateur) {
+        return null;
+    }
 
     public long countUsers() {
         return utilisateurRepository.count();

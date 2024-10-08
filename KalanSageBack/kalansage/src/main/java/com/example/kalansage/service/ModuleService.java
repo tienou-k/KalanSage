@@ -10,7 +10,7 @@ import java.util.Optional;
 public interface ModuleService {
     Module creerModule(ModulesDTO module);
 
-    Module modifierModule(Long id, Module modules);
+    Module modifierModule(Long id, ModulesDTO modules);
 
     void supprimerModule(Long idModule);
 

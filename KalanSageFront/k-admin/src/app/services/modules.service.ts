@@ -7,6 +7,7 @@ import { Observable } from 'rxjs';
 })
 export class ModuleService {
   private apiUrl = 'http://localhost:8080/api/modules';
+  private categoriesUrl = 'http://localhost:8080/api/admins/categories';
 
   constructor(private http: HttpClient) {}
 
@@ -23,7 +24,7 @@ export class ModuleService {
   // Update an existing module
   modifierModule(moduleId: number, moduleData: any): Observable<any> {
     return this.http.put<any>(
-      `${this.apiUrl}/modifier-cour/${moduleId}`,
+      `${this.apiUrl}/modifier-module/${moduleId}`,
       moduleData
     );
   }
@@ -37,6 +38,23 @@ export class ModuleService {
   getTop5Modules(): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/top5`);
   }
+  getTopCourses(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/modules/top`);
+  }
 
-  
+  // Fetch a single module by ID
+  getModuleById(id: number): Observable<any> {
+    return this.http.get<any>(`${this.apiUrl}/module-par/${id}`);
+  }
+
+  createCategory(category: { nomCategorie: string }): Observable<any> {
+    return this.http.post<any>(
+      `${this.categoriesUrl}/creer-categorie`,
+      category
+    );
+  }
+
+  getCategories(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.categoriesUrl}/list-categories`);
+  }
 }

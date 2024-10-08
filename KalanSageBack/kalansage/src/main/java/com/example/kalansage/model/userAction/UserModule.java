@@ -2,6 +2,7 @@ package com.example.kalansage.model.userAction;
 
 import com.example.kalansage.model.Module;
 import com.example.kalansage.model.User;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -32,11 +33,15 @@ public class UserModule {
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
+    @JsonBackReference
     private User user;
 
-    @ManyToOne
+
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "modules_id", nullable = false)
+    @JsonBackReference
     private Module modules;
-    
+
+
 }
 

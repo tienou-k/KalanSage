@@ -9,7 +9,6 @@ import java.util.Optional;
 
 public interface UtilisateurService {
 
-
     Utilisateur seConnecter(String username, String motDePasse);
 
     void seDeconnecter(String token);
@@ -32,4 +31,7 @@ public interface UtilisateurService {
 
     Utilisateur findByEmail(String currentUserEmail);
 
+    Optional<Utilisateur> findById(Long id);
+
+    Utilisateur save(Utilisateur utilisateur);
 }

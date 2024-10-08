@@ -18,16 +18,13 @@ public abstract class Utilisateur {
 
     private String nom;
     private String prenom;
-
     @Column(unique = true)
     private String username;
-
     @Column(unique = true)
     private String email;
-
     private String motDePasse;
     private Date dateInscription;
-    private boolean status;
+    private Boolean status;
 
     // -----------------------------Utilisateur role-----------------------------------
     @ManyToOne
@@ -41,7 +38,7 @@ public abstract class Utilisateur {
     private FileInfo fileInfos;
 
     //----------------------Constructor------------------------------------------
-    public Utilisateur(Date dateInscription, String prenom, String nom, String username, String email, String motDePasse, Role role) {
+    public Utilisateur(Date dateInscription, String prenom, String nom, String username, String email, Boolean status, String motDePasse, Role role) {
         this.dateInscription = dateInscription;
         this.prenom = prenom;
         this.nom = nom;
@@ -49,9 +46,12 @@ public abstract class Utilisateur {
         this.email = email;
         this.motDePasse = motDePasse;
         this.role = role;
+        this.status = status;
     }
 
     public void setRole(Role role) {
         this.role = role;
     }
+
+
 }

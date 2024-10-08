@@ -5,6 +5,25 @@
   border: 1px solid rgba(128, 128, 128, 0.075);
 }
 
+.toolbar {
+    background: transparent;
+    color: var(--primary-color);
+    .module-title {
+      font-size: 24px;
+      font-weight: bold;
+    }
+    .spacer {
+      flex: 1;
+    }
+    .add-button {
+      background-color: var(--primary-color);
+      color: #ffffff;
+      mat-icon {
+        margin-right: 4px;
+      }
+    }
+  }
+
 .filter-container {
   display: flex;
   justify-content: flex-end;
@@ -46,7 +65,7 @@
   border-radius: 5px;
 }
 
-/* Responsive Design */
+
 @media screen and (max-width: 768px) {
   .user-table-container {
     padding: 10px;
@@ -57,6 +76,23 @@
   }
   
   .mat-elevation-z8 {
-    font-size: 14px; /* Adjust font size for smaller screens */
+    font-size: 14px;
   }
+}
+
+.search-content {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+/* user.component.scss */
+.custom-snackbar {
+  color: #fff; 
+  font-size: 16px; 
+  padding: 16px; 
+}
+
+.custom-snackbar .mat-simple-snackbar-action {
+  color: #ff4081; 
 }

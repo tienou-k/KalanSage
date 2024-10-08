@@ -22,7 +22,7 @@ import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/admins/utilisateurs")
-@PreAuthorize("hasRole('ADMIN')")
+@PreAuthorize("hasRole('ROLE_ADMIN')")
 public class UtilisateurController {
 
     @Autowired
@@ -46,6 +46,22 @@ public class UtilisateurController {
         long count = utilisateurServiceimpl.countUsers();
         return ResponseEntity.ok(count);
     }
+
+    @PostMapping("/status/{id}")
+    public ResponseEntity<?> changeStatus(@PathVariable Long id) {
+        Optional<Utilisateur> utilisateurOptional = utilisateurRepository.findById(id);
+
+        if (utilisateurOptional.isPresent()) {
+            Utilisateur utilisateur = utilisateurOptional.get();
+            utilisateur.setStatus(!utilisateur.getStatus());
+            utilisateurRepository.save(utilisateur);
+
+            return ResponseEntity.ok(" status changé! ");
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("utilisateur non existant");
+        }
+    }
+
 
     // --------------cherche un utilisateur par id---------------------------------------------
     @GetMapping("/par-id/{id}")
@@ -101,7 +117,7 @@ public class UtilisateurController {
     //-------------------------suprimmer utilisateur---------------------------------------
 
     @DeleteMapping("/supprimer-utilisateur/{id}")
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<Void> supprimerUtilisateur(@PathVariable Long id) {
         utilisateurService.supprimerCompte(id);
         return ResponseEntity.noContent().build();

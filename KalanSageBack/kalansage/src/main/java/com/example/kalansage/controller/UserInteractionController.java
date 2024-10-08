@@ -1,8 +1,13 @@
 package com.example.kalansage.controller;
 
+import com.example.kalansage.model.Abonnement;
 import com.example.kalansage.model.Evaluation;
 import com.example.kalansage.model.Module;
-import com.example.kalansage.model.userAction.*;
+import com.example.kalansage.model.User;
+import com.example.kalansage.model.userAction.UserBadge;
+import com.example.kalansage.model.userAction.UserLecon;
+import com.example.kalansage.model.userAction.UserModule;
+import com.example.kalansage.model.userAction.UserTest;
 import com.example.kalansage.service.ModuleServiceImpl;
 import com.example.kalansage.service.UserInteractionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,18 +28,7 @@ public class UserInteractionController {
     private ModuleServiceImpl moduleServiceimpl;
 
     // Take a quiz
-    @PostMapping("/take-quiz/{userId}/{quizId}")
-    public ResponseEntity<UserQuiz> takeQuiz(
-            @PathVariable Long userId,
-            @PathVariable Long quizId,
-            @RequestParam int score) {
-        try {
-            UserQuiz userQuiz = userInteractionService.passerQuiz(userId, quizId, score);
-            return ResponseEntity.ok(userQuiz);
-        } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
-        }
-    }
+
 
     // Take a test
     @PostMapping("/take-test/{userId}/{testId}")
@@ -106,15 +100,17 @@ public class UserInteractionController {
 
     // Subscribe to an abonnement
     @PostMapping("/abonnement/{userId}/{abonnementId}")
-    @PreAuthorize("hasRole('USER')")
-    public ResponseEntity<?> enrollUserInModule(@PathVariable Long userId, @PathVariable Long moduleId) {
+    @PreAuthorize("hasRole('ROLE_USER')")
+    public ResponseEntity<?> enrollUserInAbonnement(@PathVariable Long userId, @PathVariable Long abonnementId) {
         try {
-            UserModule userModule = moduleServiceimpl.inscrireAuModule(userId, moduleId);
-            return ResponseEntity.ok(userModule);
+            // Call the method to handle the subscription process
+            userInteractionService.sAbonner(userId, abonnementId);
+            return ResponseEntity.ok("Courage 💪 vous avez desormais l'abonnement " + abonnementId + "!");
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
+
 
     // Earn a badge
     @PostMapping("/earn-badge/{userId}/{badgeId}")
@@ -149,4 +145,23 @@ public class UserInteractionController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
     }
+
+    @GetMapping("/most-subscribed")
+    public ResponseEntity<Abonnement> getMostSubscribedAbonnement() {
+        Abonnement mostSubscribed = userInteractionService.findMostSubscribedAbonnement();
+        if (mostSubscribed == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+        return ResponseEntity.ok(mostSubscribed);
+    }
+
+    @GetMapping("/users/{abonnementId}")
+    public ResponseEntity<List<User>> getUsersByAbonnement(@PathVariable Long abonnementId) {
+        List<User> users = userInteractionService.getUsersByAbonnement(abonnementId);
+        if (users.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        }
+        return ResponseEntity.ok(users);
+    }
+
 }

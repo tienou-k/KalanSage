@@ -43,7 +43,7 @@ export class HeaderComponent {
   @Output() toggleCollapsed = new EventEmitter<void>();
 
   userName: string = 'User';
-  profileImageUrl: string = '/assets/images/profile/default-user.jpg';
+  profileImageUrl: string = '/assets/images/profile/user-1.jpg';
 
   constructor(
     private authService: AuthService,
@@ -55,7 +55,7 @@ export class HeaderComponent {
       if (user) {
         this.userName = `${user.nom || ''}`.trim();
         this.profileImageUrl =
-          user.fileInfos?.url || '/assets/images/profile/default-user.jpg';
+          user.fileInfos?.url || '/assets/images/profile/user-1.jpg';
       }
     });
   }
@@ -69,7 +69,7 @@ export class HeaderComponent {
       (profile) => {
         this.userName = `${profile.nom || ''}`.trim(); 
         this.profileImageUrl =
-          profile.fileInfos?.url || '/assets/images/profile/default-user.jpg';
+          profile.fileInfos?.url || '/assets/images/profile/user-1.jpg';
       },
       (error) => {
         console.error('Failed to fetch user profile:', error);

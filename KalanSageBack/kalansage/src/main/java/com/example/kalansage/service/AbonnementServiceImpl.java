@@ -4,6 +4,7 @@ package com.example.kalansage.service;
 import com.example.kalansage.dto.AbonnementDTO;
 import com.example.kalansage.model.Abonnement;
 import com.example.kalansage.repository.AbonnementRepository;
+import com.example.kalansage.repository.UserRepository;
 import com.example.kalansage.repository.UtilisateurRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
@@ -19,6 +20,8 @@ public class AbonnementServiceImpl implements AbonnementService {
     private AbonnementRepository abonnementRepository;
     @Autowired
     private UtilisateurRepository utilisateurRepository;
+    @Autowired
+    private UserRepository userRepository;
 
     @Override
     public Abonnement creerAbonnement(AbonnementDTO abonnementDTO) {

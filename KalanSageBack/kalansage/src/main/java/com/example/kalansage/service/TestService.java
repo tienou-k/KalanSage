@@ -38,7 +38,7 @@ public class TestService {
     public TestDTO mapToTestDTO(Test test) {
         TestDTO testDTO = new TestDTO();
         testDTO.setIdTest(test.getId());
-        testDTO.setModuleId(test.getModules().getIdModule());
+        testDTO.setModuleId(test.getModules().getId());
         testDTO.setTitreModule(test.getModules().getTitre());
         testDTO.setQuestions(test.getQuestions());
         return testDTO;

@@ -38,12 +38,17 @@
   </div>
 
   <!-- Right Side: Chat Content -->
- <div class="chat-messages">
-    <div *ngFor="let message of selectedChat?.messages" class="message-item" [ngClass]="{'sent': message.sent}">
-      <p class="message-text">{{ message.text }}</p>
-      <span class="message-time">{{ message.time }}</span>
+  <div class="Right-Side">
+    <div class="chat-messages">
+      <div
+        *ngFor="let message of selectedChat?.messages"
+        class="message-item"
+        [ngClass]="{ sent: message.sent }"
+      >
+        <p class="message-text">{{ message.text }}</p>
+        <span class="message-time">{{ message.time }}</span>
+      </div>
     </div>
-  </div>
 
     <div class="chat-messages">
       <div
@@ -57,7 +62,7 @@
     </div>
 
     <!-- Message Input -->
-    <div class="message-input-container">
+    <div class="messageInput">
       <mat-form-field appearance="outline" class="message-input">
         <mat-icon class="icon">attach_file</mat-icon>
         <input
@@ -70,3 +75,4 @@
       </mat-form-field>
     </div>
   </div>
+</div>

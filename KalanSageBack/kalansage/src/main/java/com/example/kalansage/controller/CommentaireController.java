@@ -32,7 +32,7 @@ public class CommentaireController {
 
     @PutMapping("/modifier-cour/{id}")
     public ResponseEntity<Module> modifierCours(@PathVariable Long id, @RequestBody Module modules) {
-        modules.setIdModule(id); // Ensure the ID is set
+        modules.setId(id);
         return ResponseEntity.ok((Module) commentaireService.modifierCommentaire(modules));
     }
 

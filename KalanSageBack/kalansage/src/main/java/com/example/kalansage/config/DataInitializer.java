@@ -3,7 +3,9 @@ package com.example.kalansage.config;
 import com.example.kalansage.model.Module;
 import com.example.kalansage.model.*;
 import com.example.kalansage.repository.*;
+import com.example.kalansage.service.FilesStorageServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.PostConstruct;
@@ -20,9 +22,6 @@ public class DataInitializer {
     @Autowired
     private ModuleRepository ModuleRepository;
 
-    //@Autowired private ModuleRepository moduleRepository;
-
-
     @Autowired
     private LeconsRepository leconsRepository;
 
@@ -32,6 +31,15 @@ public class DataInitializer {
     @Autowired
     private CategorieRepository categorieRepository;
 
+    @Autowired
+    private AdminRepository adminRepository;
+
+    @Autowired
+    private FilesStorageServiceImpl filesStorageService;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     @PostConstruct
     public void initData() {
         initializeRoles();
@@ -39,6 +47,7 @@ public class DataInitializer {
         initializeModule();
         initializeLecons();
         initializeAbonnements();
+        initializeAdmin();
         System.out.println("Data initialized successfully.");
     }
 
@@ -72,7 +81,6 @@ public class DataInitializer {
 
     private void initializeModule() {
         if (ModuleRepository.findAll().isEmpty()) {
-
             Optional<Categorie> programmingCategory = categorieRepository.findByNomCategorie("Programming");
 
             if (programmingCategory.isPresent()) {
@@ -88,33 +96,36 @@ public class DataInitializer {
                 module2.setDateCreation(new Date());
                 module2.setCategorie(programmingCategory.get());
 
-                // Save both courses in a single operation
                 ModuleRepository.saveAll(Arrays.asList(module1, module2));
-                System.out.println("Initialized sample courses.");
+                System.out.println("Initialized sample modules.");
             } else {
-                System.out.println("erreur categorie Programming non rétrouvé");
+                System.out.println("Erreur: Categorie 'Programming' non retrouvée");
             }
         }
     }
 
 
     private void initializeLecons() {
-        if (leconsRepository.findAll().isEmpty()) {
-            Module Module = ModuleRepository.findById(1L).orElse(null);
-            if (Module != null) {
-                Lecons lecons1 = new Lecons();
-                lecons1.setTitre("Spring Boot Basics");
-                lecons1.setDescription("Understanding the basics of Spring Boot.");
-                lecons1.setModules(Module);
+        // Fetch the module from the repository
+        Optional<Module> moduleOptional = ModuleRepository.findById(1L);
 
-                Lecons lecons2 = new Lecons();
-                lecons2.setTitre("Spring Boot REST APIs");
-                lecons2.setDescription("Learn to create REST APIs with Spring Boot.");
-                lecons2.setModules(Module);
+        if (moduleOptional.isPresent()) {
+            Module module = moduleOptional.get();
 
-                leconsRepository.saveAll(Arrays.asList(lecons1, lecons2));
-                System.out.println("Initialized sample Module for the first course.");
-            }
+            Lecons lecons1 = new Lecons();
+            lecons1.setTitre("Spring Boot Basics");
+            lecons1.setDescription("Understanding the basics of Spring Boot.");
+            lecons1.setModule(module);
+
+            Lecons lecons2 = new Lecons();
+            lecons2.setTitre("Spring Boot REST APIs");
+            lecons2.setDescription("Learn to create REST APIs with Spring Boot.");
+            lecons2.setModule(module);
+
+            leconsRepository.saveAll(Arrays.asList(lecons1, lecons2));
+            System.out.println("Initialized sample lessons for the first course.");
+        } else {
+            System.out.println("No module found to assign lessons.");
         }
     }
 
@@ -124,19 +135,45 @@ public class DataInitializer {
             Abonnement abonnement1 = new Abonnement();
             abonnement1.setTypeAbonnement("Basic Plan");
             abonnement1.setStatut(true);
-            abonnement1.setDescription("Access to basic courses and Module.");
+            abonnement1.setDescription("Access to basic courses and modules.");
             abonnement1.setPrix(9.99);
             abonnement1.setDateExpiration(new Date(System.currentTimeMillis() + (1000 * 60 * 60 * 24 * 30))); // 30 days from now
 
             Abonnement abonnement2 = new Abonnement();
             abonnement2.setTypeAbonnement("Premium");
             abonnement2.setStatut(true);
-            abonnement2.setDescription("Access to all courses, Module, and premium content.");
+            abonnement2.setDescription("Access to all courses, modules, and premium content.");
             abonnement2.setPrix(19.99);
             abonnement2.setDateExpiration(new Date(System.currentTimeMillis() + (1000 * 60 * 60 * 24 * 30))); // 30 days from now
 
             abonnementRepository.saveAll(Arrays.asList(abonnement1, abonnement2));
             System.out.println("Initialized sample abonnements.");
+        }
+    }
+
+    private void initializeAdmin() {
+        if (adminRepository.findAll().isEmpty()) {
+            Optional<Role> adminRole = roleRepository.findRoleByNomRole("ADMIN");
+            if (adminRole.isPresent()) {
+                Admin defaultAdmin = new Admin();
+                defaultAdmin.setNom("Admin");
+                defaultAdmin.setPrenom("ADMIN");
+                defaultAdmin.setEmail("admin@gmail.com");
+                defaultAdmin.setUsername("admin");
+                defaultAdmin.setMotDePasse(passwordEncoder.encode("admin123"));
+                defaultAdmin.setDateInscription(new Date());
+                defaultAdmin.setStatus(true);
+                defaultAdmin.setRole(adminRole.get());
+
+                // You can optionally set a default profile picture for the admin if needed
+                // FileInfo fileInfo = filesStorageService.saveFile(<some-default-file>);
+                // defaultAdmin.setFileInfos(fileInfo);
+
+                adminRepository.save(defaultAdmin);
+                System.out.println("Initialized default admin.");
+            } else {
+                System.out.println("Erreur: Le rôle 'ADMIN' n'existe pas.");
+            }
         }
     }
 }
