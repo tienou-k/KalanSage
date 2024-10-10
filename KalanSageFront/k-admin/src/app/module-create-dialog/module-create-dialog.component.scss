@@ -35,6 +35,8 @@
 }
 
 .image-dropzone {
+  display: flex;
+  justify-content: center;
   border: 2px dashed var(--primary-color);
   padding: 20px;
   border-radius: 8px;
@@ -43,6 +45,8 @@
 
 .upload-text {
   margin-top: 10px;
+  display: flex;
+  flex-direction: column;
 }
 
 .upload-icon {
@@ -115,4 +119,14 @@
   flex-direction: column;
   justify-content: center;
   padding: 20px;
+}
+.actions{
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  align-items: center;
+}
+.custom-image {
+  width: 100px;
+  border-radius: 8px;
 }

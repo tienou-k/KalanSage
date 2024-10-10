@@ -62,10 +62,10 @@ public class ModuleServiceImpl implements ModuleService {
     }
 
     // ajouterCours dans une categorie
-    @Override
+  /*  @Override
     public void ajouterModuleDansCategorie(Module Module, Long idCategorie) {
         Module.add(idCategorie);
-    }
+    }*/
 
     @Override
     public boolean moduleExiste(String titre) {
@@ -167,6 +167,12 @@ public class ModuleServiceImpl implements ModuleService {
 
     @Override
     public List<Module> getTop5Modules() {
-        return moduleRepository.findTopModules(PageRequest.of(0, 5));
+        try {
+            return moduleRepository.findTopModules(PageRequest.of(0, 5));
+        } catch (Exception e) {
+            System.err.println("Error fetching top modules: " + e.getMessage());
+            throw new RuntimeException("Unable to fetch top modules.");
+        }
     }
+
 }

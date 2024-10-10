@@ -35,9 +35,7 @@ public class Evaluation {
 
     @ManyToOne
     @JoinColumn(name = "modules_id")
-    @EqualsAndHashCode.Exclude
-    @ToString.Exclude
-    @JsonBackReference(value = "modules-evaluations")
+    @JsonBackReference
     private Module modules;
 
 

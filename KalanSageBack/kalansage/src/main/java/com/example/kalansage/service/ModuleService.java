@@ -17,8 +17,6 @@ public interface ModuleService {
 
     Optional<Module> trouverModuleParTitre(String titreModule);
 
-    // ajouterModule dans une categorie
-    void ajouterModuleDansCategorie(Module modules, Long idCategorie);
 
     Optional<ModulesDTO> getModule(Long id);
 

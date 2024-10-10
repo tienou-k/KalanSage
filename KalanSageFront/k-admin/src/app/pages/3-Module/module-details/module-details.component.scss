@@ -1,58 +1,157 @@
+// .course-header {
+//   display: flex;
+//   justify-content: space-between;
+//   padding: 2px;
+//   color: rgb(34, 34, 66);
+//   align-items: flex-end;
+//   margin-bottom: 50px;
+
+//   .course-header-left {
+//     h2 {
+//       font-size: 2rem;
+//       margin-bottom: 10px;
+//     }
+//     .course-info {
+//       display: flex;
+//       gap: 25px;
+//       span {
+//         display: flex;
+//         align-items: center;
+//         gap: 5px;
+//       }
+//     }
+//   }
+
+//   .course-header-right {
+//     display: flex;
+//     width: 30%;
+//     border-radius: 8px;
+//     flex-direction: column;
+//     align-items: center;
+//     img {
+//       max-width: 200px;
+//       margin-bottom: 20px;
+//     }
+//     .price {
+//       display: flex;
+//       border-radius: 8px;
+//       padding: 20px;
+//       gap: 10px;
+//       flex-direction: row;
+//       align-items: center;
+//       justify-content: flex-start;
+//       margin-bottom: 0;
+//       background: var(--primary-color);
+
+//       .original-price {
+//         text-decoration: line-through;
+//         font-size: 1.2rem;
+//         color: #ff4c4c;
+//       }
+//       .discounted-price {
+//         font-size: 1.5rem;
+//         color: #ff9800;
+//       }
+//     }
+//   }
+// }
 .course-header {
   display: flex;
   justify-content: space-between;
-  padding: 2px;
-  color: rgb(34, 34, 66);
-  align-items: flex-end;
-  margin-bottom: 50px;
-
- 
+  align-items: center;
+  padding: 20px;
+  border-radius: 15px;
+  color: var(--primary-color);
 
   .course-header-left {
-    h2 {
-      font-size: 2rem;
-      margin-bottom: 10px;
+    flex: 1;
+
+    .arrow-head {
+      display: flex;
+      align-items: center;
+
+      .back-button {
+        background-color: white;
+        color: #113f67;
+        margin-right: 10px;
+      }
+
+      .category-label {
+        font-size: 14px;
+        font-weight: bold;
+        color: white;
+        background-color: #113f67;
+        padding: 5px 10px;
+        border-radius: 10px;
+      }
     }
+
+    .course-title {
+      font-size: 28px;
+      font-weight: bold;
+      margin: 15px 0;
+      color: var(--primary-color);
+    }
+
     .course-info {
       display: flex;
-      gap: 25px;
-      span {
+      gap: 15px;
+
+      .info-item {
         display: flex;
         align-items: center;
-        gap: 5px;
+        font-size: 14px;
+
+        mat-icon {
+          margin-right: 5px;
+          color: var(--secondary-color);
+        }
+
+        .text-info {
+          margin-left: 3px;
+          color: var(--primary-color);
+        }
       }
     }
   }
 
   .course-header-right {
     display: flex;
-    width: 30%;
-    border-radius: 8px;
     flex-direction: column;
     align-items: center;
-    img {
-      max-width: 200px;
-      margin-bottom: 20px;
+
+    .course-image {
+      width: 150px;
+      border-radius: 10px;
+      margin-bottom: 10px;
     }
-    .price {
+
+    .price-info {
       display: flex;
-      border-radius: 8px;
-      padding: 20px;
-      gap: 10px;
-      flex-direction: row;
-      align-items: center;
-      justify-content: flex-start;
-      margin-bottom: 0;
       background: var(--primary-color);
+      flex-direction: row;
+      gap: 10px;
+      padding: 10px;
+      border-radius: 8px;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 18px;
 
       .original-price {
         text-decoration: line-through;
-        font-size: 1.2rem;
-        color: #ff4c4c;
+        color: #ff6f61;
+        margin-bottom: 5px;
       }
+
       .discounted-price {
-        font-size: 1.5rem;
-        color: #ff9800;
+        font-weight: bold;
+        color: #ffffff;
+      }
+
+      .start-btn {
+        margin-top: 10px;
+        background-color: #ff6f61;
+        color: white;
       }
     }
   }
@@ -72,22 +171,22 @@
     height: auto;
   }
 }
- .arrow-head {
+.arrow-head {
   display: flex;
   flex-direction: row;
   justify-content: start;
   align-items: center;
-  }
+}
 
-  .course-info{
-    color: var(--secondary-color);
-    font-weight: 400;
-  }
-  .text-info{
-    color: var(--primary-color);
-    font-weight: 600;
-  }
-  .lessons {
+.course-info {
+  color: var(--secondary-color);
+  font-weight: 400;
+}
+.text-info {
+  color: var(--primary-color);
+  font-weight: 600;
+}
+.lessons {
   padding: 16px;
   background-color: #f9f9f9;
   border-radius: 8px;
@@ -151,7 +250,6 @@
 
   /* Expanded state */
   .lesson-item.expanded h3 mat-icon {
-    transform: rotate(180deg); 
+    transform: rotate(180deg);
   }
 }
-

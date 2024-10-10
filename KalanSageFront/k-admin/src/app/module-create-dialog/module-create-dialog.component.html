@@ -13,15 +13,22 @@
     <div class="image-upload">
       <label class="section-label">Couverture du module</label>
       <div class="image-dropzone">
-        <input type="file" (change)="onFileSelected($event)" />
         <div class="upload-text">
-          <mat-icon color="accent">image</mat-icon>
+          <input type="file" (change)="onFileSelected($event)" />
+          <!-- <mat-icon color="accent">image</mat-icon> -->
           <p>
             Glisser déposer ici, ou
             <span class="select-text">Sélectionner</span>
           </p>
           <small>Support JPG et PNG</small>
         </div>
+        <!-- Preview of the uploaded image -->
+        <img
+          *ngIf="imagePreviewUrl"
+          [src]="imagePreviewUrl"
+          class="custom-image"
+          alt="Image Preview"
+        />
       </div>
     </div>
 
@@ -88,10 +95,10 @@
             />
           </mat-form-field>
           <div class="actions">
-            <button mat-raised-button (click)="addNewCategory()">
+            <button mat-raised-button (click)="addNewCategory()" class="button submit" >
               Ajouter
             </button>
-            <button mat-button (click)="closeCategoryDialog()">Annuler</button>
+            <button mat-button (click)="closeCategoryDialog()" class="button reset" >Annuler</button>
           </div>
         </div>
       </ng-template>

@@ -1,6 +1,7 @@
 package com.example.kalansage.model.userAction;
 
 import com.example.kalansage.model.Module;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.Data;
 
@@ -15,6 +16,7 @@ public class Test {
 
     @OneToOne
     @JoinColumn(name = "modules_id")
+    @JsonBackReference
     private Module modules;
 
 }

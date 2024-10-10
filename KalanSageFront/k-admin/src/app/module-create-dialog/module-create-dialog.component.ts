@@ -1,4 +1,11 @@
-import { Component, OnInit, ViewChild, Inject } from '@angular/core';
+import {
+  Component,
+  OnInit,
+  ViewChild,
+  Inject,
+  EventEmitter,
+  Output,
+} from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import {
   MatDialog,
@@ -8,6 +15,7 @@ import {
 import { ModuleService } from '../../app/services/modules.service';
 import { CommonModule } from '@angular/common';
 import { MaterialModule } from '../material.module';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-module-create-dialog',
@@ -17,9 +25,11 @@ import { MaterialModule } from '../material.module';
   styleUrls: ['./module-create-dialog.component.scss'],
 })
 export class ModuleCreateDialogComponent implements OnInit {
+  @Output() moduleUpdated = new EventEmitter<any>();
   moduleForm!: FormGroup;
   categories: any[] = [];
   selectedFile: File | null = null;
+  imagePreviewUrl: string | ArrayBuffer | null = null;
   newCategoryName: string = '';
   newCategoryDescription: string = '';
   editMode: boolean = false;
@@ -32,7 +42,8 @@ export class ModuleCreateDialogComponent implements OnInit {
     private dialog: MatDialog,
     private dialogRef: MatDialogRef<ModuleCreateDialogComponent>,
     private moduleService: ModuleService,
-    @Inject(MAT_DIALOG_DATA) public data: any // Inject the module data if it's an edit
+    private snackBar: MatSnackBar,
+    @Inject(MAT_DIALOG_DATA) public data: any
   ) {}
 
   ngOnInit(): void {
@@ -47,7 +58,7 @@ export class ModuleCreateDialogComponent implements OnInit {
     // Check if the dialog was opened for editing or creating
     if (this.data?.module) {
       this.editMode = true;
-      this.moduleId = this.data.module.id; // Save the module ID for updating
+      this.moduleId = this.data.module.id;
       this.moduleForm.patchValue({
         title: this.data.module.titre,
         category: this.data.module.nomCategorie,
@@ -57,6 +68,12 @@ export class ModuleCreateDialogComponent implements OnInit {
     }
 
     this.fetchCategories();
+  }
+  showSnackbar(message: string): void {
+    this.snackBar.open(message, 'Fermer', {
+      duration: 3000,
+      panelClass: ['custom-snackbar'],
+    });
   }
 
   fetchCategories(): void {
@@ -122,25 +139,42 @@ export class ModuleCreateDialogComponent implements OnInit {
       };
 
       if (this.editMode && this.moduleId) {
-        // Call the update service if in edit mode
         this.moduleService.modifierModule(this.moduleId, formData).subscribe(
           (response) => {
-            console.log('Module modifié avec succès:', response);
+            this.showSnackbar('Module modifié avec succès');
             this.dialogRef.close(response);
+            this.moduleUpdated.emit(response);
           },
           (error) => {
-            console.error('Erreur lors de la modification du module:', error);
+            if (
+              error.status === 500 &&
+              error.message.includes('Infinite recursion')
+            ) {
+              this.showSnackbar(
+                'Module modifié avec succès malgré une erreur de réponse'
+              );
+              this.dialogRef.close();
+              this.moduleUpdated.emit(formData); 
+            } else {
+              this.showSnackbar(
+                'Erreur lors de la modification du module: ' + error.message
+              );
+              console.error('Error modifying module:', error);
+            }
           }
         );
       } else {
-        // Call the create service if in creation mode
         this.moduleService.creerModule(formData).subscribe(
           (response) => {
-            console.log('Module créé avec succès:', response);
+            this.showSnackbar('Module créé avec succès');
             this.dialogRef.close(response);
+            this.moduleUpdated.emit(response);
           },
           (error) => {
-            console.error('Erreur lors de la création du module:', error);
+            this.showSnackbar(
+              'Erreur lors de la création du module: ' + error.message
+            );
+            console.error('Error creating module:', error);
           }
         );
       }
@@ -154,12 +188,20 @@ export class ModuleCreateDialogComponent implements OnInit {
   onFileSelected(event: any): void {
     if (event.target.files && event.target.files.length > 0) {
       this.selectedFile = event.target.files[0];
+      if (this.selectedFile) {
+        const reader = new FileReader();
+        reader.onload = () => {
+          this.imagePreviewUrl = reader.result;
+        };
+        reader.readAsDataURL(this.selectedFile);
+      }
     }
   }
 
   onReset(): void {
     this.moduleForm.reset();
     this.selectedFile = null;
+    this.imagePreviewUrl = null;
   }
 
   onClose(): void {

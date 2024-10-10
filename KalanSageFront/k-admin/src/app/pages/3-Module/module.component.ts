@@ -27,6 +27,7 @@ export class ModuleComponent implements OnInit {
   pagedItems: CardItemData[] = [];
   pageSize = 6;
   pageSizeOptions: number[] = [6, 12, 24];
+  modules: any[] = [];
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
@@ -52,7 +53,7 @@ export class ModuleComponent implements OnInit {
           prix: module.prix,
           nomCategorie: module.nomCategorie,
         }));
-        this.setPagedItems(0, this.pageSize); 
+        this.setPagedItems(0, this.pageSize);
       },
       error: (error) => console.error('Error fetching modules:', error),
     });
@@ -76,14 +77,16 @@ export class ModuleComponent implements OnInit {
       height: '80%',
       width: '70%',
       disableClose: true,
-      data: { module },
+      data: module ? { module } : null,
     });
 
-    dialogRef.afterClosed().subscribe((formData) => {
-      if (formData) {
-        module
-          ? this.updateModule(module.id, formData)
-          : this.createModule(formData);
+    dialogRef.componentInstance.moduleUpdated.subscribe((module: any) => {
+      // Add the new or updated module to the list
+      const existingIndex = this.modules.findIndex((m) => m.id === module.id);
+      if (existingIndex !== -1) {
+        this.modules[existingIndex] = module;
+      } else {
+        this.modules.push(module);
       }
     });
   }
@@ -103,7 +106,7 @@ export class ModuleComponent implements OnInit {
   }
 
   onEditModule(item: any): void {
-    this.openCreateDialog(item); 
+    this.openCreateDialog(item);
   }
 
   deleteModule(id: number): void {
@@ -120,6 +123,6 @@ export class ModuleComponent implements OnInit {
   }
 
   refreshModuleList(): void {
-    this.fetchModules(); 
+    this.fetchModules();
   }
 }

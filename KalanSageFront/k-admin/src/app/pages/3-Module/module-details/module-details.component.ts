@@ -7,6 +7,8 @@ import { QuizService } from 'src/app/services/quiz.service';
 import { UserService } from 'src/app/services/users.service';
 import { AuthService } from 'src/app/services/auth-service.service';
 import { Location } from '@angular/common';
+import { VideoPlayerComponent } from '../video-player/video-player.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-module-detail',
@@ -35,6 +37,7 @@ export class ModuleDetailComponent implements OnInit {
   selectedTabIndex = 0;
   selectedLessonIndex: number | null = null;
   isAdmin: boolean;
+  certificat: number = 0;
 
   constructor(
     private route: ActivatedRoute,
@@ -43,7 +46,8 @@ export class ModuleDetailComponent implements OnInit {
     private quizService: QuizService,
     private userService: UserService,
     private location: Location,
-    private authService: AuthService
+    private authService: AuthService,
+    private dialog: MatDialog
   ) {}
 
   ngOnInit(): void {
@@ -122,13 +126,13 @@ export class ModuleDetailComponent implements OnInit {
   }
 
   playVideo(videoUrl: string): void {
-    const dialogRef = this.dialog.open(VideoPlayerDialogComponent, {
+    const dialogRef = this.dialog.open(VideoPlayerComponent, {
       data: { videoUrl },
       width: '80%',
       height: '80%',
     });
 
-    dialogRef.afterClosed().subscribe((result) => {
+    dialogRef.afterClosed().subscribe(() => {
       console.log('The video player dialog was closed');
     });
   }

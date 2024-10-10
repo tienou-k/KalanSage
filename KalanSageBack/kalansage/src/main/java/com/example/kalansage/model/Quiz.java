@@ -18,7 +18,7 @@ public class Quiz {
 
     private String questions;
 
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "lecons_id")
     @JsonBackReference
     private Lecons lecons;

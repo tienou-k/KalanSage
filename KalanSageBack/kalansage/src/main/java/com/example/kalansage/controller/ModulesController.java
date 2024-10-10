@@ -1,6 +1,7 @@
 package com.example.kalansage.controller;
 
 
+import com.example.kalansage.dto.ModuleResponseDTO;
 import com.example.kalansage.dto.ModulesDTO;
 import com.example.kalansage.model.Lecons;
 import com.example.kalansage.model.Module;
@@ -59,11 +60,19 @@ public class ModulesController {
     public ResponseEntity<?> modifierModule(@PathVariable Long id, @RequestBody ModulesDTO modulesDTO) {
         String currentUserRole = SecurityContextHolder.getContext().getAuthentication().getAuthorities().iterator().next().getAuthority();
         if (!"ROLE_ADMIN".equalsIgnoreCase(currentUserRole)) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Seuls les ADMIN peuvent modifier des module.");
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Seuls les ADMIN peuvent modifier des modules.");
         }
         try {
             Module modifierModule = modulesservice.modifierModule(id, modulesDTO);
-            return new ResponseEntity<>(modifierModule, HttpStatus.CREATED);
+
+            // Convert the entity to DTO to avoid recursion issues
+            ModuleResponseDTO responseDTO = new ModuleResponseDTO();
+            responseDTO.setId(modifierModule.getId());
+            responseDTO.setTitre(modifierModule.getTitre());
+            responseDTO.setDescription(modifierModule.getDescription());
+            responseDTO.setPrix(modifierModule.getPrix());
+
+            return ResponseEntity.ok(responseDTO);
         } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
