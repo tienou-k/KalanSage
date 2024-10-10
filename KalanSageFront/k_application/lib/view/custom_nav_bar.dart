@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:k_application/utils/constants.dart';
 
 class CustomBottomNavBar extends StatefulWidget {
   final int currentIndex;
@@ -19,70 +20,57 @@ class _CustomBottomNavBarState extends State<CustomBottomNavBar> {
   @override
   Widget build(BuildContext context) {
     return BottomNavigationBar(
+      backgroundColor: Colors.white,
       type: BottomNavigationBarType.fixed,
       currentIndex: widget.currentIndex,
       onTap: widget.onTap,
       items: [
-        BottomNavigationBarItem(
-          icon: SvgPicture.asset(
-            'assets/images/icons/home.svg',
-            height: 24,
-            width: 24,
-            color: widget.currentIndex == 0
-                ? const Color(0xFF2C3E50)
-                : Colors.grey,
-          ),
-          label: '',
-        ),
-        BottomNavigationBarItem(
-          icon: SvgPicture.asset(
-            'assets/images/icons/grid_view.svg',
-            height: 24,
-            width: 24,
-            color: widget.currentIndex == 1
-                ? const Color(0xFF2C3E50)
-                : Colors.grey,
-          ),
-          label: '',
-        ),
-        BottomNavigationBarItem(
-          icon: SvgPicture.asset(
-            'assets/images/icons/book.svg', // Ensure this path is correct
-            height: 24,
-            width: 24,
-            color: widget.currentIndex == 2
-                ? const Color(0xFF2C3E50)
-                : Colors.grey,
-          ),
-          label: '',
-        ),
-        BottomNavigationBarItem(
-          icon: SvgPicture.asset(
-            'assets/images/icons/chat_bubble_outline.svg',
-            height: 24,
-            width: 24,
-            color: widget.currentIndex == 3
-                ? const Color(0xFF2C3E50)
-                : Colors.grey,
-          ),
-          label: '',
-        ),
-        BottomNavigationBarItem(
-          icon: SvgPicture.asset(
-            'assets/images/icons/person_outline.svg',
-            height: 24,
-            width: 24,
-            color: widget.currentIndex == 4
-                ? const Color(0xFF2C3E50)
-                : Colors.grey,
-          ),
-          label: '',
-        ),
+        _buildBottomNavItem(
+            'assets/icons/home.svg', 0),
+        _buildBottomNavItem(
+            'assets/icons/grid_view.svg', 1), 
+        _buildBottomNavItem(
+            'assets/icons/book.svg', 2), 
+        _buildBottomNavItem('assets/icons/chat_bubble_outline.svg',
+            3), 
+        _buildBottomNavItem(
+            'assets/icons/User.svg', 4),
       ],
-      selectedItemColor: const Color(0xFF2C3E50),
+      selectedItemColor: primaryColor,
       unselectedItemColor: Colors.grey,
       showSelectedLabels: false,
       showUnselectedLabels: false,
+    );
+  }
+
+  // Helper method to build each Bottom Navigation Item with Underline Effect
+  BottomNavigationBarItem _buildBottomNavItem(String assetPath, int index) {
+    bool isSelected = widget.currentIndex == index;
+
+    return BottomNavigationBarItem(
+      icon: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          SvgPicture.asset(
+            assetPath,
+            height: 24,
+            width: 24,
+            color: isSelected ? primaryColor : Colors.grey,
+          ),
+          const SizedBox(height: 4),
+          isSelected
+              ? Container(
+                  width: 20, 
+                  height: 3, 
+                  decoration: BoxDecoration(
+                    color: secondaryColor,
+                    borderRadius: BorderRadius.circular(2), 
+                  ),
+                )
+              : Container(), 
+        ],
+      ),
+      label: '',
     );
   }
 }

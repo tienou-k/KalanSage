@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:k_application/view/custom_nav_bar.dart';
 import 'package:k_application/view/pages/elements/categorie_builder.dart';
+import 'package:k_application/view/pages/elements/header.dart';
 import 'package:k_application/view/pages/elements/slider_banner.dart';
 import 'package:k_application/view/pages/elements/tabs_popular.dart';
 
@@ -22,12 +23,16 @@ class _HomePageState extends State<HomePage> {
       case 0:
         break;
       case 1:
+        Navigator.pushNamed(context, '/categorie');
         break;
       case 2:
+       Navigator.pushNamed(context, '/mes_modules');
         break;
       case 3:
+       Navigator.pushNamed(context, '/chats');
         break;
       case 4:
+       Navigator.pushNamed(context, '/profile');
         break;
     }
   }
@@ -43,51 +48,9 @@ class _HomePageState extends State<HomePage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 40),
-              // Profile and Notification Row
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  const Row(
-                    children: [
-                      CircleAvatar(
-                        radius: 25,
-                        backgroundImage:
-                            AssetImage('assets/images/profile.png'),
-                      ),
-                      SizedBox(width: 10),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        //backgroundColor:
-                        children: [
-                          Text(
-                            'Mariame Daou',
-                            style: TextStyle(
-                              fontSize: 18,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          Text(
-                            '@jessbailey',
-                            style: TextStyle(
-                              color: Colors.grey,
-                              fontSize: 14,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.notifications),
-                    onPressed: () {
-                      // Handle notification tap
-                    },
-                  ),
-                ],
-              ),
+              FullScreenHeader(), // Profile and Notification Row
               const SizedBox(height: 20),
-              const SliderBanner(),
-
+              const SliderBanner(), // Slider Banner
               const SizedBox(height: 20),
               // Search Bar
               TextField(
@@ -105,20 +68,18 @@ class _HomePageState extends State<HomePage> {
               const SizedBox(height: 20),
               // Category Section
               const CategoriesSection(),
-
               const SizedBox(height: 20),
               // Tabs for All
               const TabSection(),
-
               const SizedBox(height: 19),
-              // Module Grid Section (Course Cards)
+              // Module Grid Section
               GridView.count(
                 crossAxisCount: 2,
                 shrinkWrap: true,
                 physics: const NeverScrollableScrollPhysics(),
                 childAspectRatio: 0.75,
                 crossAxisSpacing: 15,
-                mainAxisSpacing: 08,
+                mainAxisSpacing: 8,
                 children: [
                   _buildCourseCard('HTML - Learn and practice', '45 Leçons',
                       '15 Quiz', 'assets/images/modules/html.png'),
@@ -130,7 +91,6 @@ class _HomePageState extends State<HomePage> {
                       '50 Quiz', 'assets/images/modules/python.png'),
                 ],
               ),
-
               const SizedBox(height: 20),
               // "Mes Cours" Section
               Row(
@@ -145,7 +105,8 @@ class _HomePageState extends State<HomePage> {
                   ),
                   GestureDetector(
                     onTap: () {
-                      // Navigate to "Voir" page
+                      Navigator.pushNamed(
+                          context, '/mescours'); // Navigate to Mes Cours Page
                     },
                     child: const Text(
                       'voir',
@@ -171,26 +132,10 @@ class _HomePageState extends State<HomePage> {
           ),
         ),
       ),
-      // Custom Bottom Navigation Bar
       bottomNavigationBar: CustomBottomNavBar(
         currentIndex: _currentIndex,
         onTap: _onTabSelected,
       ),
-    );
-  }
-
-  // Helper method to build category icon
-  Widget _buildCategoryIcon(IconData iconData, String label) {
-    return Column(
-      children: [
-        CircleAvatar(
-          radius: 30,
-          backgroundColor: Colors.grey.shade200,
-          child: Icon(iconData, color: Colors.blueAccent),
-        ),
-        const SizedBox(height: 5),
-        Text(label),
-      ],
     );
   }
 
@@ -221,8 +166,7 @@ class _HomePageState extends State<HomePage> {
                 fit: BoxFit.contain,
               ),
             ),
-            const SizedBox(height: 07),
-            // Course Title
+            const SizedBox(height: 7),
             Text(
               title,
               style: const TextStyle(
@@ -233,7 +177,7 @@ class _HomePageState extends State<HomePage> {
               overflow: TextOverflow.ellipsis,
             ),
             const SizedBox(height: 5),
-            // 
+            // Lesson and Quiz Info
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
@@ -248,9 +192,7 @@ class _HomePageState extends State<HomePage> {
                       ),
                     ),
                     GestureDetector(
-                      onTap: () {
-                        // Handle quizzes click
-                      },
+                      onTap: () {},
                       child: Text(
                         quizzes,
                         style: const TextStyle(
@@ -262,12 +204,9 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ],
                 ),
-                // Bookmark Icon
                 IconButton(
                   icon: const Icon(Icons.bookmark_border),
-                  onPressed: () {
-                    // Handle bookmark action
-                  },
+                  onPressed: () {},
                 ),
               ],
             ),
@@ -277,7 +216,6 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  // Helper method to build "Mes Cours" cards
   Widget _buildMyCourseCard(String title, Color color) {
     return Expanded(
       child: Container(

@@ -1,0 +1,16 @@
+#Use an image based on python
+FROM openjdk:17-jdk-slim
+
+
+#Set work repository
+WRKDIR / kontere
+
+#Copy your App files into your workspace container
+COPY kalansage/target/kalansage-0.0.1-SNAPSHOT.jar  / kalansage/target/kalansage-0.0.1-SNAPSHOT.jar
+
+
+#Expose the port used to connect to your container
+EXPOSE 8080
+
+#commande to be executed to launch your app
+ENTRYPOINT ["java", "-jar", "kalansage/kalansage-0.0.1-SNAP"]

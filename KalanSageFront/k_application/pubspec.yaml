@@ -31,4 +31,15 @@ flutter:
     - assets/icons/grid_view.svg
     - assets/icons/book.svg
     - assets/icons/chat_bubble_outline.svg
-    - assets/icons/user.png
+    - assets/icons/User.svg
+    - assets/icons/dev.svg
+    - assets/icons/com.svg
+    - assets/icons/video.svg
+    - assets/icons/science.svg
+    - assets/icons/reseau.svg
+    - assets/icons/finanace.svg
+    - assets/icons/content.svg
+    - assets/icons/art_design.svg
+    - assets/icons/photo.svg
+    - assets/icons/marketing.svg
+
