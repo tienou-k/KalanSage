@@ -151,12 +151,12 @@ public class ModuleServiceImpl implements ModuleService {
                 .orElseThrow(() -> new IllegalArgumentException("Module introuvable."));
 
         // Check if the user is already enrolled in the module
-        if (userModuleRepository.existsByUserAndModules(user, module)) {
+        if (userModuleRepository.existsByUserAndModule(user, module)) {
             throw new IllegalArgumentException("L'utilisateur est déjà inscrit à ce module.");
         }
         UserModule userModule = new UserModule();
         userModule.setUser(user);
-        userModule.setModules(module);
+        userModule.setModule(module);
         userModule.setDateInscription(new Date());
         userModule.setProgress(0);
         userModule.setCompleted(false);

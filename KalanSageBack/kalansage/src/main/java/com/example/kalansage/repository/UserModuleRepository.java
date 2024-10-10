@@ -12,5 +12,6 @@ import java.util.List;
 public interface UserModuleRepository extends JpaRepository<UserModule, Long> {
     List<UserModule> findByUser(User user);
 
-    boolean existsByUserAndModules(User user, Module module);
+    //boolean existsByUserAndModules(User user, Module module);
+    boolean existsByUserAndModule(User user, Module module);
 }

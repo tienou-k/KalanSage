@@ -18,7 +18,7 @@ public class QuizService {
     }
 
     public Optional<Quiz> getQuizByLeconId(Long leconId) {
-        return Optional.ofNullable(quizRepository.findByLecons_IdLecon(leconId));
+        return Optional.ofNullable(quizRepository.findByLecon_IdLecon(leconId));
     }
 
     public void supprimerQuiz(Long quizId) {

@@ -120,7 +120,7 @@ public class DataInitializer {
                 // Création du quiz associé à la première leçon
                 Quiz quiz1 = new Quiz();
                 quiz1.setQuestions("Quelles sont les bases de Spring Boot?");
-                quiz1.setLecons(lecons1);
+                quiz1.setLecon(lecons1);
                 lecons1.setQuiz(quiz1); // Association du quiz à la leçon
 
                 // Création de la deuxième leçon
@@ -133,7 +133,7 @@ public class DataInitializer {
                 // Création du quiz associé à la deuxième leçon
                 Quiz quiz2 = new Quiz();
                 quiz2.setQuestions("Quels sont les avantages de Spring Boot?");
-                quiz2.setLecons(lecons2);
+                quiz2.setLecon(lecons2);
                 lecons2.setQuiz(quiz2);
 
                 // Sauvegarde des leçons et des quiz

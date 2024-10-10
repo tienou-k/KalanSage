@@ -36,7 +36,7 @@ public class EvaluationServiceImpl implements EvaluationService {
         userSet.add(user);
         evaluation.setUsers(userSet);
 
-        evaluation.setModules(modules);
+        evaluation.setModule(modules);
         evaluation.setCommentaire(comment);
         evaluation.setEtoiles(rating);
         return evaluationRepository.save(evaluation);
@@ -55,7 +55,7 @@ public class EvaluationServiceImpl implements EvaluationService {
             Evaluation updatedEvaluation = existingEvaluation.get();
             updatedEvaluation.setEtoiles(evaluation.getEtoiles());
             updatedEvaluation.setCommentaire(evaluation.getCommentaire());
-            updatedEvaluation.setModules(evaluation.getModules());
+            updatedEvaluation.setModule(evaluation.getModule());
             return evaluationRepository.save(updatedEvaluation);
         } else {
             throw new IllegalArgumentException("Évaluation introuvable avec l'ID : " + evaluation.getIdEvaluation());

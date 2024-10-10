@@ -14,9 +14,13 @@ public class Test {
 
     private String questions;
 
+    /* @OneToOne
+     @JoinColumn(name = "modules_id")
+     @JsonBackReference
+     private Module modules;*/
     @OneToOne
-    @JoinColumn(name = "modules_id")
+    @JoinColumn(name = "module_id")
     @JsonBackReference
-    private Module modules;
+    private Module module;
 
 }

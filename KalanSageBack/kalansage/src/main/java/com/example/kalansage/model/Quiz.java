@@ -18,10 +18,15 @@ public class Quiz {
 
     private String questions;
 
-    @OneToOne
+    /*@OneToOne
     @JoinColumn(name = "lecons_id")
     @JsonBackReference
-    private Lecons lecons;
+    private Lecons lecons;*/
+
+    @OneToOne
+    @JoinColumn(name = "lecon_id")
+    @JsonBackReference
+    private Lecons lecon;
 
 
 }

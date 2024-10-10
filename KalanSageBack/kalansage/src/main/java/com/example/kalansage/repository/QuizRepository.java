@@ -7,5 +7,5 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface QuizRepository extends JpaRepository<Quiz, Long> {
-    Quiz findByLecons_IdLecon(Long idLecon);
+    Quiz findByLecon_IdLecon(Long idLecon);
 }

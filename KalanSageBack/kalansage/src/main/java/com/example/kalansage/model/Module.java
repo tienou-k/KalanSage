@@ -29,7 +29,28 @@ public class Module {
     private Date dateCreation;
     private Integer pointGagnes;
 
+    
     @ManyToOne
+    @JoinColumn(name = "categorie_id", nullable = false)
+    @JsonIgnore
+    private Categorie categorie;
+
+    @OneToMany(mappedBy = "module", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<Lecons> lecons = new HashSet<>();
+
+    @OneToMany(mappedBy = "module", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private Set<UserModule> userModules = new HashSet<>();
+
+    @OneToMany(mappedBy = "module", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonIgnore
+    private Set<Evaluation> evaluations = new HashSet<>();
+
+    @OneToOne(mappedBy = "module")
+    @JsonIgnore
+    private Test test;
+
+    /*@ManyToOne
     @JoinColumn(name = "categorie_id", nullable = false)
     @JsonIgnore
     private Categorie categorie;
@@ -45,7 +66,7 @@ public class Module {
     @JsonIgnore
     private Set<Evaluation> evaluations = new HashSet<>();
 
-    @OneToOne(mappedBy = "modules")
+    @OneToOne(mappedBy = "module")
     @JsonIgnore
-    private Test test;
+    private Test test;*/
 }

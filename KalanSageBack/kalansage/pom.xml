@@ -11,7 +11,7 @@
     <groupId>com.example</groupId>
     <artifactId>kalansage</artifactId>
     <version>0.0.1-SNAPSHOT</version>
-    <packaging>war</packaging>
+    <packaging>jar</packaging>
     <name>kalansage</name>
     <description>kalansage</description>
     <url/>
@@ -118,6 +118,8 @@
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
                 <configuration>
+                    <mainClass>KalansageApplication.class</mainClass>
+                    <classifier>exec</classifier>
                     <excludes>
                         <exclude>
                             <groupId>org.projectlombok</groupId>

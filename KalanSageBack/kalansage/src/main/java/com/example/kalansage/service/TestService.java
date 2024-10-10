@@ -21,7 +21,7 @@ public class TestService {
         Module Module = moduleRepository.findById(moduleId)
                 .orElseThrow(() -> new RuntimeException("Module no trouvé"));
         Test test = new Test();
-        test.setModules(Module);
+        test.setModule(Module);
         test.setQuestions(questions);
 
         Test savedTest = testRepository.save(test);
@@ -38,8 +38,8 @@ public class TestService {
     public TestDTO mapToTestDTO(Test test) {
         TestDTO testDTO = new TestDTO();
         testDTO.setIdTest(test.getId());
-        testDTO.setModuleId(test.getModules().getId());
-        testDTO.setTitreModule(test.getModules().getTitre());
+        testDTO.setModuleId(test.getModule().getId());
+        testDTO.setTitreModule(test.getModule().getTitre());
         testDTO.setQuestions(test.getQuestions());
         return testDTO;
     }

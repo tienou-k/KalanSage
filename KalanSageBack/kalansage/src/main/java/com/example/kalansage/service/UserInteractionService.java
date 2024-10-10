@@ -14,7 +14,7 @@ import java.util.stream.Collectors;
 
 @Service
 public class UserInteractionService {
-    
+
     @Autowired
     private UserTestRepository userTestRepository;
     @Autowired
@@ -124,7 +124,7 @@ public class UserInteractionService {
         if (user.isPresent() && module.isPresent()) {
             UserModule userModule = new UserModule();
             userModule.setUser(user.get());
-            userModule.setModules(module.get());
+            userModule.setModule(module.get());
             userModule.setCompletionDate(new Date());
             return userModuleRepository.save(userModule);
         } else {
@@ -143,13 +143,13 @@ public class UserInteractionService {
                 .orElseThrow(() -> new IllegalArgumentException("Module introuvable."));
 
         // Check if the user is already enrolled in the module
-        if (userModuleRepository.existsByUserAndModules(user, module)) {
+        if (userModuleRepository.existsByUserAndModule(user, module)) {
             throw new IllegalArgumentException("L'utilisateur est déjà inscrit à ce module.");
         }
 
         UserModule userModule = new UserModule();
         userModule.setUser(user);
-        userModule.setModules(module);
+        userModule.setModule(module);
         userModule.setDateInscription(new Date());
 
         return userModuleRepository.save(userModule);
@@ -207,7 +207,7 @@ public class UserInteractionService {
         }
         Evaluation evaluation = new Evaluation();
         evaluation.setUserId(userId);
-        evaluation.setModules(cours.get());
+        evaluation.setModule(cours.get());
         evaluation.setCommentaire(commentaire);
         evaluation.setEtoiles(etoiles);
 

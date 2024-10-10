@@ -22,12 +22,21 @@ public class Lecons {
     private String description;
     private String contenu;
 
+
     @ManyToOne
+    @JoinColumn(name = "module_id", nullable = false)
+    @JsonBackReference
+    private Module module;
+
+    @OneToOne(mappedBy = "lecon", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private Quiz quiz;
+    /*@ManyToOne
     @JoinColumn(name = "module_id", nullable = false)
     @JsonBackReference
     private Module module;
 
     @OneToOne(mappedBy = "lecons", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
-    private Quiz quiz;
+    private Quiz quiz;*/
 }

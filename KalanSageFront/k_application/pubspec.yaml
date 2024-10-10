@@ -1,0 +1,34 @@
+name: k_application
+description: "A new Flutter project."
+publish_to: "none"
+version: 0.1.0
+
+environment:
+  sdk: ^3.5.1
+
+dependencies:
+  flutter:
+    sdk: flutter
+  http: ^1.2.2
+  pinput: ^5.0.0
+  flutter_svg: ^1.0.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^4.0.0
+
+flutter:
+  uses-material-design: true
+
+  assets:
+    - assets/logo/
+    - assets/images/
+    - assets/images/profile.png
+    - assets/images/slider/
+    - assets/images/modules/
+    - assets/icons/home.svg
+    - assets/icons/grid_view.svg
+    - assets/icons/book.svg
+    - assets/icons/chat_bubble_outline.svg
+    - assets/icons/user.png

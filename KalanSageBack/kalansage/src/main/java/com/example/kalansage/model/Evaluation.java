@@ -33,10 +33,14 @@ public class Evaluation {
     private Set<User> users = new HashSet<>();
 
 
-    @ManyToOne
+    /*@ManyToOne
     @JoinColumn(name = "modules_id")
     @JsonBackReference
-    private Module modules;
+    private Module modules;*/
+    @ManyToOne
+    @JoinColumn(name = "module_id", nullable = false)
+    @JsonBackReference
+    private Module module;
 
 
     public void setUserId(Long userId) {
