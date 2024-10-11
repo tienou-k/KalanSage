@@ -36,4 +36,6 @@ public class QuizController {
         quizService.supprimerQuiz(quizId);
         return ResponseEntity.noContent().build();
     }
+    // quiz list
+
 }

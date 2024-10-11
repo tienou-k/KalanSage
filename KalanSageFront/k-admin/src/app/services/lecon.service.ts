@@ -6,8 +6,8 @@ import { Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class LeconService {
-  private apiUrl = 'http://localhost:8080/api/lecons';
-  private apiModuleUrl = 'http://localhost:8080/api/modules';
+  private apiUrl = 'http://10.175.48.31:8080/api/lecons';
+  private apiModuleUrl = 'http://10.175.48.31:8080/api/modules';
 
   constructor(private http: HttpClient) {}
 

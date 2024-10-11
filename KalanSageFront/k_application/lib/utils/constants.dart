@@ -1,14 +1,11 @@
-
 import 'package:flutter/material.dart';
 
-// API base URL (to communicate with Spring Boot backend)
-const String apiUrl =
-    "http://localhost:8080/api"; 
+const String apiUrl = 'http://192.168.190.1:8080/api';
+
 
 // App colors
-const Color primaryColor = Color(0xFF194860); 
-const Color secondaryColor =
-    Color(0xFFED6A19); 
+const Color primaryColor = Color(0xFF194860);
+const Color secondaryColor = Color(0xFFED6A19);
 
 // Text styles
 const TextStyle appTitleStyle = TextStyle(

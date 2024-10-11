@@ -199,19 +199,19 @@ class _MesModulesPage extends State<MesModulesPage> {
                 Row(
                   children: [
                     // Rating
-                    const Icon(Icons.star, color: Colors.orange, size: 16),
+                    const Icon(Icons.star, color: secondaryColor, size: 16),
                     const SizedBox(width: 5),
                     Text(
                       rating,
                       style: const TextStyle(
                         fontSize: 14,
                         fontWeight: FontWeight.bold,
-                        color: Colors.orange,
+                        color: secondaryColor,
                       ),
                     ),
                     const SizedBox(width: 15),
                     // Students
-                    const Icon(Icons.people, color: Colors.orange, size: 16),
+                    const Icon(Icons.people, color: secondaryColor, size: 16),
                     const SizedBox(width: 5),
                     Text(
                       students,

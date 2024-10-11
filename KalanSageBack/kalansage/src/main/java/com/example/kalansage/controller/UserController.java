@@ -49,28 +49,27 @@ public class UserController {
             @RequestParam("email") String email,
             @RequestParam("username") String username,
             @RequestParam("password") String password,
-            @RequestParam("role") String nomRole,
             @RequestParam("status") Boolean status,
-            @RequestParam("file") MultipartFile file) throws IOException {
+            @RequestParam(value = "file", required = false) MultipartFile file) throws IOException {
 
-        if (!"USER".equalsIgnoreCase(nomRole)) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Vous ne pouvez pas être un ADMIN !");
-        }
-
-        Optional<Role> userRole = roleRepository.findRoleByNomRole("USER");
+        // Set the default role to "USER"
+        String nomRole = "USER";
+        // Fetch the role from the repository
+        Optional<Role> userRole = roleRepository.findRoleByNomRole(nomRole);
         if (userRole.isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Le rôle 'USER' n'existe pas. Veuillez contacter un administrateur.");
         }
-
+        // Check for existing user by email
         Optional<User> existingUser = userRepository.findByEmail(email);
         if (existingUser.isPresent()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Un utilisateur avec cet email existe déjà.");
         }
-
-        // Save the file
-        FileInfo fileInfo = filesStorageService.saveFile(file);
-
-        // Create the new user
+        // Save the file only if it is provided
+        FileInfo fileInfo = null;
+        if (file != null && !file.isEmpty()) {
+            fileInfo = filesStorageService.saveFile(file);
+        }
+        // Create a new user
         User user = new User();
         user.setNom(nom);
         user.setPrenom(prenom);
@@ -81,7 +80,7 @@ public class UserController {
         user.setStatus(status);
         user.setRole(userRole.get());
         user.setFileInfos(fileInfo);
-
+        // Save the user
         userRepository.save(user);
         return ResponseEntity.ok(user);
     }

@@ -9,7 +9,7 @@ import { Router } from '@angular/router';
   providedIn: 'root',
 })
 export class AuthService {
-  private apiUrl = 'http://localhost:8080/api/auth';
+  private apiUrl = 'http://10.175.48.31:8080/api/auth';
   private currentUserSubject: BehaviorSubject<any>;
   public currentUser: Observable<any>;
 
@@ -120,15 +120,15 @@ export class AuthService {
 
   // This method checks if the user is an admin
   isUserAdmin(): boolean {
-    const userRoles = this.getUserRoles(); 
+    const userRoles = this.getUserRoles();
     return userRoles.includes('ROLE_ADMIN');
   }
 
   // Mock method to fetch user roles, replace this with your actual implementation
   getUserRoles(): string[] {
-    const token = localStorage.getItem('userToken'); 
+    const token = localStorage.getItem('userToken');
     if (token) {
-      const payload = JSON.parse(atob(token.split('.')[1])); 
+      const payload = JSON.parse(atob(token.split('.')[1]));
       return payload.roles;
     }
     return [];

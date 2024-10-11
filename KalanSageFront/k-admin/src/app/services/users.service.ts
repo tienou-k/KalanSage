@@ -6,9 +6,9 @@ import { Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class UserService {
-  private apiUrl = 'http://localhost:8080/api/admins/utilisateurs';
-  private apiUserUrl = 'http://localhost:8080/api/users';
-  private abonnementapiUrl = 'http://localhost:8080/api/admins/abonnements';
+  private apiUrl = 'http://10.175.48.31:8080/api/admins/utilisateurs';
+  private apiUserUrl = 'http://110.175.48.31:8080/api/users';
+  private abonnementapiUrl = 'http://10.175.48.31:8080/api/admins/abonnements';
 
   constructor(private http: HttpClient) {}
 
@@ -51,8 +51,6 @@ export class UserService {
   }
 
   getUsersByModule(moduleId: number): Observable<any[]> {
-    return this.http.get<any[]>(
-      `${this.abonnementapiUrl}/users`
-    );
+    return this.http.get<any[]>(`${this.abonnementapiUrl}/users`);
   }
 }

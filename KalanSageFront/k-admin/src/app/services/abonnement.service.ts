@@ -6,7 +6,7 @@ import { Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class AbonnementService {
-  private apiUrl = 'http://localhost:8080/api/admins/abonnements';
+  private apiUrl = 'http://10.175.48.31:8080/api/admins/abonnements';
 
   constructor(private http: HttpClient) {}
 
@@ -24,7 +24,4 @@ export class AbonnementService {
   getSubscribedUsers(): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/users`);
   }
-
-
-  
 }

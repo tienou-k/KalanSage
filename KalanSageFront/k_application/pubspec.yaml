@@ -12,6 +12,7 @@ dependencies:
   http: ^1.2.2
   pinput: ^5.0.0
   flutter_svg: ^1.0.0
+  shared_preferences: ^2.0.6
 
 dev_dependencies:
   flutter_test:
@@ -42,4 +43,8 @@ flutter:
     - assets/icons/art_design.svg
     - assets/icons/photo.svg
     - assets/icons/marketing.svg
-
+    - assets/icons/Document Add.svg
+    - assets/icons/langueAdd.svg
+    - assets/icons/User Heart Rounded.svg
+    - assets/icons/Wallet 2.svg
+    - assets/icons/decon.svg

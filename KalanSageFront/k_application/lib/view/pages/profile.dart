@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:k_application/utils/constants.dart';
 import 'package:k_application/view/custom_nav_bar.dart';
 
@@ -28,7 +29,7 @@ class _ProfilePageState extends State<ProfilePage> {
         Navigator.pushNamed(context, '/mes_modules');
         break;
       case 3:
-      Navigator.pushNamed(context, '/chats');
+        Navigator.pushNamed(context, '/chats');
         break;
       case 4:
         break;
@@ -110,13 +111,13 @@ class _ProfilePageState extends State<ProfilePage> {
               child: Column(
                 children: [
                   _buildMenuItem(
-                      Icons.person, 'Profile', const Color(0xFFEEF2FF)),
-                  _buildMenuItem(Icons.notifications, 'Notification',
+                      'assets/icons/User Heart Rounded.svg', 'Profile', const Color(0xFFEEF2FF)),
+                  _buildMenuItem('assets/icons/Document Add.svg', 'Notification',
                       const Color(0xFFD5F4E6)),
                   _buildMenuItem(
-                      Icons.language, 'Langue', const Color(0xFFE5F7F3)),
-                  _buildMenuItem(Icons.wallet_giftcard, 'Mes Points',
-                      const Color(0xFFFFE5E5)),
+                      'assets/icons/langueAdd.svg', 'Langue', const Color.fromARGB(29, 9, 40, 175)),
+                  _buildMenuItem(
+                      'assets/icons/Wallet 2.svg', 'Mes Points', const Color(0xFFFFE5E5)),
                 ],
               ),
             ),
@@ -129,8 +130,7 @@ class _ProfilePageState extends State<ProfilePage> {
             child: Align(
               alignment: Alignment.bottomCenter,
               child: Padding(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20),
+                padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 20),
                 child: Container(
                   padding: const EdgeInsets.all(16),
                   decoration: BoxDecoration(
@@ -148,8 +148,11 @@ class _ProfilePageState extends State<ProfilePage> {
                     children: [
                       Row(
                         children: [
-                          const Icon(Icons.dark_mode_outlined,
-                              color: Colors.grey),
+                          SvgPicture.asset(
+                            'assets/icons/dark_mode.svg',
+                            height: 24,
+                            color: Colors.grey,
+                          ),
                           const SizedBox(width: 16),
                           const Text(
                             'Light/Dark',
@@ -170,8 +173,9 @@ class _ProfilePageState extends State<ProfilePage> {
                         ],
                       ),
                       const SizedBox(height: 10),
-                      _buildMenuItem(Icons.exit_to_app, 'Deconnexion',
-                          const Color(0xFFEEF2FF)),
+                      _buildMenuItem(
+                          'assets/icons/decon.svg', 'Deconnexion', const Color(0xFFEEF2FF),
+                          ),
                     ],
                   ),
                 ),
@@ -188,8 +192,8 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  // Helper method to build profile menu item
-  Widget _buildMenuItem(IconData icon, String title, Color iconBgColor) {
+  // Helper method to build profile menu item with custom SVG icons
+  Widget _buildMenuItem(String iconPath, String title, Color iconBgColor, ) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: Row(
@@ -200,7 +204,12 @@ class _ProfilePageState extends State<ProfilePage> {
               color: iconBgColor,
               borderRadius: BorderRadius.circular(8),
             ),
-            child: Icon(icon, color: Colors.black54),
+            child: SvgPicture.asset(
+              iconPath,
+              height: 24,
+              width: 24,
+              color: Colors.black54,
+            ),
           ),
           const SizedBox(width: 16),
           Text(
@@ -211,7 +220,7 @@ class _ProfilePageState extends State<ProfilePage> {
             ),
           ),
           const Spacer(),
-          const Icon(Icons.arrow_forward_ios, color: Colors.grey),
+         // const Icon(Icons.arrow_forward_ios, color: Colors.grey),
         ],
       ),
     );

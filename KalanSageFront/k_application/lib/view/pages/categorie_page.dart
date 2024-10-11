@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:k_application/models/categorie_model.dart';
+import 'package:k_application/services/cartegorie_service.dart';
+import 'package:k_application/utils/constants.dart';
 import 'package:k_application/view/custom_nav_bar.dart';
 
 class CategoriePage extends StatefulWidget {
@@ -11,6 +14,16 @@ class CategoriePage extends StatefulWidget {
 
 class _CategoriePage extends State<CategoriePage> {
   int _currentIndex = 1;
+  final CategorieService _categorieService = CategorieService();
+  late Future<List<CategorieModel>>
+      _categories;
+
+  @override
+  void initState() {
+    super.initState();
+    _categories =
+        _categorieService.fetchCategories(); 
+  }
 
   void _onTabSelected(int index) {
     setState(() {
@@ -21,10 +34,10 @@ class _CategoriePage extends State<CategoriePage> {
         Navigator.pushNamed(context, '/home');
         break;
       case 1:
-        
+        // Stay on the current page
         break;
       case 2:
-      Navigator.pushNamed(context, '/mes_modules');
+        Navigator.pushNamed(context, '/mes_modules');
         break;
       case 3:
         Navigator.pushNamed(context, '/chats');
@@ -41,7 +54,7 @@ class _CategoriePage extends State<CategoriePage> {
       backgroundColor: Colors.white,
       appBar: AppBar(
         title: const Text(
-          'Categorie',
+          'Categories',
           style: TextStyle(
             fontSize: 24,
             fontWeight: FontWeight.bold,
@@ -61,7 +74,7 @@ class _CategoriePage extends State<CategoriePage> {
             TextField(
               decoration: InputDecoration(
                 hintText: 'Rechercher....',
-                prefixIcon: const Icon(Icons.search, color: Colors.orange),
+                prefixIcon: const Icon(Icons.search, color: secondaryColor),
                 filled: true,
                 fillColor: Colors.grey.shade100,
                 border: OutlineInputBorder(
@@ -81,33 +94,35 @@ class _CategoriePage extends State<CategoriePage> {
             ),
             const SizedBox(height: 20),
             Expanded(
-              child: GridView.count(
-                crossAxisCount: 2,
-                crossAxisSpacing: 20,
-                mainAxisSpacing: 20,
-                childAspectRatio: 1.0,
-                children: [
-                  _buildCategoryCard('Art & Design', '20 Cours',
-                      'assets/icons/art_design.svg'),
-                  _buildCategoryCard(
-                      'Développement', '138 Cours', 'assets/icons/dev.svg'),
-                  _buildCategoryCard(
-                      'Communication', '07 Cours', 'assets/icons/com.svg'),
-                  _buildCategoryCard(
-                      'Vidéographie', '14 Cours', 'assets/icons/video.svg'),
-                  _buildCategoryCard(
-                      'Photographie', '01 Cours', 'assets/icons/photo.svg'),
-                  _buildCategoryCard(
-                      'Marketing', '38 Cours', 'assets/icons/marketing.svg'),
-                  _buildCategoryCard(
-                      'Redaction', '02 Cours', 'assets/icons/content.svg'),
-                  _buildCategoryCard(
-                      'Finance', '20 Cours', 'assets/icons/finanace.svg'),
-                  _buildCategoryCard(
-                      'Science', '05 Cours', 'assets/icons/science.svg'),
-                  _buildCategoryCard(
-                      'Reseau', '18 Cours', 'assets/icons/reseau.svg'),
-                ],
+              child: FutureBuilder<List<CategorieModel>>(
+                future: _categories,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (snapshot.hasError) {
+                    return Center(child: Text('Error: ${snapshot.error}'));
+                  } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                    return const Center(child: Text('No categories found'));
+                  }
+
+                  return GridView.builder(
+                    gridDelegate:
+                        const SliverGridDelegateWithFixedCrossAxisCount(
+                      crossAxisCount: 2,
+                      crossAxisSpacing: 20,
+                      mainAxisSpacing: 20,
+                      childAspectRatio: 1.0,
+                    ),
+                    itemCount: snapshot.data!.length,
+                    itemBuilder: (context, index) {
+                      final category = snapshot.data![index];
+                      return _buildCategoryCard(
+                          category.nomCategorie,
+                          '20 Modules',
+                          category.id); 
+                    },
+                  );
+                },
               ),
             ),
           ],
@@ -120,7 +135,7 @@ class _CategoriePage extends State<CategoriePage> {
     );
   }
 
-  Widget _buildCategoryCard(String title, String subtitle, String iconPath) {
+  Widget _buildCategoryCard(String title, String subtitle, int id) {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -138,9 +153,9 @@ class _CategoriePage extends State<CategoriePage> {
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
           SvgPicture.asset(
-            iconPath,
+            'assets/icons/default_icon.svg', 
             height: 40,
-            color: Colors.orange,
+            color: secondaryColor,
           ),
           const SizedBox(height: 10),
           Text(

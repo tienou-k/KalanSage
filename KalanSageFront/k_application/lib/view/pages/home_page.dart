@@ -13,7 +13,9 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
+ 
   int _currentIndex = 0;
+//------------------------------------------------------------
 
   void _onTabSelected(int index) {
     setState(() {
@@ -48,9 +50,9 @@ class _HomePageState extends State<HomePage> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 40),
-              FullScreenHeader(), // Profile and Notification Row
+              HeaderPage(), 
               const SizedBox(height: 20),
-              const SliderBanner(), // Slider Banner
+              const SliderBanner(),
               const SizedBox(height: 20),
               // Search Bar
               TextField(
@@ -106,7 +108,7 @@ class _HomePageState extends State<HomePage> {
                   GestureDetector(
                     onTap: () {
                       Navigator.pushNamed(
-                          context, '/mescours'); // Navigate to Mes Cours Page
+                          context, '/mescours'); 
                     },
                     child: const Text(
                       'voir',

@@ -6,8 +6,8 @@ import { Observable } from 'rxjs';
   providedIn: 'root',
 })
 export class ModuleService {
-  private apiUrl = 'http://localhost:8080/api/modules';
-  private categoriesUrl = 'http://localhost:8080/api/admins/categories';
+  private apiUrl = 'http://10.175.48.31:8080/api/modules';
+  private categoriesUrl = 'http://10.175.48.31:8080/api/admins/categories';
 
   constructor(private http: HttpClient) {}
 
