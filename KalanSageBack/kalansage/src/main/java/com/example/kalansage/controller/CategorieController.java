@@ -2,38 +2,25 @@ package com.example.kalansage.controller;
 
 import com.example.kalansage.dto.CategorieDTO;
 import com.example.kalansage.model.Categorie;
-<<<<<<< HEAD
-import com.example.kalansage.repository.CategorieRepository;
-import com.example.kalansage.service.CategorieService;
-import org.springframework.beans.factory.annotation.Autowired;
-=======
 import com.example.kalansage.model.Module;
 import com.example.kalansage.repository.CategorieRepository;
 import com.example.kalansage.service.CategorieService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
->>>>>>> 6044997 (repusher)
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-<<<<<<< HEAD
-=======
 import java.util.ArrayList;
 import java.util.Collections;
->>>>>>> 6044997 (repusher)
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
-<<<<<<< HEAD
-@RequestMapping("/api/admins/categories")
-=======
 @RequestMapping("/api/categories")
->>>>>>> 6044997 (repusher)
 public class CategorieController {
 
     @Autowired
@@ -94,8 +81,6 @@ public class CategorieController {
         return ResponseEntity.ok(categorieDTOs);
     }
 
-<<<<<<< HEAD
-=======
 
     @GetMapping("/{id}/modules")
     public ResponseEntity<?> getModulesListInCategorie(@PathVariable Long id) {
@@ -130,7 +115,6 @@ public class CategorieController {
     }
 
 
->>>>>>> 6044997 (repusher)
     private boolean isAdmin() {
         String currentUserRole = SecurityContextHolder.getContext().getAuthentication().getAuthorities().iterator().next().getAuthority();
         return !"ROLE_ADMIN".equalsIgnoreCase(currentUserRole);

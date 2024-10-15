@@ -5,7 +5,6 @@ import '../models/user_model.dart';
 <<<<<<< HEAD
 import '../utils/constants.dart'; 
 =======
-import '../utils/constants.dart';
 >>>>>>> 6044997 (repusher)
 
 class UserService {

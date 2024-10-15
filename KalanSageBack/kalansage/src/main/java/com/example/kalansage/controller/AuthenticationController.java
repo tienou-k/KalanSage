@@ -5,10 +5,7 @@ import com.example.kalansage.model.LoginRequest;
 import com.example.kalansage.model.Utilisateur;
 import com.example.kalansage.repository.UtilisateurRepository;
 import com.example.kalansage.service.CustomUserDetailsService;
-<<<<<<< HEAD
-=======
 import com.example.kalansage.service.OTPService;
->>>>>>> 6044997 (repusher)
 import com.example.kalansage.service.UtilisateurService;
 import com.example.kalansage.util.JwtUtil;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,29 +29,16 @@ public class AuthenticationController {
 
     @Autowired
     private AuthenticationManager authenticationManager;
-<<<<<<< HEAD
-
     @Autowired
     private CustomUserDetailsService customUserDetailsService;
-
-=======
-    @Autowired
-    private CustomUserDetailsService customUserDetailsService;
->>>>>>> 6044997 (repusher)
     @Autowired
     private UtilisateurService utilisateurService;
     @Autowired
     private UtilisateurRepository utilisateurRepository;
-<<<<<<< HEAD
-
-    @Autowired
-    private JwtUtil jwtUtil;
-=======
     @Autowired
     private JwtUtil jwtUtil;
     @Autowired
     private OTPService otpService;
->>>>>>> 6044997 (repusher)
 
     @PostMapping("/login")
     public ResponseEntity<?> createAuthenticationToken(@RequestBody LoginRequest authRequest) {
@@ -104,9 +88,6 @@ public class AuthenticationController {
         }
     }
 
-<<<<<<< HEAD
-}
-=======
     // Endpoint to request OTP
     @PostMapping("/generate-otp")
     public ResponseEntity<String> generateOTP(@RequestParam String email, @RequestParam String deviceToken) {
@@ -126,4 +107,3 @@ public class AuthenticationController {
         }
     }
 }
->>>>>>> 6044997 (repusher)

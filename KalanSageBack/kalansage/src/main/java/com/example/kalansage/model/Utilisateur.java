@@ -22,10 +22,7 @@ public abstract class Utilisateur {
     private String username;
     @Column(unique = true)
     private String email;
-<<<<<<< HEAD
-=======
     private String telephone;
->>>>>>> 6044997 (repusher)
     private String motDePasse;
     private Date dateInscription;
     private Boolean status;

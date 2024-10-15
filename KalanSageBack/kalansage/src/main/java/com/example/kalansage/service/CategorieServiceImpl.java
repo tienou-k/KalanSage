@@ -8,10 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 
-<<<<<<< HEAD
-=======
 import java.util.ArrayList;
->>>>>>> 6044997 (repusher)
 import java.util.List;
 
 
@@ -63,10 +60,6 @@ public class CategorieServiceImpl implements CategorieService {
 
     //------------------------la listes des cours dans une categorie--------------------------------
     @Override
-<<<<<<< HEAD
-    public List<Module> getCoursesInCategorie(Long categorieId) {
-        return categorieRepository.findById(categorieId).map(Categorie::getModules).orElse(null);
-=======
     public List<Module> getModulesListInCategorie(Long categorieId) {
         return categorieRepository.findById(categorieId)
                 .map(Categorie::getModules)
@@ -78,7 +71,6 @@ public class CategorieServiceImpl implements CategorieService {
         return categorieRepository.findById(categorieId)
                 .map(categorie -> categorie.getModules().size())
                 .orElse(0);
->>>>>>> 6044997 (repusher)
     }
 
     @Override
@@ -87,9 +79,6 @@ public class CategorieServiceImpl implements CategorieService {
         categorieRepository.findById(categorieId)
                 .ifPresent(categorie -> categorie.getModules().removeIf(cours -> cours.getId().equals(courseId)));
     }
-<<<<<<< HEAD
-=======
 
 
->>>>>>> 6044997 (repusher)
 }

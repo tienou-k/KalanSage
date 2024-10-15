@@ -19,10 +19,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-<<<<<<< HEAD
-=======
 import java.util.Collections;
->>>>>>> 6044997 (repusher)
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
@@ -51,10 +48,7 @@ public class UserController {
             @RequestParam("nom") String nom,
             @RequestParam("prenom") String prenom,
             @RequestParam("email") String email,
-<<<<<<< HEAD
-=======
             @RequestParam("telephone") String telephone,
->>>>>>> 6044997 (repusher)
             @RequestParam("username") String username,
             @RequestParam("password") String password,
             @RequestParam("status") Boolean status,
@@ -62,17 +56,6 @@ public class UserController {
 
         // Set the default role to "USER"
         String nomRole = "USER";
-<<<<<<< HEAD
-        // Fetch the role from the repository
-        Optional<Role> userRole = roleRepository.findRoleByNomRole(nomRole);
-        if (userRole.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Le rôle 'USER' n'existe pas. Veuillez contacter un administrateur.");
-        }
-        // Check for existing user by email
-        Optional<User> existingUser = userRepository.findByEmail(email);
-        if (existingUser.isPresent()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Un utilisateur avec cet email existe déjà.");
-=======
         Optional<Role> userRole = roleRepository.findRoleByNomRole(nomRole);
         if (userRole.isEmpty()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Collections.singletonMap("message", "Le rôle 'USER' n'existe pas. Veuillez contacter un administrateur."));
@@ -80,7 +63,6 @@ public class UserController {
         Optional<User> existingUser = userRepository.findByEmail(email);
         if (existingUser.isPresent()) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Collections.singletonMap("message", "Un utilisateur avec cet email existe déjà."));
->>>>>>> 6044997 (repusher)
         }
         // Save the file only if it is provided
         FileInfo fileInfo = null;
@@ -93,10 +75,7 @@ public class UserController {
         user.setPrenom(prenom);
         user.setUsername(username);
         user.setEmail(email);
-<<<<<<< HEAD
-=======
         user.setTelephone(telephone);
->>>>>>> 6044997 (repusher)
         user.setMotDePasse(passwordEncoder.encode(password));
         user.setDateInscription(new Date());
         user.setStatus(status);
@@ -104,11 +83,7 @@ public class UserController {
         user.setFileInfos(fileInfo);
         // Save the user
         userRepository.save(user);
-<<<<<<< HEAD
-        return ResponseEntity.ok(user);
-=======
         return ResponseEntity.ok(Collections.singletonMap("message", "User created successfully!"));
->>>>>>> 6044997 (repusher)
     }
 
     @PutMapping(path = "/modifier-user/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -117,10 +92,7 @@ public class UserController {
             @RequestParam(value = "nom", required = false) String nom,
             @RequestParam(value = "prenom", required = false) String prenom,
             @RequestParam(value = "email", required = false) String email,
-<<<<<<< HEAD
-=======
             @RequestParam("telephone") String telephone,
->>>>>>> 6044997 (repusher)
             @RequestParam(value = "username", required = false) String username,
             @RequestParam(value = "password", required = false) String password,
             @RequestParam(value = "role", required = false) String nomRole,
