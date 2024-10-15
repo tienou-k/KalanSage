@@ -1,37 +1,18 @@
-<<<<<<< HEAD
-
-
-=======
->>>>>>> 6044997 (repusher)
 class CategorieModel {
   final int id;
   final String nomCategorie;
   final String description;
-<<<<<<< HEAD
-=======
   int moduleCount;
->>>>>>> 6044997 (repusher)
 
   CategorieModel({
     required this.id,
     required this.nomCategorie,
     required this.description,
-<<<<<<< HEAD
-=======
     required this.moduleCount,
->>>>>>> 6044997 (repusher)
   });
 
   factory CategorieModel.fromJson(Map<String, dynamic> json) {
     return CategorieModel(
-<<<<<<< HEAD
-      id: json['idCategorie'],
-      nomCategorie: json['nomCategorie'],
-      description: json['description'],
-    );
-  }
-}
-=======
       id: json['idCategorie'] as int,
       nomCategorie: json['nomCategorie'] as String,
       description: json['description'] as String,
@@ -52,4 +33,3 @@ class CategorieModel {
     }
   }
 }
->>>>>>> 6044997 (repusher)

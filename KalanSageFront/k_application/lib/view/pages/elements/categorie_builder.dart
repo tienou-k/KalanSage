@@ -1,11 +1,4 @@
 import 'package:flutter/material.dart';
-<<<<<<< HEAD
-
-class CategoriesSection extends StatelessWidget {
-  const CategoriesSection({super.key});
-
-  @override
-=======
 import 'package:k_application/models/categorie_model.dart';
 import 'package:k_application/services/cartegorie_service.dart';
 
@@ -17,18 +10,17 @@ class CategoriesSection extends StatefulWidget {
 }
 
 class _CategoriesSectionState extends State<CategoriesSection> {
-  final CategorieService categorieService = CategorieService();
-  late Future<List<CategorieModel>> categories;
+  final CategorieService _categorieService = CategorieService();
+  late Future<List<CategorieModel>> _categories;
 
   @override
   void initState() {
     super.initState();
-    categories =
-        categorieService.fetchCategories(); 
+    _categories =
+        _categorieService.fetchCategories(); 
   }
 
   @override
->>>>>>> 6044997 (repusher)
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -43,20 +35,6 @@ class _CategoriesSectionState extends State<CategoriesSection> {
         ),
         const SizedBox(height: 10),
         // Categories Row
-<<<<<<< HEAD
-        SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: Row(
-            children: [
-              _buildCategoryChip(Icons.brush, 'Design'),
-              _buildCategoryChip(Icons.code, 'Code'),
-              _buildCategoryChip(Icons.camera_alt, 'Photo'),
-              _buildCategoryChip(Icons.grid_view, 'UI/UX'),
-              _buildCategoryChip(Icons.school, 'Education'),
-              _buildCategoryChip(Icons.settings, 'Tech'),
-            ],
-          ),
-=======
         FutureBuilder<List<CategorieModel>>(
           future: _categories,
           builder: (context, snapshot) {
@@ -77,32 +55,20 @@ class _CategoriesSectionState extends State<CategoriesSection> {
               ),
             );
           },
->>>>>>> 6044997 (repusher)
         ),
       ],
     );
   }
 
-<<<<<<< HEAD
-  
-  Widget buildCategoryChip(IconData iconData, String label) {
-=======
   Widget _buildCategoryChip(String label) {
->>>>>>> 6044997 (repusher)
     return Padding(
       padding: const EdgeInsets.only(right: 10),
       child: Column(
         children: [
           CircleAvatar(
             radius: 25,
-<<<<<<< HEAD
-            backgroundColor:const Color.fromARGB(48, 25, 72, 96), 
-            child: Icon(iconData,
-                color: Colors.black, size: 20), 
-=======
             backgroundColor: const Color.fromARGB(48, 25, 72, 96),
             child: const Icon(Icons.category, color: Colors.black, size: 20),
->>>>>>> 6044997 (repusher)
           ),
           const SizedBox(height: 2),
           Text(

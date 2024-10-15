@@ -1,11 +1,7 @@
 import 'package:flutter/material.dart';
 
-<<<<<<< HEAD
-const String apiUrl = 'http://192.168.190.1:8080/api';
-=======
 const String apiUrl = 'http://localhost:8080/api';
 
->>>>>>> 6044997 (repusher)
 
 
 // App colors

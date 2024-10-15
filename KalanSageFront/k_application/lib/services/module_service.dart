@@ -1,8 +1,5 @@
 import 'package:http/http.dart' as http;
-<<<<<<< HEAD
-=======
 import 'package:k_application/models/module_model.dart';
->>>>>>> 6044997 (repusher)
 import 'package:k_application/utils/constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
@@ -35,9 +32,6 @@ class ModuleService {
       throw Exception('Failed to list modules: ${response.body}');
     }
   }
-<<<<<<< HEAD
-
-=======
 Future<List<ModuleModel>> fetchModulesByCategory(String categoryId) async {
     await _initPrefs(); // Make sure preferences are initialized
     String? token = _prefs?.getString('currentUser.token');
@@ -70,7 +64,6 @@ Future<List<ModuleModel>> fetchModulesByCategory(String categoryId) async {
   }
 
   
->>>>>>> 6044997 (repusher,)
   // Fetch the top 5 modules
   Future<List<Map<String, dynamic>>> getTop5Modules() async {
     final response = await http.get(

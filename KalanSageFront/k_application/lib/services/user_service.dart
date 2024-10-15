@@ -2,10 +2,7 @@ import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import '../models/user_model.dart';
-<<<<<<< HEAD
-import '../utils/constants.dart'; 
-=======
->>>>>>> 6044997 (repusher)
+import '../utils/constants.dart';
 
 class UserService {
   SharedPreferences? _prefs;
@@ -18,10 +15,7 @@ class UserService {
   Future<void> _initPrefs() async {
     _prefs = await SharedPreferences.getInstance();
   }
-<<<<<<< HEAD
-=======
 
->>>>>>> 6044997 (repusher,)
 // Create a new user
   Future<Map<String, dynamic>> createUser(Map<String, dynamic> userData) async {
     final request = http.MultipartRequest(
@@ -29,19 +23,6 @@ class UserService {
       Uri.parse('$apiUrl/users/creer-user'),
     );
 
-<<<<<<< HEAD
-    // Add fields to the request
-    request.fields['nom'] = userData['nom'];
-    request.fields['prenom'] = userData['prenom'];
-    request.fields['email'] = userData['email'];
-    request.fields['username'] = userData['username'];
-    request.fields['password'] = userData['password'];
-    request.fields['role'] = 'USER';
-    request.fields['status'] =
-        userData['status'].toString(); 
-
-    // Optionally add a file if provided
-=======
     // Assigning fields including telephone
     if (userData['nom'] != null) request.fields['nom'] = userData['nom'];
     if (userData['prenom'] != null) {
@@ -67,32 +48,20 @@ class UserService {
     }
 
     // Add file if available
->>>>>>> 6044997 (repusher)
     if (userData['file'] != null) {
       request.files.add(
         await http.MultipartFile.fromPath('file', userData['file'].path),
       );
     }
 
-<<<<<<< HEAD
-    // Add authorization header if available
-=======
     // Add authorization token if available
->>>>>>> 6044997 (repusher)
     final token = _prefs?.getString('currentUser.token');
     if (token != null) {
       request.headers['Authorization'] = 'Bearer $token';
     }
 
-<<<<<<< HEAD
-    // Send the request
-    final response = await request.send();
-
-    // Process the response
-=======
     // Send request and handle response
     final response = await request.send();
->>>>>>> 6044997 (repusher)
     if (response.statusCode == 200 || response.statusCode == 201) {
       final responseData = await response.stream.bytesToString();
       return jsonDecode(responseData);
@@ -117,25 +86,6 @@ class UserService {
     }
   }
 
-<<<<<<< HEAD
-   /*// Sign-up service
-  Future<UserModel?> createUser(
-      String name, String email, String password) async {
-    final response = await http.post(
-      Uri.parse('$apiUrl/user/creer-user'),
-      headers: {"Content-Type": "application/json"},
-      body: jsonEncode({'name': name, 'email': email, 'password': password}),
-    );
-
-    if (response.statusCode == 201) {
-      return UserModel.fromJson(jsonDecode(response.body));
-    } else {
-      throw Exception('Failed to sign up');
-    }
-  }*/
-
-=======
->>>>>>> 6044997 (repusher,)
   // Update user details
   Future<Map<String, dynamic>> updateUser(
       int userId, Map<String, dynamic> userData) async {
@@ -154,10 +104,7 @@ class UserService {
       throw Exception('Failed to update user: ${response.body}');
     }
   }
-<<<<<<< HEAD
-=======
 
->>>>>>> 6044997 (repusher,)
   // Fetch user by ID
   Future<Map<String, dynamic>> getUserById(int userId) async {
     final response = await http.get(
@@ -174,11 +121,7 @@ class UserService {
     }
   }
 
-<<<<<<< HEAD
-   // Fetch all users
-=======
   // Fetch all users
->>>>>>> 6044997 (repusher,)
   Future<List<Map<String, dynamic>>> getAllUsers() async {
     final response = await http.get(
       Uri.parse('$apiUrl/users/list-users'),
@@ -225,8 +168,6 @@ class UserService {
       throw Exception('Failed to list abonnements: ${response.body}');
     }
   }
-<<<<<<< HEAD
-=======
 
   Future<Map<String, dynamic>> verifyOTP(Map<String, String> otpData) async {
     try {
@@ -245,5 +186,4 @@ class UserService {
       return {'status': 'error', 'message': 'Error during OTP verification'};
     }
   }
->>>>>>> 6044997 (repusher)
 }

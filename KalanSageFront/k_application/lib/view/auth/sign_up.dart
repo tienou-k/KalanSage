@@ -1,12 +1,4 @@
 import 'package:flutter/material.dart';
-<<<<<<< HEAD
-import 'package:k_application/utils/constants.dart';
-
-class SignupScreen extends StatelessWidget {
-  const SignupScreen({super.key});
-
-  @override
-=======
 import 'package:k_application/services/user_service.dart';
 import 'package:k_application/utils/constants.dart';
 
@@ -18,14 +10,14 @@ class SignupScreen extends StatefulWidget {
 }
 
 class _SignupScreenState extends State<SignupScreen> {
-  final userService = UserService();
-  final formKey = GlobalKey<FormState>();
-  String? name;
-  String? firstName;
-  String? email;
-  String? phone;
-  String? password;
-  bool isLoading = false;
+  final _userService = UserService();
+  final _formKey = GlobalKey<FormState>();
+  String? _name;
+  String? _firstName;
+  String? _email;
+  String? _phone;
+  String? _password;
+  bool _isLoading = false;
 
   @override
   void initState() {
@@ -33,132 +25,11 @@ class _SignupScreenState extends State<SignupScreen> {
   }
 
   @override
->>>>>>> 6044997 (repusher)
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
       body: SingleChildScrollView(
         child: Padding(
-<<<<<<< HEAD
-          padding: const EdgeInsets.symmetric(horizontal: 20.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              const SizedBox(height: 60),
-              // Title
-              const Center(
-                child: Column(
-                  children: [
-                    Text(
-                      'Bienvenue ✌️',
-                      style: TextStyle(
-                        fontSize: 28,
-                        fontWeight: FontWeight.bold,
-                        color: primaryColor,
-                      ),
-                    ),
-                    SizedBox(height: 5),
-                    Text(
-                      'Créer votre compte ici',
-                      style: TextStyle(
-                        fontSize: 16,
-                        color: Colors.black54,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 40),
-              // Name input field
-              TextField(
-                decoration: InputDecoration(
-                  labelText: 'Nom........',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 20),
-              // Surname input field
-              TextField(
-                decoration: InputDecoration(
-                  labelText: 'Prénom........',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 20),
-              // Email input field
-              TextField(
-                decoration: InputDecoration(
-                  labelText: 'Votre email........',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 20),
-              // Phone number input field
-              TextField(
-                decoration: InputDecoration(
-                  labelText: 'Numéro........',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 20),
-              // Password input field
-              TextField(
-                obscureText: true,
-                decoration: InputDecoration(
-                  labelText: 'Mot de passe........',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 30),
-              // Create account button
-              ElevatedButton(
-                onPressed: () {
-                  Navigator.pushNamed(context, '/otp-verification');
-                },
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: primaryColor,
-                  padding: const EdgeInsets.symmetric(vertical: 15),
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                ),
-                child: const Text(
-                  'Créer',
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Colors.white,
-                  ),
-                ),
-              ),
-              const SizedBox(height: 20),
-              // Navigate to login page
-              Center(
-                child: TextButton(
-                  onPressed: () {
-                    Navigator.pushNamed(
-                        context, '/login'); // Navigate back to login
-                  },
-                  child: const Text(
-                    'Vous n\'avez pas de compte ? Connexion',
-                    style: TextStyle(
-                      color: primaryColor,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-=======
           padding: const EdgeInsets.all(20.0),
           child: Form(
             key: _formKey,
@@ -265,14 +136,11 @@ class _SignupScreenState extends State<SignupScreen> {
                 ),
               ],
             ),
->>>>>>> 6044997 (repusher)
           ),
         ),
       ),
     );
   }
-<<<<<<< HEAD
-=======
 
   Widget _buildTextField({
     required String label,
@@ -297,7 +165,7 @@ class _SignupScreenState extends State<SignupScreen> {
     );
   }
 
-  String? validateName(String? value) {
+  String? _validateName(String? value) {
     final namePattern = RegExp(r'^[A-Za-zÀ-ÿ\s]+$');
     if (value == null || value.isEmpty) {
       return 'Le champ nom est requis';
@@ -307,46 +175,46 @@ class _SignupScreenState extends State<SignupScreen> {
     return null;
   }
 
-  String? validateEmail(String? value) {
+  String? _validateEmail(String? value) {
     if (value == null || !value.contains('@')) {
       return 'Veuillez entrer une adresse e-mail valide';
     }
     return null;
   }
 
-  String? validatePhone(String? value) {
+  String? _validatePhone(String? value) {
     if (value == null || value.isEmpty || value.length < 8) {
       return 'Le numéro doit contenir au moins 8 chiffres';
     }
     return null;
   }
 
-  String? validatePassword(String? value) {
+  String? _validatePassword(String? value) {
     if (value == null || value.length < 6) {
       return 'Le mot de passe doit contenir au moins 6 caractères';
     }
     return null;
   }
 
-  Future<void> signup() async {
+  Future<void> _signup() async {
     setState(() {
-      isLoading = true;
+      _isLoading = true;
     });
 
     try {
       final userData = {
-        'nom': name ?? '',
-        'prenom': firstName ?? '',
-        'email': email ?? '',
-        'telephone': phone ?? '',
-        'username': email ?? '',
-        'password': password ?? '',
+        'nom': _name ?? '',
+        'prenom': _firstName ?? '',
+        'email': _email ?? '',
+        'telephone': _phone ?? '',
+        'username': _email ?? '',
+        'password': _password ?? '',
         'role': 'USER',
         'status': false, 
       };
 
       // Call the service to create a user
-      final response = await userService.createUser(userData);
+      final response = await _userService.createUser(userData);
 
       if (response['message'] != null) {
         CustomSnackBar.show(
@@ -379,7 +247,7 @@ class _SignupScreenState extends State<SignupScreen> {
       );
     } finally {
       setState(() {
-        isLoading = false;
+        _isLoading = false;
       });
     }
   }
@@ -407,5 +275,4 @@ class CustomSnackBar {
 
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
->>>>>>> 6044997 (repusher)
 }

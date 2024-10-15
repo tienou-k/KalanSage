@@ -26,23 +26,6 @@ class _LoginScreenState extends State<LoginScreen> {
       try {
         String email = _emailController.text;
         String password = _passwordController.text;
-<<<<<<< HEAD
-
-        print(
-            'Attempting to log in with email: $email and password: $password'); // Debugging line
-
-        final user = await _authService.login(email, password);
-
-        if (user != null) {
-          print('Login successful. User data: $user'); // Debugging line
-          // Navigate to home if login is successful
-          Navigator.pushReplacementNamed(context, '/home');
-        }
-      } catch (error) {
-        print('Login failed with error: $error'); // Debugging line
-        _showSnackbar(
-            'La connexion a échoué.');
-=======
         final user = await _authService.login(email, password);
 
         if (user != null) {
@@ -50,18 +33,13 @@ class _LoginScreenState extends State<LoginScreen> {
         }
       } catch (error) {
         _showSnackbar('La connexion a échoué.');
->>>>>>> 6044997 (repusher)
       } finally {
         setState(() {
           _isLoading = false;
         });
       }
     } else {
-<<<<<<< HEAD
-      print('Validation failed'); // Debugging line
-=======
       print('Validation failed');
->>>>>>> 6044997 (repusher)
     }
   }
 
@@ -71,11 +49,7 @@ class _LoginScreenState extends State<LoginScreen> {
       SnackBar(
         content: Text(message),
         backgroundColor: Colors.red,
-<<<<<<< HEAD
-        duration: const Duration(seconds: 3),
-=======
         duration: const Duration(seconds: 5),
->>>>>>> 6044997 (repusher)
       ),
     );
   }
@@ -119,11 +93,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   bottom: Radius.circular(50),
                 ),
                 child: Image.asset(
-<<<<<<< HEAD
-                  'assets/images/kids.png',
-=======
                   'assets/images/login.png',
->>>>>>> 6044997 (repusher)
                   height: 300,
                   width: double.infinity,
                   fit: BoxFit.cover,
@@ -160,10 +130,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     prefixIcon: const Icon(Icons.email),
                   ),
                   validator: _validateEmail,
-<<<<<<< HEAD
-=======
                   enabled: !_isLoading,
->>>>>>> 6044997 (repusher)
                 ),
               ),
               const SizedBox(height: 20),
@@ -181,10 +148,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     prefixIcon: const Icon(Icons.lock),
                   ),
                   validator: _validatePassword,
-<<<<<<< HEAD
-=======
                   enabled: !_isLoading,
->>>>>>> 6044997 (repusher)
                 ),
               ),
               const SizedBox(height: 30),
@@ -215,11 +179,7 @@ class _LoginScreenState extends State<LoginScreen> {
               // Forgot password and create account
               TextButton(
                 onPressed: () {
-<<<<<<< HEAD
-                  // Handle forgot password action
-=======
                   //
->>>>>>> 6044997 (repusher)
                 },
                 child: const Text(
                   'Mot de passe oublié ?',

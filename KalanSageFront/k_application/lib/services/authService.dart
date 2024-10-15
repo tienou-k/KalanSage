@@ -87,15 +87,6 @@ class AuthService {
       throw Exception('Failed to fetch user profile: ${errorData['message']}');
     }
   }
-<<<<<<< HEAD
-
-  // Logout
-  Future<void> logout() async {
-    await _ensurePrefsInitialized();
-    await _prefs?.remove('currentUser');
-  }
-
-=======
   
   // Logout method
   Future<void> logout() async {
@@ -107,7 +98,6 @@ class AuthService {
   }
 
 
->>>>>>> 6044997 (repusher)
   // Check if user is logged in
   bool isLoggedIn() {
     final currentUser = getCurrentUser();

@@ -1,10 +1,4 @@
 import 'package:flutter/material.dart';
-<<<<<<< HEAD
-import 'package:pinput/pinput.dart'; // For OTP input field
-
-class OTPVerificationScreen extends StatelessWidget {
-  const OTPVerificationScreen({super.key});
-=======
 import 'package:k_application/view/auth/sign_up.dart';
 import 'package:pinput/pinput.dart';
 import 'package:k_application/services/user_service.dart';
@@ -19,10 +13,9 @@ class OTPVerificationScreen extends StatefulWidget {
 }
 
 class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
-  final userService = UserService();
-  bool isLoading = false;
-  String otp = '';
->>>>>>> 6044997 (repusher)
+  final _userService = UserService();
+  bool _isLoading = false;
+  String _otp = '';
 
   @override
   Widget build(BuildContext context) {
@@ -59,18 +52,10 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
               showCursor: true,
               keyboardType: TextInputType.number,
               onChanged: (value) {
-<<<<<<< HEAD
-                // Handle OTP value change
+                _otp = value;
               },
               onCompleted: (value) {
-                // Handle completed OTP entry
-                print("OTP Code Entered: $value");
-=======
-                otp = value;
-              },
-              onCompleted: (value) {
-                otp = value;
->>>>>>> 6044997 (repusher)
+                _otp = value;
               },
               defaultPinTheme: PinTheme(
                 width: 60,
@@ -89,13 +74,6 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
             const SizedBox(height: 40),
             // Confirm button
             ElevatedButton(
-<<<<<<< HEAD
-              onPressed: () {
-                Navigator.pushNamed(context, '/home');
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF2C3E50), 
-=======
               onPressed: _isLoading
                   ? null
                   : () {
@@ -112,22 +90,12 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
                     },
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFF2C3E50),
->>>>>>> 6044997 (repusher)
                 padding:
                     const EdgeInsets.symmetric(horizontal: 80, vertical: 15),
                 shape: RoundedRectangleBorder(
                   borderRadius: BorderRadius.circular(10),
                 ),
               ),
-<<<<<<< HEAD
-              child: const Text(
-                'Confirmer',
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.white,
-                ),
-              ),
-=======
               child: _isLoading
                   ? CircularProgressIndicator(color: Colors.white)
                   : const Text(
@@ -137,23 +105,20 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
                         color: Colors.white,
                       ),
                     ),
->>>>>>> 6044997 (repusher)
             ),
           ],
         ),
       ),
     );
   }
-<<<<<<< HEAD
-=======
 
   Future<void> _verifyOTP(String otp) async {
     setState(() {
-      isLoading = true;
+      _isLoading = true;
     });
 
     try {
-      final response = await userService.verifyOTP({
+      final response = await _userService.verifyOTP({
         'email': widget.email,
         'otp': otp,
       });
@@ -183,9 +148,8 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
       );
     } finally {
       setState(() {
-        isLoading = false;
+        _isLoading = false;
       });
     }
   }
->>>>>>> 6044997 (repusher)
 }

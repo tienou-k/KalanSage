@@ -1,16 +1,10 @@
 import 'package:flutter/material.dart';
-<<<<<<< HEAD
-import 'package:flutter_svg/flutter_svg.dart';
-=======
 import 'package:flutter_svg/svg.dart';
->>>>>>> 6044997 (repusher)
 import 'package:k_application/models/categorie_model.dart';
 import 'package:k_application/services/cartegorie_service.dart';
 import 'package:k_application/utils/constants.dart';
-<<<<<<< HEAD
-=======
+import 'package:k_application/view/custom_nav_bar.dart';
 import 'package:k_application/view/pages/detail_categorie_page.dart';
->>>>>>> 6044997 (repusher)
 
 class CategoriePage extends StatefulWidget {
   const CategoriePage({super.key});
@@ -22,22 +16,12 @@ class CategoriePage extends StatefulWidget {
 class _CategoriePage extends State<CategoriePage> {
   int _currentIndex = 1;
   final CategorieService _categorieService = CategorieService();
-<<<<<<< HEAD
-  late Future<List<CategorieModel>>
-      _categories;
-=======
   late Future<List<CategorieModel>> _categories;
->>>>>>> 6044997 (repusher)
 
   @override
   void initState() {
     super.initState();
-<<<<<<< HEAD
-    _categories =
-        _categorieService.fetchCategories(); 
-=======
     _categories = _categorieService.fetchCategories();
->>>>>>> 6044997 (repusher)
   }
 
   void _onTabSelected(int index) {
@@ -49,10 +33,6 @@ class _CategoriePage extends State<CategoriePage> {
         Navigator.pushNamed(context, '/home');
         break;
       case 1:
-<<<<<<< HEAD
-        // Stay on the current page
-=======
->>>>>>> 6044997 (repusher)
         break;
       case 2:
         Navigator.pushNamed(context, '/mes_modules');
@@ -70,21 +50,6 @@ class _CategoriePage extends State<CategoriePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-<<<<<<< HEAD
-      appBar: AppBar(
-        title: const Text(
-          'Categories',
-          style: TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-            color: Colors.black,
-          ),
-        ),
-        centerTitle: true,
-        backgroundColor: Colors.white,
-        elevation: 0,
-        iconTheme: const IconThemeData(color: Colors.black),
-=======
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(kToolbarHeight),
         child: Container(
@@ -118,7 +83,6 @@ class _CategoriePage extends State<CategoriePage> {
             ),*/
           ),
         ),
->>>>>>> 6044997 (repusher)
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -171,17 +135,11 @@ class _CategoriePage extends State<CategoriePage> {
                     itemBuilder: (context, index) {
                       final category = snapshot.data![index];
                       return _buildCategoryCard(
-<<<<<<< HEAD
-                          category.nomCategorie,
-                          '20 Modules',
-                          category.id); 
-=======
                         category.nomCategorie,
                         '${category.moduleCount} Modules',
                         category.id,
                         category.getIconPath(),
                       );
->>>>>>> 6044997 (repusher)
                     },
                   );
                 },
@@ -197,48 +155,6 @@ class _CategoriePage extends State<CategoriePage> {
     );
   }
 
-<<<<<<< HEAD
-  Widget _buildCategoryCard(String title, String subtitle, int id) {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.1),
-            blurRadius: 6,
-            spreadRadius: 2,
-          ),
-        ],
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          SvgPicture.asset(
-            'assets/icons/default_icon.svg', 
-            height: 40,
-            color: secondaryColor,
-          ),
-          const SizedBox(height: 10),
-          Text(
-            title,
-            style: const TextStyle(
-              fontSize: 16,
-              fontWeight: FontWeight.bold,
-              color: Colors.black,
-            ),
-          ),
-          const SizedBox(height: 5),
-          Text(
-            subtitle,
-            style: const TextStyle(
-              fontSize: 14,
-              color: Colors.grey,
-            ),
-          ),
-        ],
-=======
   Widget _buildCategoryCard(
       String title, String subtitle, int id, String iconPath) {
     return GestureDetector(
@@ -293,7 +209,6 @@ class _CategoriePage extends State<CategoriePage> {
             ),
           ],
         ),
->>>>>>> 6044997 (repusher)
       ),
     );
   }

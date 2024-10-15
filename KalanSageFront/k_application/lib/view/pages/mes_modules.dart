@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:k_application/utils/constants.dart';
+import 'package:k_application/view/custom_nav_bar.dart';
 
 class MesModulesPage extends StatefulWidget {
   const MesModulesPage({super.key});
@@ -25,11 +26,7 @@ class _MesModulesPage extends State<MesModulesPage> {
       case 2:
         break;
       case 3:
-<<<<<<< HEAD
-       Navigator.pushNamed(context, '/chats');
-=======
         Navigator.pushNamed(context, '/chats');
->>>>>>> 6044997 (repusher)
         break;
       case 4:
         Navigator.pushNamed(context, '/profile');
@@ -41,21 +38,6 @@ class _MesModulesPage extends State<MesModulesPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
-<<<<<<< HEAD
-      appBar: AppBar(
-        title: const Text(
-          'Mes Formations',
-          style: TextStyle(
-            fontSize: 24,
-            fontWeight: FontWeight.bold,
-            color: Colors.black,
-          ),
-        ),
-        centerTitle: true,
-        backgroundColor: Colors.white,
-        elevation: 0,
-        iconTheme: const IconThemeData(color: Colors.black),
-=======
       appBar: PreferredSize(
         preferredSize: Size.fromHeight(kToolbarHeight),
         child: Container(
@@ -85,7 +67,6 @@ class _MesModulesPage extends State<MesModulesPage> {
             automaticallyImplyLeading: false,
           ),
         ),
->>>>>>> 6044997 (repusher)
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),

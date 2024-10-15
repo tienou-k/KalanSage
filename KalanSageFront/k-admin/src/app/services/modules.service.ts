@@ -7,11 +7,7 @@ import { Observable } from 'rxjs';
 })
 export class ModuleService {
   private apiUrl = 'http://10.175.48.31:8080/api/modules';
-<<<<<<< HEAD
-  private categoriesUrl = 'http://10.175.48.31:8080/api/admins/categories';
-=======
   private categoriesUrl = 'http://:8080/api/admins/categories';
->>>>>>> 6044997 (repusher)
 
   constructor(private http: HttpClient) {}
 

@@ -15,15 +15,9 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   Timer? _timer;
 
   final List<String> images = [
-<<<<<<< HEAD
-    "assets/images/kids.png",
-    "assets/images/kids.png",
-    "assets/images/kids.png",
-=======
     "assets/images/splash1.png",
     "assets/images/splash2.png",
     "assets/images/splash3.png",
->>>>>>> 6044997 (repusher)
   ];
 
   @override
@@ -129,12 +123,8 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                 },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: primaryColor,
-<<<<<<< HEAD
-                  padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
-=======
                   padding:
                       const EdgeInsets.symmetric(horizontal: 40, vertical: 15),
->>>>>>> 6044997 (repusher)
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(10),
                   ),

@@ -1,8 +1,3 @@
-<<<<<<< HEAD
-// services/categorie_service.dart
-
-=======
->>>>>>> 6044997 (repusher)
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:k_application/utils/constants.dart';
@@ -16,29 +11,11 @@ class CategorieService {
     _initPrefs();
   }
 
-<<<<<<< HEAD
-=======
   // Initialiser SharedPreferences
->>>>>>> 6044997 (repusher,)
   Future<void> _initPrefs() async {
     _prefs = await SharedPreferences.getInstance();
   }
 
-<<<<<<< HEAD
-  // Fetch all categories
-  Future<List<CategorieModel>> fetchCategories() async {
-    final response =
-        await http.get(Uri.parse('$apiUrl/admins/categories/list-categories'));
-
-    if (response.statusCode == 200) {
-      List<dynamic> jsonData = json.decode(response.body);
-      // Map the response to CategorieModel
-      return jsonData.map((json) => CategorieModel.fromJson(json)).toList();
-    } else {
-      throw Exception('Failed to load categories: ${response.body}');
-    }
-  }
-=======
   // Récupérer toutes les catégories
   Future<List<CategorieModel>> fetchCategories() async {
     await _initPrefs();
@@ -112,5 +89,4 @@ class CategorieService {
 
 
   */
->>>>>>> 6044997 (repusher)
 }

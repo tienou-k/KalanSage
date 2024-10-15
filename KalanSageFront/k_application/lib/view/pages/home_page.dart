@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-<<<<<<< HEAD
-=======
->>>>>>> 6044997 (repusher)
+import 'package:k_application/utils/constants.dart';
 import 'package:k_application/view/custom_nav_bar.dart';
 import 'package:k_application/view/pages/elements/categorie_builder.dart';
 import 'package:k_application/view/pages/elements/header.dart';
@@ -61,11 +59,7 @@ class _HomePageState extends State<HomePage> {
               TextField(
                 decoration: InputDecoration(
                   hintText: 'Rechercher...',
-<<<<<<< HEAD
-                  prefixIcon: const Icon(Icons.search),
-=======
                   prefixIcon: const Icon(Icons.search, color: secondaryColor),
->>>>>>> 6044997 (repusher)
                   filled: true,
                   fillColor: Colors.grey.shade200,
                   border: OutlineInputBorder(
@@ -76,11 +70,7 @@ class _HomePageState extends State<HomePage> {
               ),
               const SizedBox(height: 20),
               // Category Section
-<<<<<<< HEAD
-              const CategoriesSection(),
-=======
               CategoriesSection(),
->>>>>>> 6044997 (repusher)
               const SizedBox(height: 20),
               // Tabs for All
               const TabSection(),
