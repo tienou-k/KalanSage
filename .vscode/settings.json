@@ -1,3 +1,9 @@
 {
+<<<<<<< HEAD
     "svn.ignoreMissingSvnWarning": true
 }
+=======
+  "svn.ignoreMissingSvnWarning": true,
+  "java.compile.nullAnalysis.mode": "automatic"
+}
+>>>>>>> 6044997 (repusher)

@@ -1,4 +1,8 @@
 import 'package:http/http.dart' as http;
+<<<<<<< HEAD
+=======
+import 'package:k_application/models/module_model.dart';
+>>>>>>> 6044997 (repusher)
 import 'package:k_application/utils/constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
@@ -31,7 +35,42 @@ class ModuleService {
       throw Exception('Failed to list modules: ${response.body}');
     }
   }
+<<<<<<< HEAD
 
+=======
+Future<List<ModuleModel>> fetchModulesByCategory(String categoryId) async {
+    await _initPrefs(); // Make sure preferences are initialized
+    String? token = _prefs?.getString('currentUser.token');
+
+    // Check if the token is null
+    if (token == null) {
+      throw Exception('User is not authenticated. Token is null.');
+    }
+
+    // Set up headers for the request
+    final headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token',
+    };
+
+    // Update the URL with your local IP
+    final response = await http.get(
+      Uri.parse('$apiUrl/categories/$categoryId/modules'),
+      headers: headers,
+    );
+
+    if (response.statusCode == 200) {
+      List<dynamic> jsonData = jsonDecode(response.body);
+      return jsonData.map((json) => ModuleModel.fromJson(json)).toList();
+    } else {
+      print('Response status: ${response.statusCode}');
+      print('Response body: ${response.body}');
+      throw Exception('Failed to load modules in categorie');
+    }
+  }
+
+  
+>>>>>>> 6044997 (repusher,)
   // Fetch the top 5 modules
   Future<List<Map<String, dynamic>>> getTop5Modules() async {
     final response = await http.get(

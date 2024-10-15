@@ -36,7 +36,11 @@ class AppRoutes {
       case signup:
         return MaterialPageRoute(builder: (_) => const SignupScreen());
       case otpverification:
+<<<<<<< HEAD
         return MaterialPageRoute(builder: (_) => const OTPVerificationScreen());
+=======
+        return MaterialPageRoute(builder: (_) => const OTPVerificationScreen(email: '',));
+>>>>>>> 6044997 (repusher)
       case home:
         return MaterialPageRoute(builder: (_) => const HomePage());
       case categorie:

@@ -4,7 +4,11 @@ import 'dart:convert';
 
 class ApiService {
   final String baseUrl =
+<<<<<<< HEAD
       "http://10.175.48.31:8080/api"; 
+=======
+      "http://localhost:8080/api"; 
+>>>>>>> 6044997 (repusher,)
 
   // Generic GET request
   Future<dynamic> get(String endpoint) async {

@@ -107,7 +107,10 @@
         <dependency>
             <groupId>com.google.firebase</groupId>
             <artifactId>firebase-admin</artifactId>
+<<<<<<< HEAD
             <version>6.15.0</version>
+=======
+>>>>>>> 6044997 (repusher)
         </dependency>
     </dependencies>
 

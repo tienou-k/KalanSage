@@ -82,9 +82,14 @@ public class SecurityConfig {
 
         configuration.setAllowedOrigins(Arrays.asList(
                 "http://localhost:4200",  // Angular IP (development)
+<<<<<<< HEAD
                 "http://192.168.190.1:8080",  // Backend IP
                 "http://192.168.1.4",// Phone IP
                 "http://localhost:49743/"
+=======
+                "http://localhost:63262/",  // Backend IP
+                "http://192.168.1.6"// Phone IP
+>>>>>>> 6044997 (repusher)
         ));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));

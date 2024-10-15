@@ -67,7 +67,11 @@ class _HeaderPage extends State<HeaderPage> {
                     ),
                   ),
                   Text(
+<<<<<<< HEAD
                     '${_userEmail ??'email-null'} ${_userEmail ?? ''}',
+=======
+                    _userEmail ?? 'email-null',
+>>>>>>> 6044997 (repusher)
                     style: TextStyle(
                       color: Colors.white70,
                       fontSize: 14,

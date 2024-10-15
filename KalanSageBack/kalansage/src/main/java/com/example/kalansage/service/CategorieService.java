@@ -8,7 +8,11 @@ import java.util.List;
 
 public interface CategorieService {
 
+<<<<<<< HEAD
     List<Module> getCoursesInCategorie(Long categorieId);
+=======
+    List<Module> getModulesListInCategorie(Long categorieId);
+>>>>>>> 6044997 (repusher)
 
     void removeCourseFromCategorie(Long categorieId, Long courseId);
 
@@ -23,6 +27,14 @@ public interface CategorieService {
     //--------------------------lister toutes les categories--------------------------------------
     List<Categorie> getAllCategories();
 
+<<<<<<< HEAD
     //--------------------------get categorie par id--------------------------------------
     Categorie getCategoriebyId(Long idCategorie);
+=======
+
+    //--------------------------get categorie par id--------------------------------------
+    Categorie getCategoriebyId(Long idCategorie);
+
+    int getModulesCountInCategorie(Long categorieId);
+>>>>>>> 6044997 (repusher)
 }

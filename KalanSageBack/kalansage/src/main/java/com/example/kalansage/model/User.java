@@ -95,5 +95,10 @@ public class User extends Utilisateur {
     @OneToMany(mappedBy = "user")
     private List<Certificat> certificates;
 
+<<<<<<< HEAD
 
+=======
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<OTP> otps;
+>>>>>>> 6044997 (repusher)
 }

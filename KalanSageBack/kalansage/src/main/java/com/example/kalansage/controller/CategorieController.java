@@ -2,21 +2,38 @@ package com.example.kalansage.controller;
 
 import com.example.kalansage.dto.CategorieDTO;
 import com.example.kalansage.model.Categorie;
+<<<<<<< HEAD
 import com.example.kalansage.repository.CategorieRepository;
 import com.example.kalansage.service.CategorieService;
 import org.springframework.beans.factory.annotation.Autowired;
+=======
+import com.example.kalansage.model.Module;
+import com.example.kalansage.repository.CategorieRepository;
+import com.example.kalansage.service.CategorieService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.rest.webmvc.ResourceNotFoundException;
+>>>>>>> 6044997 (repusher)
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+<<<<<<< HEAD
+=======
+import java.util.ArrayList;
+import java.util.Collections;
+>>>>>>> 6044997 (repusher)
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
+<<<<<<< HEAD
 @RequestMapping("/api/admins/categories")
+=======
+@RequestMapping("/api/categories")
+>>>>>>> 6044997 (repusher)
 public class CategorieController {
 
     @Autowired
@@ -77,6 +94,43 @@ public class CategorieController {
         return ResponseEntity.ok(categorieDTOs);
     }
 
+<<<<<<< HEAD
+=======
+
+    @GetMapping("/{id}/modules")
+    public ResponseEntity<?> getModulesListInCategorie(@PathVariable Long id) {
+        try {
+            List<Module> modules = categorieService.getModulesListInCategorie(id);
+            if (modules.isEmpty()) {
+                return ResponseEntity.ok(new ArrayList<>());
+            }
+            return ResponseEntity.ok(modules);
+        } catch (ResourceNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Catégorie non trouvée avec l'ID : " + id);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Une erreur s'est produite : " + e.getMessage());
+        }
+    }
+
+
+    @GetMapping("/{id}/modules/count")
+    public ResponseEntity<?> getModulesCountInCategorie(@PathVariable Long id) {
+        try {
+            Optional<Categorie> categoryOptional = categorieRepository.findById(id);
+            if (categoryOptional.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Catégorie non trouvée avec l'ID : " + id);
+            }
+            int moduleCount = categorieService.getModulesCountInCategorie(id);
+            return ResponseEntity.ok().body(Collections.singletonMap("moduleCount", moduleCount));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Une erreur s'est produite : " + e.getMessage());
+        }
+    }
+
+
+>>>>>>> 6044997 (repusher)
     private boolean isAdmin() {
         String currentUserRole = SecurityContextHolder.getContext().getAuthentication().getAuthorities().iterator().next().getAuthority();
         return !"ROLE_ADMIN".equalsIgnoreCase(currentUserRole);
