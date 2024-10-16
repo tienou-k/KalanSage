@@ -17,7 +17,7 @@ import java.io.IOException;
 @Service
 public class FirebaseService {
 
-    @Value("${firebase.config.path}")
+   /* @Value("${firebase.config.path}")
     private String firebaseConfigPath;
 
     @PostConstruct
@@ -31,7 +31,7 @@ public class FirebaseService {
         if (FirebaseApp.getApps().isEmpty()) {
             FirebaseApp.initializeApp(options);
         }
-    }
+    }*/
 
     // Send push notification via Firebase Cloud Messaging
     public void sendPushNotification(String token, String title, String message) {
