@@ -1,60 +1,107 @@
 import { Injectable } from '@angular/core';
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
+import { AuthService } from './auth-service.service';
 
 @Injectable({
   providedIn: 'root',
 })
 export class ModuleService {
-  private apiUrl = 'http://10.175.48.31:8080/api/modules';
-  private categoriesUrl = 'http://:8080/api/admins/categories';
+  private apiUrl = 'http://localhost:8080/api/modules';
+  private categoriesUrl = 'http://localhost:8080/api/admins/categories';
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private authService: AuthService) {}
+
+  // Utility method to get the authorization header using the access token from AuthService
+  private getAuthHeaders(): HttpHeaders {
+    const token = this.authService.getAccessToken();
+    return new HttpHeaders({
+      Authorization: `Bearer ${token}`,
+      'Content-Type': 'application/json',
+    });
+  }
 
   // Create a new module
   creerModule(moduleData: any): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/creer-module`, moduleData);
+    return this.http.post<any>(`${this.apiUrl}/creer-module`, moduleData, {
+      headers: this.getAuthHeaders(),
+    });
   }
 
   // Delete a module by ID
   supprimerModule(moduleId: number): Observable<any> {
-    return this.http.delete<any>(`${this.apiUrl}/supprimer-module/${moduleId}`);
+    return this.http.delete<any>(
+      `${this.apiUrl}/supprimer-module/${moduleId}`,
+      {
+        headers: this.getAuthHeaders(),
+      }
+    );
   }
 
   // Update an existing module
   modifierModule(moduleId: number, moduleData: any): Observable<any> {
     return this.http.put<any>(
       `${this.apiUrl}/modifier-module/${moduleId}`,
-      moduleData
+      moduleData,
+      {
+        headers: this.getAuthHeaders(),
+      }
     );
   }
 
   // Fetch the list of all modules
   listerModules(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/list-modules`);
+    return this.http.get<any[]>(`${this.apiUrl}/list-modules`, {
+      headers: this.getAuthHeaders(),
+    });
   }
 
   // Fetch the top 5 modules
   getTop5Modules(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/top5`);
+    return this.http.get<any[]>(`${this.apiUrl}/top5`, {
+      headers: this.getAuthHeaders(),
+    });
   }
+
   getTopCourses(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/modules/top`);
+    return this.http.get<any[]>(`${this.apiUrl}/modules/top`, {
+      headers: this.getAuthHeaders(),
+    });
   }
 
   // Fetch a single module by ID
   getModuleById(id: number): Observable<any> {
-    return this.http.get<any>(`${this.apiUrl}/module-par/${id}`);
+    return this.http.get<any>(`${this.apiUrl}/module-par/${id}`, {
+      headers: this.getAuthHeaders(),
+    });
   }
 
+  getUsersByModule(moduleId: number): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/${moduleId}/user-count`, {
+      headers: this.getAuthHeaders(),
+    });
+  }
+  /* getUsersByModule(moduleId: number): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/${moduleId}/user-count`, {
+      headers: this.getAuthHeaders(),
+    });
+  }*/
+  // Fetch all categories with proper authorization headers
+  getCategories(): Observable<any[]> {
+    const headers = this.getAuthHeaders();
+    return this.http.get<any[]>(`${this.categoriesUrl}/list-categories`, {
+      headers,
+    });
+  }
+
+  // Create a new category
   createCategory(category: { nomCategorie: string }): Observable<any> {
     return this.http.post<any>(
       `${this.categoriesUrl}/creer-categorie`,
-      category
+      category,
+      {
+        headers: this.getAuthHeaders(),
+      }
     );
-  }
-
-  getCategories(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.categoriesUrl}/list-categories`);
   }
 }

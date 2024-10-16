@@ -6,14 +6,14 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Repository
-public interface TokenBlacklistRepository {
-    Set<String> blacklistedTokens = new HashSet<>();
+public class TokenBlacklistRepository {
+    private Set<String> blacklistedTokens = new HashSet<>();
 
-    public default void addToken(String token) {
+    public void addToken(String token) {
         blacklistedTokens.add(token);
     }
 
-    public default boolean isTokenBlacklisted(String token) {
+    public boolean isTokenBlacklisted(String token) {
         return blacklistedTokens.contains(token);
     }
 

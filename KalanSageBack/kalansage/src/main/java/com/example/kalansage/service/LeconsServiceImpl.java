@@ -66,6 +66,11 @@ public class LeconsServiceImpl implements LeconsService {
         return leconsRepository.findByModule_Id(moduleId);
     }
 
+    @Override
+    public Long countByModule_Id(Long moduleId) {
+        // Count lessons based on the moduleId
+        return leconsRepository.countByModule_Id(moduleId);
+    }
 
     @Override
     public List<Lecons> listerLecons() {

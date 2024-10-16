@@ -15,6 +15,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final AuthService _authService = AuthService();
   final _formKey = GlobalKey<FormState>();
   bool _isLoading = false;
+  bool _passwordVisible = false; // Toggle password visibility
 
   // Handle login logic
   Future<void> _login() async {
@@ -26,12 +27,24 @@ class _LoginScreenState extends State<LoginScreen> {
       try {
         String email = _emailController.text;
         String password = _passwordController.text;
+
+        // Debug: Print the entered email and password
+        print(
+            'Attempting to log in with email: $email and password: $password');
+
         final user = await _authService.login(email, password);
 
+        // Debug: Check if user is null
         if (user != null) {
+          print('Login successful. Navigating to home page.');
           Navigator.pushReplacementNamed(context, '/home');
+        } else {
+          print('Login failed. No user returned.');
+          _showSnackbar('La connexion a échoué. Veuillez réessayer.');
         }
       } catch (error) {
+        // Debug: Log the error
+        print('Error during login: $error');
         _showSnackbar('La connexion a échoué.');
       } finally {
         setState(() {
@@ -39,7 +52,8 @@ class _LoginScreenState extends State<LoginScreen> {
         });
       }
     } else {
-      print('Validation failed');
+      // Debug: Log validation failure
+      print('Form validation failed');
     }
   }
 
@@ -134,18 +148,30 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
               const SizedBox(height: 20),
-              // Password input field
+              // Password input field with visibility toggle
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: TextFormField(
                   controller: _passwordController,
-                  obscureText: true,
+                  obscureText: !_passwordVisible, // Password visibility
                   decoration: InputDecoration(
                     labelText: 'Mot de passe',
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
                     prefixIcon: const Icon(Icons.lock),
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        _passwordVisible
+                            ? Icons.visibility
+                            : Icons.visibility_off,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          _passwordVisible = !_passwordVisible;
+                        });
+                      },
+                    ),
                   ),
                   validator: _validatePassword,
                   enabled: !_isLoading,
@@ -179,7 +205,8 @@ class _LoginScreenState extends State<LoginScreen> {
               // Forgot password and create account
               TextButton(
                 onPressed: () {
-                  //
+                  // Debug: Forgot password button pressed
+                  print('Forgot password button pressed');
                 },
                 child: const Text(
                   'Mot de passe oublié ?',
@@ -189,6 +216,8 @@ class _LoginScreenState extends State<LoginScreen> {
               TextButton(
                 onPressed: () {
                   Navigator.pushNamed(context, '/signup');
+                  // Debug: Create account button pressed
+                  print('Navigating to sign up page');
                 },
                 child: const Text(
                   'Vous n\'avez pas de compte ? Créer',

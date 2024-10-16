@@ -38,16 +38,25 @@ class AuthService {
       body: body,
     );
 
+    print('Response status: ${response.statusCode}');
+    print('Response body: ${response.body}');
+
     if (response.statusCode == 200) {
       final responseData = jsonDecode(response.body);
+      print('Parsed response: $responseData');
 
-      // Save token and role in SharedPreferences
-      final user = {
-        'token': responseData['token'],
-        'role': responseData['role'],
-      };
-      await _prefs?.setString('currentUser', jsonEncode(user));
-      return user;
+      // Check if accessToken exists in the response
+      if (responseData['accessToken'] != null) {
+        // Save accessToken and role in SharedPreferences
+        final user = {
+          'token': responseData['accessToken'],
+          'role': responseData['role'],
+        };
+        await _prefs?.setString('currentUser', jsonEncode(user));
+        return user;
+      } else {
+        throw Exception('No access token found in login response.');
+      }
     } else {
       // Enhanced error logging
       final errorData = jsonDecode(response.body);
@@ -60,8 +69,8 @@ class AuthService {
     await _ensurePrefsInitialized();
 
     final currentUser = getCurrentUser();
-    if (currentUser == null) {
-      throw Exception('Vous êtes Fantômes non ! ');
+    if (currentUser == null || currentUser['token'] == null) {
+      throw Exception('Aucun jeton trouvé. Veuillez vous reconnecter.');
     }
 
     final token = currentUser['token'];
@@ -87,16 +96,13 @@ class AuthService {
       throw Exception('Failed to fetch user profile: ${errorData['message']}');
     }
   }
-  
+
   // Logout method
   Future<void> logout() async {
     await _ensurePrefsInitialized();
     await _prefs?.remove('currentUser');
-   // await _prefs?.remove('currentUser.token');
-   // await _prefs?.remove('currentUser.role');
     print('User logged out.');
   }
-
 
   // Check if user is logged in
   bool isLoggedIn() {

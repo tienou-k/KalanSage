@@ -82,7 +82,7 @@ public class SecurityConfig {
 
         configuration.setAllowedOrigins(Arrays.asList(
                 "http://localhost:4200",  // Angular IP (development)
-                "http://localhost:63262/",  // Backend IP
+                "http://localhost:52583/",  // Flutter App IP
                 "http://192.168.1.6"// Phone IP
         ));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));

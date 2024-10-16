@@ -1,6 +1,7 @@
 package com.example.kalansage.service;
 
 import com.example.kalansage.dto.ModulesDTO;
+import com.example.kalansage.exception.UserAlreadyEnrolledException;
 import com.example.kalansage.model.Categorie;
 import com.example.kalansage.model.Module;
 import com.example.kalansage.model.User;
@@ -152,7 +153,7 @@ public class ModuleServiceImpl implements ModuleService {
 
         // Check if the user is already enrolled in the module
         if (userModuleRepository.existsByUserAndModule(user, module)) {
-            throw new IllegalArgumentException("L'utilisateur est déjà inscrit à ce module.");
+            throw new UserAlreadyEnrolledException("L'utilisateur est déjà inscrit à ce module.");
         }
         UserModule userModule = new UserModule();
         userModule.setUser(user);
@@ -165,6 +166,7 @@ public class ModuleServiceImpl implements ModuleService {
     }
 
 
+
     @Override
     public List<Module> getTop5Modules() {
         try {
@@ -174,5 +176,12 @@ public class ModuleServiceImpl implements ModuleService {
             throw new RuntimeException("Unable to fetch top modules.");
         }
     }
+    public long getUserCountByModule(Module  module) {
+        return userModuleRepository.countByModule(module);
+    }
 
+    public Module findModuleById(Long moduleId) {
+        return moduleRepository.findById(moduleId)
+                .orElseThrow(() -> new RuntimeException("Module not found with id: " + moduleId));
+    }
 }

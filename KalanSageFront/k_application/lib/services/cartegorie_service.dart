@@ -11,21 +11,31 @@ class CategorieService {
     _initPrefs();
   }
 
-  // Initialiser SharedPreferences
+  // Initialize SharedPreferences
   Future<void> _initPrefs() async {
     _prefs = await SharedPreferences.getInstance();
   }
 
-  // Récupérer toutes les catégories
+  // Retrieve all categories
   Future<List<CategorieModel>> fetchCategories() async {
     await _initPrefs();
-    String? token = _prefs?.getString('currentUser.token');
-    if (token == null) {
-      print(
-          'Aucun jeton trouvé. Veuillez vous reconnecter.'); 
-      throw Exception(
-          'L\'utilisateur n\'est pas authentifié. Le jeton est nul.');
+
+    // Retrieve the current user from SharedPreferences
+    String? currentUserJson = _prefs?.getString('currentUser');
+
+    if (currentUserJson == null) {
+      print('No user found. Please log in again.');
+      throw Exception('User not authenticated. Token is null.');
     }
+
+    // Parse the JSON to extract the token
+    final currentUser = jsonDecode(currentUserJson);
+    String? token = currentUser['token'];
+
+    if (token == null) {
+      throw Exception('No token found. User not authenticated.');
+    }
+
     final headers = {
       'Content-Type': 'application/json',
       'Authorization': 'Bearer $token',
@@ -35,35 +45,45 @@ class CategorieService {
       Uri.parse('$apiUrl/categories/list-categories'),
       headers: headers,
     );
+
     if (response.statusCode == 200) {
       List<dynamic> jsonData = jsonDecode(response.body);
-      // Créer une liste de catégories et récupérer le nombre de modules
+
+      // Create a list of categories and retrieve module count
       List<CategorieModel> categories = [];
       for (var json in jsonData) {
         var category = CategorieModel.fromJson(json);
+
+        // Fetch and set the module count for each category
         category.moduleCount =
             await fetchModulesCountInCategorie(category.id.toString());
         categories.add(category);
       }
       return categories;
     } else {
-      String errorMessage =
-          'Échec du chargement des catégories : ${response.body}';
-      print(errorMessage); 
+      String errorMessage = 'Failed to load categories: ${response.body}';
+      print(errorMessage);
       throw Exception(errorMessage);
     }
   }
 
-  // Récupérer le nombre de modules dans une catégorie spécifique
+  // Retrieve the count of modules in a specific category
   Future<int> fetchModulesCountInCategorie(String categoryId) async {
     await _initPrefs();
-    String? token = _prefs?.getString('currentUser.token');
 
-    // Vérifier jeton
-    if (token == null) {
-      throw Exception(
-          'L\'utilisateur n\'est pas authentifié. Le jeton est nul.');
+    String? currentUserJson = _prefs?.getString('currentUser');
+
+    if (currentUserJson == null) {
+      throw Exception('User not authenticated. Token is null.');
     }
+
+    final currentUser = jsonDecode(currentUserJson);
+    String? token = currentUser['token'];
+
+    if (token == null) {
+      throw Exception('No token found. User not authenticated.');
+    }
+
     final headers = {
       'Content-Type': 'application/json',
       'Authorization': 'Bearer $token',
@@ -73,20 +93,13 @@ class CategorieService {
       Uri.parse('$apiUrl/categories/$categoryId/modules/count'),
       headers: headers,
     );
+
     if (response.statusCode == 200) {
       final responseData = jsonDecode(response.body);
-      return responseData['moduleCount']; 
+      return responseData['moduleCount'];
     } else {
-      String errorMessage =
-          'Échec du chargement du nombre de modules : ${response.body}';
+      String errorMessage = 'Failed to load module count: ${response.body}';
       throw Exception(errorMessage);
     }
   }
-
-
-  /*
-
-
-
-  */
 }

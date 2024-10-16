@@ -1,6 +1,7 @@
 package com.example.kalansage.repository;
 
 
+import com.example.kalansage.model.Module;
 import com.example.kalansage.model.Role;
 import com.example.kalansage.model.User;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -23,6 +24,4 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     @Query("SELECT u FROM User u JOIN u.abonnementUser a")
     List<User> findAllAbonnementUsers();
-
-
 }

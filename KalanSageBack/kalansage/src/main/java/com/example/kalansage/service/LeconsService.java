@@ -19,4 +19,5 @@ public interface LeconsService {
     List<Lecons> listerLecons();
 
 
+    Long countByModule_Id(Long moduleId);
 }

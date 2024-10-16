@@ -3,7 +3,10 @@ import 'package:k_application/services/authService.dart';
 import 'package:k_application/utils/constants.dart';
 
 class HeaderPage extends StatefulWidget {
-  const HeaderPage({super.key});
+  final double? height; 
+  final double? width; 
+
+  const HeaderPage({super.key, this.height, this.width,});
 
   @override
   _HeaderPage createState() => _HeaderPage();
@@ -11,9 +14,7 @@ class HeaderPage extends StatefulWidget {
 
 class _HeaderPage extends State<HeaderPage> {
   final AuthService _authService = AuthService();
-  String? _userName;
   String? _userPrenom;
-  String? _userEmail;
 
   @override
   void initState() {
@@ -25,64 +26,78 @@ class _HeaderPage extends State<HeaderPage> {
     try {
       final userProfile = await _authService.fetchUserProfile();
       setState(() {
-        _userName = userProfile['nom'];
+        //_userName = userProfile['nom'];
         _userPrenom = userProfile['prenom'];
-        _userEmail = userProfile['email'];
+        // _userEmail = userProfile['email'];
+        // _userImageUrl = userProfile['imageUrl'];
       });
     } catch (error) {
-      // Handle errors appropriately, for now, just print it.
       print('Error fetching user profile: $error');
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.only(left: 16, right: 16),
-      width: double.infinity,
-      height: 80,
-      decoration: const BoxDecoration(
-        color: primaryColor,
-      ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Row(
-            children: [
-              const CircleAvatar(
-                radius: 25,
-                backgroundImage: AssetImage('assets/images/profile.png'),
-              ),
-              const SizedBox(width: 10),
-              Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    '${_userPrenom ?? 'Utilisateur'} ${_userName ?? ''}',
-                    style: const TextStyle(
-                      color: Colors.white,
-                      fontSize: 20,
-                      fontWeight: FontWeight.bold,
+    return Material(
+      elevation: 4.0, // Controls the level of elevation
+      shadowColor:
+          Colors.black.withOpacity(0.3), 
+      child: Container(
+        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
+        height: widget.height ?? 80,
+        width: widget.width ?? double.infinity,
+        decoration: const BoxDecoration(
+          color: primaryColor,
+        ),
+        child: Row(
+          children: [
+            const SizedBox(width: 16),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    // First row with "Bienvenue 🤞"
+                    Row(
+                      children: [
+                        Text(
+                          'Bienvenue 🤞',
+                          style: const TextStyle(
+                            color: Colors.white,
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ],
                     ),
-                  ),
-                  Text(
-                    _userEmail ?? 'email-null',
-                    style: TextStyle(
-                      color: Colors.white70,
-                      fontSize: 14,
+
+                    // Second row with username
+                    Text(
+                      // '${_userPrenom ?? 'Utilisateur'} ${_userName ?? ''}',
+                      _userPrenom ?? 'Utilisateur',
+                      style: const TextStyle(
+                        color: Colors.white,
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                  ),
-                ],
-              ),
-            ],
-          ),
-          IconButton(
-            icon: const Icon(Icons.notifications_outlined),
-            color: Colors.white,
-            onPressed: () {},
-          ),
-        ],
+                  ],
+                )
+              ],
+            ),
+            const Spacer(),
+            IconButton(
+              icon: const Icon(Icons.notifications_outlined),
+              color: Colors.white, 
+              onPressed: () {
+                // Handle notification click
+              },
+            ),
+          ],
+        ),
       ),
     );
   }

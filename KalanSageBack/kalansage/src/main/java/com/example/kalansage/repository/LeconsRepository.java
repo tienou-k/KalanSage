@@ -9,4 +9,6 @@ public interface LeconsRepository extends JpaRepository<Lecons, Long> {
     boolean existsByTitreAndDescriptionAndContenu(String titre, String description, String contenu);
 
     List<Lecons> findByModule_Id(Long moduleId);
+
+    Long countByModule_Id(Long moduleId);
 }

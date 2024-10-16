@@ -1,6 +1,9 @@
 package com.example.kalansage.controller;
 
-import com.example.kalansage.model.JwtResponse;
+
+
+
+import com.example.kalansage.dto.JwtResponse;
 import com.example.kalansage.model.LoginRequest;
 import com.example.kalansage.model.Utilisateur;
 import com.example.kalansage.repository.UtilisateurRepository;
@@ -40,6 +43,7 @@ public class AuthenticationController {
     @Autowired
     private OTPService otpService;
 
+    // Login endpoint: returns both access token and refresh token
     @PostMapping("/login")
     public ResponseEntity<?> createAuthenticationToken(@RequestBody LoginRequest authRequest) {
         try {
@@ -47,11 +51,17 @@ public class AuthenticationController {
                     new UsernamePasswordAuthenticationToken(authRequest.getEmail(), authRequest.getMotDePasse())
             );
             final UserDetails userDetails = customUserDetailsService.loadUserByUsername(authRequest.getEmail());
+
             // Extract the role from the user details
             String role = userDetails.getAuthorities().iterator().next().getAuthority();
-            // Generate the JWT token including the role
-            final String jwt = jwtUtil.generateToken(userDetails, role);
-            return ResponseEntity.ok().body(new JwtResponse(jwt, role));
+
+            // Generate the JWT access token and refresh token
+            final String accessToken = jwtUtil.generateToken(userDetails, role);
+            final String refreshToken = jwtUtil.generateRefreshToken(userDetails);
+
+            // Send both access and refresh tokens in the response
+            JwtResponse jwtResponse = new JwtResponse(accessToken, role, refreshToken);
+            return ResponseEntity.ok().body(jwtResponse);
         } catch (AuthenticationException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Mot de passe ou email incorrect");
         } catch (Exception e) {
@@ -59,6 +69,36 @@ public class AuthenticationController {
         }
     }
 
+    // Refresh token endpoint: generates a new access token using a valid refresh token
+    @PostMapping("/refresh-token")
+    public ResponseEntity<?> refreshAccessToken(@RequestBody Map<String, String> request) {
+        String refreshToken = request.get("refreshToken");
+
+        if (refreshToken == null || refreshToken.isEmpty()) {
+            return ResponseEntity.badRequest().body("Refresh token is missing");
+        }
+
+        try {
+            // Validate the refresh token
+            if (jwtUtil.validateRefreshToken(refreshToken)) {
+                // Extract username from refresh token
+                String username = jwtUtil.extractUsername(refreshToken);
+                UserDetails userDetails = customUserDetailsService.loadUserByUsername(username);
+
+                // Generate a new access token
+                String newAccessToken = jwtUtil.generateToken(userDetails, userDetails.getAuthorities().iterator().next().getAuthority());
+
+                // Return the new access token
+                Map<String, String> response = new HashMap<>();
+                response.put("accessToken", newAccessToken);
+                return ResponseEntity.ok(response);
+            } else {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid or expired refresh token");
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Could not refresh access token");
+        }
+    }
 
     @GetMapping("/profil")
     public ResponseEntity<?> getProfile() {
@@ -94,7 +134,6 @@ public class AuthenticationController {
         otpService.createAndSendOTP(email, deviceToken);
         return ResponseEntity.ok("OTP sent via push notification.");
     }
-
 
     // Endpoint to verify OTP
     @PostMapping("/verify-otp")

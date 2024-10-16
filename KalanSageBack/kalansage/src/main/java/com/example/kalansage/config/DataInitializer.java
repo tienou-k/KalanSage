@@ -1,7 +1,8 @@
 package com.example.kalansage.config;
 
-import com.example.kalansage.model.Module;
+
 import com.example.kalansage.model.*;
+import com.example.kalansage.model.Module;
 import com.example.kalansage.repository.*;
 import com.example.kalansage.service.FilesStorageServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -16,6 +16,7 @@ import { ModuleService } from '../../app/services/modules.service';
 import { CommonModule } from '@angular/common';
 import { MaterialModule } from '../material.module';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { CategoryService } from '../services/categorie.service';
 
 @Component({
   selector: 'app-module-create-dialog',
@@ -42,6 +43,7 @@ export class ModuleCreateDialogComponent implements OnInit {
     private dialog: MatDialog,
     private dialogRef: MatDialogRef<ModuleCreateDialogComponent>,
     private moduleService: ModuleService,
+    private categoryService: CategoryService,
     private snackBar: MatSnackBar,
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {}
@@ -67,7 +69,7 @@ export class ModuleCreateDialogComponent implements OnInit {
       });
     }
 
-    this.fetchCategories();
+    this.loadCategories();
   }
   showSnackbar(message: string): void {
     this.snackBar.open(message, 'Fermer', {
@@ -75,17 +77,17 @@ export class ModuleCreateDialogComponent implements OnInit {
       panelClass: ['custom-snackbar'],
     });
   }
-
-  fetchCategories(): void {
-    this.moduleService.getCategories().subscribe(
+  loadCategories(): void {
+    this.categoryService.getCategories().subscribe(
       (data) => {
         this.categories = data;
       },
       (error) => {
-        console.error('Erreur lors de la récupération des catégories:', error);
+        console.error('Error fetching categories:', error);
       }
     );
   }
+
 
   openAddCategoryDialog(): void {
     const dialogRef = this.dialog.open(this.addCategoryDialog, {
@@ -154,7 +156,7 @@ export class ModuleCreateDialogComponent implements OnInit {
                 'Module modifié avec succès malgré une erreur de réponse'
               );
               this.dialogRef.close();
-              this.moduleUpdated.emit(formData); 
+              this.moduleUpdated.emit(formData);
             } else {
               this.showSnackbar(
                 'Erreur lors de la modification du module: ' + error.message

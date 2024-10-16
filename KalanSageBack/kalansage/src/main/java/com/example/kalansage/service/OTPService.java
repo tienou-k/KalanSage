@@ -1,6 +1,7 @@
 package com.example.kalansage.service;
 
 
+
 import com.example.kalansage.model.OTP;
 import com.example.kalansage.model.User;
 import com.example.kalansage.repository.OTPRepository;
@@ -25,7 +26,6 @@ public class OTPService {
     private PushNotificationService pushNotificationService;
     @Autowired
     private FirebaseService firebaseService;
-
 
     // Generate a random OTP
     public String generateOTP(int length) {

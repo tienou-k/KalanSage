@@ -71,7 +71,7 @@ class ModuleDetailPage extends StatelessWidget {
             const SizedBox(height: 20),
             // Description or additional content can go here
             const Text(
-              'Here you can put more details about the course, such as a brief description, the syllabus, or additional resources.',
+              'Here you can put more details about the course',
               style: TextStyle(fontSize: 16, color: Colors.black54),
             ),
             const SizedBox(height: 20),

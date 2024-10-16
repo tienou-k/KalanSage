@@ -1,5 +1,6 @@
 package com.example.kalansage.controller;
 
+import com.example.kalansage.exception.UserAlreadyEnrolledException;
 import com.example.kalansage.model.Abonnement;
 import com.example.kalansage.model.Evaluation;
 import com.example.kalansage.model.Module;
@@ -10,6 +11,7 @@ import com.example.kalansage.model.userAction.UserModule;
 import com.example.kalansage.model.userAction.UserTest;
 import com.example.kalansage.service.ModuleServiceImpl;
 import com.example.kalansage.service.UserInteractionService;
+import com.example.kalansage.service.UserPointsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -17,6 +19,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/user")
@@ -26,7 +29,8 @@ public class UserInteractionController {
     private UserInteractionService userInteractionService;
     @Autowired
     private ModuleServiceImpl moduleServiceimpl;
-
+    @Autowired
+    private UserPointsService userPointsService;
     // Take a quiz
 
 
@@ -84,19 +88,30 @@ public class UserInteractionController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
         }
     }
-
+    @PostMapping("/gagner/points")
+    public ResponseEntity<String> awardPoints(@RequestParam Long userId, @RequestParam int points) {
+        userPointsService.awardPoints(userId, points);
+        return ResponseEntity.ok("Points awarded successfully.");
+    }
     // Enroll in a course
     @PostMapping("/inscrisModule/{userId}/{moduleId}")
-    public ResponseEntity<UserModule> enrollInCourse(
+    public ResponseEntity<Object> enrollInCourse(
             @PathVariable Long userId,
             @PathVariable Long moduleId) {
         try {
             UserModule userModule = userInteractionService.inscrireAuModule(userId, moduleId);
             return ResponseEntity.ok(userModule);
+        } catch (UserAlreadyEnrolledException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("message", e.getMessage()));
         } catch (RuntimeException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(null);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("message", "An error occurred while processing the request"));
         }
     }
+
+
+
 
     // Subscribe to an abonnement
     @PostMapping("/abonnement/{userId}/{abonnementId}")

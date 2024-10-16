@@ -130,5 +130,15 @@ public class ModulesController {
         return ResponseEntity.ok(leconsList);
     }
 
-
+    @GetMapping("/module/{moduleId}/lecons/count")
+    public ResponseEntity<Long> getLeconsCountByModule(@PathVariable Long moduleId) {
+        Long leconsCount = leconsService.countByModule_Id(moduleId);
+        return ResponseEntity.ok(leconsCount);
+    }
+    @GetMapping("/{moduleId}/user-count")
+    public ResponseEntity<Long> getUserCountByModule(@PathVariable Long moduleId) {
+        Module module = moduleServiceimpl.findModuleById(moduleId);
+        long userCount = moduleServiceimpl.getUserCountByModule(module);
+        return ResponseEntity.ok(userCount);
+    }
 }

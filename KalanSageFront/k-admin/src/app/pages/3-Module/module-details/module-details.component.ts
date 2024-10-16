@@ -21,6 +21,7 @@ export class ModuleDetailComponent implements OnInit {
   moduleId: number;
   lecons: any[] = [];
   quizzes: any[] = [];
+  student: any;
   studentCount: number = 0;
   leconCount: number = 0;
   quizCount: number = 0;
@@ -92,17 +93,18 @@ export class ModuleDetailComponent implements OnInit {
       }
     );
   }
-
   getStudentsCount(): void {
-    this.userService.getUsersByModule(this.moduleId).subscribe(
-      (students) => {
-        this.studentCount = students.length;
+    this.moduleService.getUsersByModule(this.moduleId).subscribe(
+      (data) => {
+        this.student = data;
+        this.studentCount = this.student.length;
       },
       (error) => {
-        console.error('Error fetching student count:', error);
+        console.error('Erreur de chargement des inscris:', error);
       }
     );
   }
+
 
   onTabChange(index: number): void {
     this.selectedTabIndex = index;

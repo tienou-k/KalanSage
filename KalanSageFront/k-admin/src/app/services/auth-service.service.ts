@@ -9,7 +9,7 @@ import { Router } from '@angular/router';
   providedIn: 'root',
 })
 export class AuthService {
-  private apiUrl = 'http://10.175.48.31:8080/api/auth';
+  private apiUrl = 'http://localhost:8080/api/auth';
   private currentUserSubject: BehaviorSubject<any>;
   public currentUser: Observable<any>;
 
@@ -31,6 +31,7 @@ export class AuthService {
     });
   }
 
+  // Modified login method to store both access and refresh tokens
   login(email: string, password: string): Observable<any> {
     const headers = { 'Content-Type': 'application/json' };
 
@@ -43,8 +44,9 @@ export class AuthService {
       .pipe(
         map((response) => {
           const user = {
-            token: response.token,
-            role: response.message,
+            accessToken: response.accessToken,
+            refreshToken: response.refreshToken,
+            role: response.role,
           };
           localStorage.setItem('currentUser', JSON.stringify(user));
           this.currentUserSubject.next(user);
@@ -60,6 +62,52 @@ export class AuthService {
       );
   }
 
+  // AuthService.ts
+  getAccessToken(): string | null {
+    const currentUser = this.currentUserSubject.value;
+    const token = currentUser ? currentUser.accessToken : null;
+    console.log('Access Token:', token);
+    return token;
+  }
+
+  getRefreshToken(): string | null {
+    const currentUser = this.currentUserSubject.value;
+    const refreshToken = currentUser ? currentUser.refreshToken : null;
+    console.log('Refresh Token:', refreshToken); 
+    return refreshToken;
+  }
+
+  // Method to refresh the access token using the refresh token
+  refreshToken(): Observable<any> {
+    const refreshToken = this.currentUserValue?.refreshToken;
+    if (!refreshToken) {
+      return this.logout();
+    }
+
+    const headers = new HttpHeaders().set(
+      'Authorization',
+      `Bearer ${refreshToken}`
+    );
+    return this.http
+      .post<any>(`${this.apiUrl}/refresh-token`, {}, { headers })
+      .pipe(
+        map((response) => {
+          const updatedUser = {
+            ...this.currentUserValue,
+            accessToken: response.accessToken,
+          };
+          localStorage.setItem('currentUser', JSON.stringify(updatedUser));
+          this.currentUserSubject.next(updatedUser);
+          return updatedUser;
+        }),
+        catchError((error) => {
+          console.error('Failed to refresh token:', error);
+          this.logout();
+          throw error;
+        })
+      );
+  }
+
   private showSnackbar(message: string) {
     this.snackBar.open(message, 'Fermer', {
       duration: 3000,
@@ -68,10 +116,11 @@ export class AuthService {
     });
   }
 
+  // Method to fetch the user profile using the access token
   fetchUserProfile(): Observable<any> {
     const headers = new HttpHeaders().set(
       'Authorization',
-      `Bearer ${this.currentUserValue.token}`
+      `Bearer ${this.currentUserValue.accessToken}`
     );
     return this.http.get<any>(`${this.apiUrl}/profil`, { headers }).pipe(
       tap((profile) => {
@@ -86,10 +135,11 @@ export class AuthService {
     );
   }
 
+  // Logout method clears both access and refresh tokens
   logout(): Observable<any> {
     const headers = new HttpHeaders().set(
       'Authorization',
-      `Bearer ${this.currentUserValue?.token}`
+      `Bearer ${this.currentUserValue?.accessToken}`
     );
 
     return this.http
@@ -115,7 +165,7 @@ export class AuthService {
   }
 
   isLoggedIn(): boolean {
-    return !!this.currentUserValue && !!this.currentUserValue.token;
+    return !!this.currentUserValue && !!this.currentUserValue.accessToken;
   }
 
   // This method checks if the user is an admin
