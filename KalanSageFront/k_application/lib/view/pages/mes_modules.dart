@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:k_application/models/module_model.dart';
+import 'package:k_application/services/user_service.dart';
 import 'package:k_application/utils/constants.dart';
 import 'package:k_application/view/custom_nav_bar.dart';
 import 'package:k_application/services/module_service.dart';
+import 'package:k_application/view/pages/details_module_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class MesModulesPage extends StatefulWidget {
   const MesModulesPage({super.key});
@@ -14,14 +17,17 @@ class MesModulesPage extends StatefulWidget {
 class _MesModulesPageState extends State<MesModulesPage> {
   int _currentIndex = 2;
   List<ModuleModel> _modules = [];
+
   List<ModuleModel> _filteredModules = [];
   bool _isLoading = true;
   bool _hasError = false;
   String _selectedTab = 'Tous';
+  SharedPreferences? _prefs;
 
   @override
   void initState() {
     super.initState();
+    _loadPrefs();
     _fetchModules();
   }
 
@@ -33,8 +39,7 @@ class _MesModulesPageState extends State<MesModulesPage> {
         _modules = modulesData
             .map<ModuleModel>((moduleMap) => ModuleModel.fromJson(moduleMap))
             .toList();
-        _filteredModules =
-            _filterModules(_selectedTab);
+        _filteredModules = _filterModules(_selectedTab);
         _isLoading = false;
         _hasError = false;
       });
@@ -46,41 +51,126 @@ class _MesModulesPageState extends State<MesModulesPage> {
     }
   }
 
+  void _loadPrefs() async {
+    _prefs = await SharedPreferences.getInstance();
+  }
+
+  Future<int?> _getCurrentUserId() async {
+    _prefs = await SharedPreferences.getInstance();
+    return _prefs?.getInt('userId');
+  }
+
+  //fetch user Modules liste
+  void fetchUserModules() async {
+    try {
+      final userId = await _getCurrentUserId();
+      if (userId == null) {
+        setState(() {
+          _isLoading = false;
+          _hasError = true;
+          _showErrorMessage('Utilisateur non connecté');
+        });
+        return;
+      }
+
+      var modulesData = await UserService().getModulesForUser(userId);
+      setState(() {
+        _modules = modulesData;
+        _filteredModules = _filterModules(_selectedTab);
+        _isLoading = false;
+        _hasError = false;
+      });
+    } catch (error) {
+      setState(() {
+        _isLoading = false;
+        _hasError = true;
+        _showErrorMessage('Erreur lors de la récupération des modules: $error');
+      });
+    }
+  }
+
+  void _showErrorMessage(String message) {
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text(message)));
+  }
+
   // Filter modules based on selected tab
   List<ModuleModel> _filterModules(String tabName) {
     switch (tabName) {
       case 'Favoris':
-        // Bookmark filter (with 'Inscris' button)
         return _modules
-            .where((module) => module.isBookmarked && !module.isEnrolled)
+            .where((module) =>
+                module.isBookmarked == true && module.isEnrolled == false)
             .toList();
       case 'Inscris':
-        // Enrolled modules (modules the user has subscribed to)
-        return _modules.where((module) => module.isEnrolled).toList();
+        return _modules.where((module) => module.isEnrolled == true).toList();
       case 'En cours':
-        // Modules the user has started but not finished
-        return _modules.where((module) => module.isInProgress).toList();
+        return _modules.where((module) => module.isInProgress == true).toList();
       case 'Finis':
-        // Completed modules
-        return _modules.where((module) => module.isCompleted).toList();
+        return _modules.where((module) => module.isCompleted == true).toList();
       default:
-        // 'Tous' shows all modules that are not subscribed yet
-        return _modules.where((module) => !module.isEnrolled).toList();
+        return _modules;
     }
   }
 
   // Fetch the student count for each module
-  void _fetchStudentCountForModules() async {
+  void fetchStudentCountForModules() async {
     try {
       for (var module in _modules) {
         var studentCount =
             await ModuleService().getUserCountByModule(module.id);
         setState(() {
-          module.studentCount = studentCount; 
+          module.studentCount = studentCount;
         });
       }
     } catch (error) {
+      // ignore: avoid_print
       print('Error fetching student count: $error');
+    }
+  }
+
+  // Method to handle user enrollment logic
+  void _enrollUser(int moduleId) async {
+    setState(() {
+    });
+
+    try {
+      final result = await UserService().enrollInModule(moduleId);
+
+      if (result['success'] == true) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Inscription réussie !'),
+            backgroundColor: Colors.green, 
+          ),
+        );
+        _fetchModules();
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Échec de l\'inscription.'),
+            backgroundColor: Colors.red, 
+          ),
+        );
+      }
+    } catch (e) {
+      String errorMessage = 'Erreur lors de l\'inscription.';
+      if (e.toString().contains('User is already enrolled in this module')) {
+        errorMessage = 'Vous êtes déjà inscrit à ce module.';
+      } else {
+        errorMessage = 'Erreur: ${e.toString()}';
+      }
+
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(errorMessage),
+          backgroundColor: Colors.red, 
+        ),
+      );
+    } finally {
+      setState(() {
+        
+      });
     }
   }
 
@@ -91,22 +181,24 @@ class _MesModulesPageState extends State<MesModulesPage> {
       onTap: () {
         setState(() {
           _selectedTab = title;
-          _filteredModules =
-              _filterModules(title);
+          _filteredModules = _filterModules(title);
         });
       },
       child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         decoration: BoxDecoration(
           color: _selectedTab == title ? primaryColor : Colors.white,
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(8),
           border: Border.all(
-            color: _selectedTab == title ? Colors.transparent : Colors.black,
+            color: _selectedTab == title
+                ? primaryColor
+                : Colors.grey.withOpacity(0.5),
           ),
         ),
         child: Text(
           title,
           style: TextStyle(
+            fontSize: 16,
             color: _selectedTab == title ? Colors.white : Colors.black,
             fontWeight:
                 _selectedTab == title ? FontWeight.bold : FontWeight.normal,
@@ -172,29 +264,51 @@ class _MesModulesPageState extends State<MesModulesPage> {
                 ],
               ),
             ),
-            const SizedBox(height: 20),
-            // Check if data is loading, error occurred, or data fetched
+            const SizedBox(height: 50),
+
             _isLoading
                 ? Center(child: CircularProgressIndicator())
                 : _hasError
                     ? Center(
                         child:
-                            Text('Error fetching modules. Please try again.'))
-                    : Expanded(
-                        child: ListView.builder(
-                          itemCount: _filteredModules.length,
-                          itemBuilder: (context, index) {
-                            var module = _filteredModules[index];
-                            return _buildCourseCard(
-                              title: module.title,
-                              description: module.description,
-                              rating: module.rating.toString(),
-                              students: module.studentCount.toString(),
-                              isEnrolled: module.isEnrolled,
-                            );
-                          },
-                        ),
-                      ),
+                            Text('Erreur lors de la récupération des modules'))
+                    : _filteredModules.isEmpty
+                        ? Center(
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                Icon(Icons.hourglass_disabled,
+                                    color: const Color.fromARGB(
+                                        255, 165, 165, 164),
+                                    size: 16),
+                                SizedBox(height: 30),
+                                Text(
+                                  'Aucun module trouvé',
+                                  style: TextStyle(
+                                    fontSize: 18.0,
+                                    fontWeight: FontWeight.bold,
+                                    color: Colors.grey,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          )
+                        : Expanded(
+                            child: ListView.builder(
+                              itemCount: _filteredModules.length,
+                              itemBuilder: (context, index) {
+                                var module = _filteredModules[index];
+                                return _buildCourseCard(
+                                  title: EncodingUtils.decode( module.title),
+                                  description:EncodingUtils.decode( module.description),
+                                  students: module.studentCount.toString(),
+                                  isEnrolled: module.isEnrolled,
+                                  moduleId: module.id,
+                                  index: index,
+                                );
+                              },
+                            ),
+                          ),
           ],
         ),
       ),
@@ -219,7 +333,7 @@ class _MesModulesPageState extends State<MesModulesPage> {
               Navigator.pushNamed(context, '/chats');
               break;
             case 4:
-              Navigator.pushNamed(context, '/profile');
+              Navigator.pushNamed(context, '/dashboard');
               break;
           }
         },
@@ -231,84 +345,108 @@ class _MesModulesPageState extends State<MesModulesPage> {
   Widget _buildCourseCard({
     required String title,
     required String description,
-    required String rating,
+    // required String rating,
     required String students,
     required bool isEnrolled,
+    required int moduleId,
+    required int index,
   }) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.2),
-            blurRadius: 6,
-            offset: const Offset(0, 4),
-          ),
-        ],
-      ),
-      child: Row(
-        children: [
-          const SizedBox(width: 16),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 16,
-                  ),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                const SizedBox(height: 5),
-                Text(
-                  description,
-                  style: const TextStyle(
-                    fontWeight: FontWeight.w200,
-                    fontSize: 12,
-                  ),
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                ),
-                const SizedBox(height: 5),
-                Row(
-                  children: [
-                    // Rating
-                    const Icon(Icons.star, color: secondaryColor, size: 16),
-                    const SizedBox(width: 5),
-                    Text(
-                      ' rating',
-                      style: const TextStyle(
-                        fontSize: 14,
-                        fontWeight: FontWeight.bold,
-                        color: secondaryColor,
-                      ),
-                    ),
-                    const SizedBox(width: 15),
-                    // Students
-                    const Icon(Icons.people, color: secondaryColor, size: 16),
-                    const SizedBox(width: 5),
-                    Text(
-                      '$students Apprenant',
-                      style: const TextStyle(
-                        fontSize: 14,
-                        color: Colors.grey,
-                      ),
-                    ),
-                  ],
-                ),
-              ],
+    return GestureDetector(
+      onTap: () {
+        Navigator.push(
+          context,
+          MaterialPageRoute(
+            builder: (context) => DetailModulePage(
+              module: _modules[index],
             ),
           ),
-          if (!isEnrolled)
+        );
+      },
+      child: Container(
+        margin: const EdgeInsets.only(bottom: 16),
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.grey.withOpacity(0.2),
+              blurRadius: 6,
+              offset: const Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Row(
+          children: [
+            const SizedBox(width: 16),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    title,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.bold,
+                      fontSize: 16,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 5),
+                  Text(
+                    description,
+                    style: const TextStyle(
+                      fontWeight: FontWeight.w300,
+                      fontSize: 14,
+                    ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                  const SizedBox(height: 10),
+                  Row(
+                    children: [
+                      const Icon(Icons.star, color: secondaryColor, size: 16),
+                      const SizedBox(width: 5),
+                      Text(
+                        // 'Rating: $rating ',
+                          'Rating',
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w400,
+                          fontSize: 12,
+                          color: Colors.grey,
+                        ),
+                      ),
+                      const SizedBox(width: 5),
+                      const Icon(Icons.people, color: secondaryColor, size: 16),
+                      const SizedBox(width: 5),
+                      Text(
+                        '$students Apprenants ',
+                        style: const TextStyle(
+                          fontWeight: FontWeight.w400,
+                          fontSize: 12,
+                          color: Colors.grey,
+                        ),
+                      ),
+                      const SizedBox(width: 20),
+                    ],
+                  ),
+                ],
+              ),
+            ),
             ElevatedButton(
               onPressed: () {
-                // Handle course inscription logic
+                if (!isEnrolled) {
+                  _enrollUser(moduleId);
+                } else {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => DetailModulePage(
+                        module: _modules[index],
+                      ),
+                    ),
+                  );
+                }
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: primaryColor,
@@ -318,15 +456,16 @@ class _MesModulesPageState extends State<MesModulesPage> {
                   borderRadius: BorderRadius.circular(10),
                 ),
               ),
-              child: const Text(
-                'S\'inscrire',
-                style: TextStyle(
+              child: Text(
+                isEnrolled ? 'Start' : 'S\'inscrire',
+                style: const TextStyle(
                   fontSize: 14,
                   color: Colors.white,
                 ),
               ),
             ),
-        ],
+          ],
+        ),
       ),
     );
   }

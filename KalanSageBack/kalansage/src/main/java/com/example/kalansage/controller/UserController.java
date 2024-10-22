@@ -4,6 +4,7 @@ package com.example.kalansage.controller;
 import com.example.kalansage.model.FileInfo;
 import com.example.kalansage.model.Role;
 import com.example.kalansage.model.User;
+import com.example.kalansage.repository.FileInfoRepository;
 import com.example.kalansage.repository.RoleRepository;
 import com.example.kalansage.repository.UserRepository;
 import com.example.kalansage.service.AbonnementService;
@@ -19,10 +20,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 
 @RestController
@@ -36,6 +34,8 @@ public class UserController {
     private AbonnementService abonnementService;
     @Autowired
     private FilesStorageServiceImpl filesStorageService;
+    @Autowired
+    private FileInfoRepository fileInfoRepository;
     @Autowired
     private RoleRepository roleRepository;
     @Autowired
@@ -58,17 +58,36 @@ public class UserController {
         String nomRole = "USER";
         Optional<Role> userRole = roleRepository.findRoleByNomRole(nomRole);
         if (userRole.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Collections.singletonMap("message", "Le rôle 'USER' n'existe pas. Veuillez contacter un administrateur."));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Collections.singletonMap("message", "Le rôle 'USER' n'existe pas. Veuillez contacter un administrateur."));
         }
+
         Optional<User> existingUser = userRepository.findByEmail(email);
         if (existingUser.isPresent()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Collections.singletonMap("message", "Un utilisateur avec cet email existe déjà."));
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Collections.singletonMap("message", "Un utilisateur avec cet email existe déjà."));
         }
-        // Save the file only if it is provided
+
         FileInfo fileInfo = null;
         if (file != null && !file.isEmpty()) {
-            fileInfo = filesStorageService.saveFile(file);
+            // Validate the image type (only allow PNG or JPEG)
+            String fileExtension = getExtension(Objects.requireNonNull(file.getOriginalFilename()));
+            if (!fileExtension.equalsIgnoreCase("png") && !fileExtension.equalsIgnoreCase("jpg") && !fileExtension.equalsIgnoreCase("jpeg")) {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body(Collections.singletonMap("message", "Oups! l'image doit être au format PNG, JPEG ou JPG."));
+            }
+
+            // Rename the file according to a specific format (e.g., nom_1.png)
+            String renamedFile = nom.replace(" ", "_") + "1." + fileExtension;
+
+            // Save the file to a specific folder
+            String specificFolderPath = "/profile";  // Adjust path as needed
+            fileInfo = filesStorageService.saveFileInSpecificFolderWithCustomName(file, specificFolderPath, renamedFile);
+
+            // Save the FileInfo object before associating it with the User
+            fileInfo = fileInfoRepository.save(fileInfo);
         }
+
         // Create a new user
         User user = new User();
         user.setNom(nom);
@@ -80,10 +99,15 @@ public class UserController {
         user.setDateInscription(new Date());
         user.setStatus(status);
         user.setRole(userRole.get());
-        user.setFileInfos(fileInfo);
+        user.setFileInfos(fileInfo); // Set the saved fileInfo object
+
         // Save the user
         userRepository.save(user);
-        return ResponseEntity.ok(Collections.singletonMap("message", "User created successfully!"));
+        return ResponseEntity.ok(Collections.singletonMap("message", "Utilisateur créé avec succès!"));
+    }
+
+    private String getExtension(String filename) {
+        return filename.substring(filename.lastIndexOf('.') + 1);
     }
 
     @PutMapping(path = "/modifier-user/{id}", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
@@ -92,7 +116,7 @@ public class UserController {
             @RequestParam(value = "nom", required = false) String nom,
             @RequestParam(value = "prenom", required = false) String prenom,
             @RequestParam(value = "email", required = false) String email,
-            @RequestParam("telephone") String telephone,
+            @RequestParam(value = "telephone", required = false) String telephone,
             @RequestParam(value = "username", required = false) String username,
             @RequestParam(value = "password", required = false) String password,
             @RequestParam(value = "role", required = false) String nomRole,
@@ -119,7 +143,7 @@ public class UserController {
         }
 
         // Mise à jour des champs de l'utilisateur
-        champModifier(user, nom, prenom, email, username, password, status, file);
+        champModifier(user, nom, prenom, email, telephone, username, password, status, file);
         userRepository.save(user);
         return ResponseEntity.ok(user);
     }
@@ -144,7 +168,7 @@ public class UserController {
         return true;
     }
 
-    private void champModifier(User user, String nom, String prenom, String email, String username, String password, Boolean status, MultipartFile file) throws IOException {
+    private void champModifier(User user, String nom, String prenom, String email,String telephone, String username, String password, Boolean status, MultipartFile file) throws IOException {
         if (nom != null && !nom.isEmpty()) {
             user.setNom(nom);
         }
@@ -156,6 +180,9 @@ public class UserController {
         }
         if (email != null && !email.isEmpty()) {
             user.setEmail(email);
+        }
+        if (telephone != null && !telephone.isEmpty()) {
+            user.setTelephone(telephone);
         }
         if (password != null && !password.isEmpty()) {
             user.setMotDePasse(passwordEncoder.encode(password));

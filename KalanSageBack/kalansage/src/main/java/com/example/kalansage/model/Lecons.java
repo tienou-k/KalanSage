@@ -7,6 +7,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
+
 @Data
 @Entity
 @NoArgsConstructor
@@ -21,6 +23,9 @@ public class Lecons {
     private String titre;
     private String description;
     private String contenu;
+    private Date dateAjout;
+    private Date dateModification;
+    private String videoPath;
 
 
     @ManyToOne
@@ -31,12 +36,14 @@ public class Lecons {
     @OneToOne(mappedBy = "lecon", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonManagedReference
     private Quiz quiz;
-    /*@ManyToOne
-    @JoinColumn(name = "module_id", nullable = false)
-    @JsonBackReference
-    private Module module;
 
-    @OneToOne(mappedBy = "lecons", cascade = CascadeType.ALL, orphanRemoval = true)
-    @JsonManagedReference
-    private Quiz quiz;*/
+
+    @PrePersist
+    protected void onCreate() {
+        this.dateAjout = new Date();
+    }
+    @PreUpdate
+    protected void onUpdate() {
+        this.dateModification = new Date();
+    }
 }

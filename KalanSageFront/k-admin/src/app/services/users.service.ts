@@ -8,7 +8,7 @@ import { AuthService } from './auth-service.service';
 })
 export class UserService {
   private apiUrl = 'http://localhost:8080/api/admins/utilisateurs';
-  private apiUserUrl = 'http://localhost:8080/api/users';
+  private apiUserUrl = 'http://localhost:8080/api/user';
   private abonnementapiUrl = 'http://localhost:8080/api/admins/abonnements';
 
   constructor(private http: HttpClient, private authService: AuthService) {}
@@ -29,9 +29,9 @@ export class UserService {
         headers: this.getAuthHeaders(),
       })
       .pipe(
-        tap((users) => console.log('Users fetched:', users)), 
+        tap((users) => console.log('Users fetched:', users)),
         catchError((error) => {
-          console.error('Error fetching users:', error); 
+          console.error('Error fetching users:', error);
           if (error.status === 401) {
             console.log('Token might be expired. Attempting refresh...');
             this.authService.refreshToken().subscribe(() => {
@@ -39,7 +39,7 @@ export class UserService {
               return this.getUsers();
             });
           }
-          throw error; 
+          throw error;
         })
       );
   }
@@ -103,4 +103,9 @@ export class UserService {
   //     headers: this.getAuthHeaders(),
   //   });
   // }
+  getTop(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUserUrl}/user/top5`, {
+      headers: this.getAuthHeaders(),
+    });
+  }
 }

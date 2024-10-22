@@ -6,7 +6,9 @@ import 'package:k_application/view/pages/categorie_page.dart';
 import 'package:k_application/view/pages/chat_page.dart';
 import 'package:k_application/view/pages/home_page.dart';
 import 'package:k_application/view/pages/mes_modules.dart';
-import 'package:k_application/view/pages/profile.dart';
+import 'package:k_application/view/pages/profile_home.dart';
+import 'package:k_application/view/pages/profile_modifier.dart';
+import 'package:k_application/view/pages/profile_parametre.dart';
 import 'package:k_application/view/screens/loading_screen.dart';
 import 'package:k_application/view/screens/splash_screen.dart';
 
@@ -21,14 +23,22 @@ class AppRoutes {
   static const String home = '/home';
   static const String categorie = '/categorie';
   static const String mesModules = '/mes_modules';
+  static const String lessonList = '/lessonList';
   static const String chats = '/chats';
-  static const String profile = '/profile';
+  //----------------------------------------------------------------
+  static const String profile = '/dashboard';
+  static const String profileModifier = '/profile_modifier';
+  static const String  profileSettings = '/profile_settings';
+  static const String profileScreen = '/profile_screen';
+  //----------------------------------------------------------------
+  static const String moduleDetails = '/module-details';
 
   // Method to handle routing
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
       case splash:
-        return MaterialPageRoute(builder: (_) => const SplashScreen());
+        return MaterialPageRoute(
+            builder: (_) => const SplashScreen());
       case welcome:
         return MaterialPageRoute(builder: (_) => const WelcomeScreen());
       case login:
@@ -36,7 +46,10 @@ class AppRoutes {
       case signup:
         return MaterialPageRoute(builder: (_) => const SignupScreen());
       case otpverification:
-        return MaterialPageRoute(builder: (_) => const OTPVerificationScreen(email: '',));
+        return MaterialPageRoute(
+            builder: (_) => const OTPVerificationScreen(
+                  email: '',
+                ));
       case home:
         return MaterialPageRoute(builder: (_) => const HomePage());
       case categorie:
@@ -46,9 +59,13 @@ class AppRoutes {
       case chats:
         return MaterialPageRoute(builder: (_) => ChatPage());
       case profile:
-        return MaterialPageRoute(builder: (_) => ProfilePage());
+        return MaterialPageRoute(builder: (_) => DashboardScreen());
+        case profileSettings:
+        return MaterialPageRoute(builder: (_) => ProfileSettings());
+        case profileModifier:
+        return MaterialPageRoute(builder: (_) => ProfileModifier());
       default:
-        return MaterialPageRoute(builder: (_) => const SplashScreen());
+        return MaterialPageRoute(builder: (_) => const WelcomeScreen());
     }
   }
 }

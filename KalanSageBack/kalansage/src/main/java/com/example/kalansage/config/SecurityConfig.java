@@ -45,7 +45,8 @@ public class SecurityConfig {
                         // Public endpoints
                         .requestMatchers(
                                 "/api/users/creer-user",
-                                "api/auth/**"
+                                "api/auth/**",
+                                "/images_du_projet/modules/**"
                         ).permitAll()
                         // General auth endpoints
 
@@ -60,6 +61,7 @@ public class SecurityConfig {
                         // User endpoints
                         .requestMatchers("/api/users/list-users", "/api/users/modifier-user").hasAnyAuthority("ROLE_USER", "ROLE_ADMIN")
                         .requestMatchers("/api/user").hasRole("USER")
+                        .requestMatchers("/api/bookmarks").hasRole("USER")
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(exception -> exception.authenticationEntryPoint(jwtAuthenticationEntryPoint))
@@ -82,7 +84,7 @@ public class SecurityConfig {
 
         configuration.setAllowedOrigins(Arrays.asList(
                 "http://localhost:4200",  // Angular IP (development)
-                "http://localhost:52583/",  // Flutter App IP
+                "http://localhost:59875/",  // Flutter App IP
                 "http://192.168.1.6"// Phone IP
         ));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));

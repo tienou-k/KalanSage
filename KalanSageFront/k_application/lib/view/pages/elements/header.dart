@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:k_application/services/authService.dart';
+import 'package:k_application/services/auth_service.dart';
 import 'package:k_application/utils/constants.dart';
 
 class HeaderPage extends StatefulWidget {
@@ -31,8 +31,8 @@ class _HeaderPage extends State<HeaderPage> {
         // _userEmail = userProfile['email'];
         // _userImageUrl = userProfile['imageUrl'];
       });
+    // ignore: empty_catches
     } catch (error) {
-      print('Error fetching user profile: $error');
     }
   }
 
@@ -76,7 +76,6 @@ class _HeaderPage extends State<HeaderPage> {
 
                     // Second row with username
                     Text(
-                      // '${_userPrenom ?? 'Utilisateur'} ${_userName ?? ''}',
                       _userPrenom ?? 'Utilisateur',
                       style: const TextStyle(
                         color: Colors.white,

@@ -19,14 +19,11 @@ public class UserBookmark {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
-
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
-
     @ManyToOne
     @JoinColumn(name = "module_id", nullable = false)
     private Module module;
-
     private Date bookmarkDate;
 }

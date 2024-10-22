@@ -13,17 +13,11 @@ import java.util.Optional;
 @Repository
 public interface ModuleRepository extends JpaRepository<Module, Long> {
     List<Module> findByCategorie(Categorie categorie);
-
-    List<Module> findCoursByPrix(float prix);
-
     boolean existsByTitre(String titre);
-
     Optional<Module> findModuleByTitre(String titreModule);
-
-    /*@Query("SELECT m FROM Module m LEFT JOIN UserModule um ON m.id = um.modules.id GROUP BY m ORDER BY COUNT(um.id) DESC")
-    List<Module> findTopModules(Pageable pageable);*/
     @Query("SELECT m FROM Module m LEFT JOIN UserModule um ON m.id = um.module.id GROUP BY m ORDER BY COUNT(um.id) DESC")
     List<Module> findTopModules(Pageable pageable);
+    List<Module> findByCategorie_IdCategorie(Long idCategorie);
 
-
+    Module findModuleById(Long id);
 }

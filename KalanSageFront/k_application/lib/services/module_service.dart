@@ -1,6 +1,7 @@
 import 'package:http/http.dart' as http;
-import 'package:k_application/models/leconModel.dart';
+import 'package:k_application/models/lecon_model.dart';
 import 'package:k_application/models/module_model.dart';
+import 'package:k_application/services/auth_service.dart';
 import 'package:k_application/utils/constants.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
@@ -50,31 +51,33 @@ class ModuleService {
     }
   }
 
-  // Fetch modules by category
+// Fetch modules by category
   Future<List<ModuleModel>> fetchModulesByCategory(String categoryId) async {
     String? token = await _getToken();
-
     if (token == null) {
       throw Exception('User is not authenticated. Token is null.');
     }
-
     final headers = {
       'Content-Type': 'application/json',
       'Authorization': 'Bearer $token',
     };
-
-    final response = await http.get(
-      Uri.parse('$apiUrl/categories/$categoryId/modules'),
-      headers: headers,
-    );
-
-    if (response.statusCode == 200) {
-      List<dynamic> jsonData = jsonDecode(response.body);
-      return jsonData.map((json) => ModuleModel.fromJson(json)).toList();
-    } else {
-      throw Exception('Failed to load modules in category: ${response.body}');
+    final url = '$apiUrl/categories/$categoryId/modules';
+    try {
+      final response = await http.get(Uri.parse(url), headers: headers);
+      if (response.statusCode == 200) {
+        List<dynamic> jsonData = jsonDecode(response.body);
+        return jsonData.map((json) => ModuleModel.fromJson(json)).toList();
+      } else if (response.statusCode == 204) {
+        return []; 
+      } else {
+        throw Exception('Failed to load modules in category: ${response.body}');
+      }
+    } catch (e) {
+      throw Exception('An error occurred while fetching modules: $e');
     }
   }
+
+
 
   // Fetch the top 5 modules
   Future<List<Map<String, dynamic>>> getTop5Modules() async {
@@ -164,16 +167,18 @@ class ModuleService {
     }
   }
 
-  // Fetch lessons by module ID
-  Future<List<LeconModel>> getLeconsByModule(int moduleId) async {
+ Future<List<LeconModel>> getLeconsByModule(int moduleId) async {
     String? token = await _getToken();
 
     if (token == null) {
       throw Exception('User is not authenticated. Token is null.');
     }
 
+    final url = '$apiUrl/modules/module/$moduleId/lecons';
+    print('Fetching lessons from: $url');
+
     final response = await http.get(
-      Uri.parse('$apiUrl/modules/module/$moduleId/lecons'),
+      Uri.parse(url),
       headers: {
         'Authorization': 'Bearer $token',
       },
@@ -183,10 +188,11 @@ class ModuleService {
       List<dynamic> jsonData = jsonDecode(response.body);
       return jsonData.map((json) => LeconModel.fromJson(json)).toList();
     } else {
+      print('Failed to fetch lessons: ${response.body}');
       throw Exception('Failed to fetch lessons: ${response.body}');
     }
   }
-// User count by Modules
+  // User count by Modules
   Future<int> getUserCountByModule(int moduleId) async {
     String? token = await _getToken();
 
@@ -209,29 +215,48 @@ class ModuleService {
     }
   }
 
- // Update bookmark status
-  Future<void> updateBookmarkStatus(ModuleModel module) async {
-     String? token = await _getToken();
-    try {
-      if (token == null) {
-        throw Exception('User is not authenticated. Token is null.');
-      }
+//addToBookmarks
+  Future<void> addToBookmarks(String moduleId, String userId) async {
+    // Implementation to add module to bookmarks
+    final token = await _getToken(); // Assuming this method exists
+    if (token == null) {
+      throw Exception('User is not authenticated. Token is null.');
+    }
 
-      final response = await http.put(
-        Uri.parse('$apiUrl/bookmark/${module.id}'),
-        body: json.encode({
-          'isBookmarked': module.isBookmarked,
-        }),
-        headers: {
-         'Authorization': 'Bearer $token',
-        },
-      );
+    final url = '$apiUrl/modules/${moduleId}/';
+    final headers = <String, String>{
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token',
+    };
+    final body = jsonEncode({'userId': userId, 'isBookmarked': true});
 
-      if (response.statusCode != 200) {
-        throw Exception('Failed to update bookmark status');
-      }
-    } catch (e) {
-      throw Exception('Error: $e');
+    final response =
+        await http.post(Uri.parse(url), headers: headers, body: body);
+
+    if (response.statusCode != 200) {
+      throw Exception('Failed to add to bookmarks: ${response.body}');
     }
   }
+
+  Future<void> removeFromBookmarks(String moduleId) async {
+    // Implementation to remove module from bookmarks
+    final token = await _getToken(); // Assuming this method exists
+    if (token == null) {
+      throw Exception('User is not authenticated. Token is null.');
+    }
+    final url = '$apiUrl/modules/$moduleId/bookmark';
+    final headers = <String, String>{
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token',
+    };
+    final body = jsonEncode({'userId': '', 'isBookmarked': false});
+
+    final response =
+        await http.post(Uri.parse(url), headers: headers, body: body);
+
+    if (response.statusCode != 200) {
+      throw Exception('Failed to remove from bookmarks: ${response.body}');
+    }
+  }
+
 }

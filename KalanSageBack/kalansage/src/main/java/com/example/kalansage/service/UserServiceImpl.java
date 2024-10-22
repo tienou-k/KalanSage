@@ -75,8 +75,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Optional<User> getUser(Long id) {
-        return userRepository.findById(id);
+    public User getUser(Long id) {
+        return userService.getUser(id);
     }
 
     @Override
@@ -101,10 +101,6 @@ public class UserServiceImpl implements UserService {
         // Implement notification handling logic here
     }
 
-    @Override
-    public User getUserById(Long userId) {
-        return userService.getUserById(userId);
-    }
 
     @Override
     public boolean hasComplete(User user, Module modules) {

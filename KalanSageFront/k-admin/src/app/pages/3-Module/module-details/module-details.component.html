@@ -30,12 +30,21 @@
     </div>
   </div>
   <!-- Course Price and Image -->
-  <div class="course-header-right">
-    <img
-      src="assets/course-image.png"
-      alt="Course Image"
-      class="course-image"
-    />
+  <div class="course-header-right" >
+<img
+  *ngIf="!isLoading && moduleDetails.image"
+  [src]="getImageUrl(moduleDetails.image)"
+  [alt]="moduleDetails.titre"
+  class="course-image"
+/>
+
+<img
+  *ngIf="!isLoading && !moduleDetails.image"
+  src="assets/path/to/fallback/image.jpg" 
+  alt="No image available"
+  class="fallback-image"
+/>
+
     <div class="price-info">
       <span class="original-price" *ngIf="moduleDetails.originalPrice">
         ${{ moduleDetails.originalPrice }}

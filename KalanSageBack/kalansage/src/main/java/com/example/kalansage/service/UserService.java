@@ -19,7 +19,7 @@ public interface UserService {
 
     Optional<User> getUtilisateur(String id);
 
-    Optional<User> getUser(Long id);
+    User getUser(Long id);
 
     Optional<User> trouverParEmail(String email);
 
@@ -29,7 +29,7 @@ public interface UserService {
 
     void recevoirNotification(Long id, Notification notification);
 
-    User getUserById(Long userId);
+    //User getUserById(Long userId);
 
     boolean hasComplete(User user, Module modules);
 }

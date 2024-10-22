@@ -21,7 +21,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     List<User> findByRole(Role role);
 
-
     @Query("SELECT u FROM User u JOIN u.abonnementUser a")
     List<User> findAllAbonnementUsers();
+
+    User findUserById(Long id);
 }

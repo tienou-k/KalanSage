@@ -135,7 +135,7 @@ export class ModuleCreateDialogComponent implements OnInit {
         titre: this.moduleForm.value.title,
         description: this.moduleForm.value.description,
         prix: this.moduleForm.value.price,
-        nomCategorie: this.moduleForm.value.category,
+        categorieId: this.moduleForm.value.category,
         dateCreation: new Date(),
         image: this.selectedFile,
       };

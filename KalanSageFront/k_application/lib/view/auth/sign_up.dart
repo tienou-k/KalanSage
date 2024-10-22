@@ -20,11 +20,6 @@ class _SignupScreenState extends State<SignupScreen> {
   bool _isLoading = false;
 
   @override
-  void initState() {
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.white,
@@ -210,7 +205,7 @@ class _SignupScreenState extends State<SignupScreen> {
         'username': _email ?? '',
         'password': _password ?? '',
         'role': 'USER',
-        'status': false, 
+        'status': false,
       };
 
       // Call the service to create a user
@@ -227,7 +222,11 @@ class _SignupScreenState extends State<SignupScreen> {
         );
 
         if (response['status'] != 'error') {
-          Navigator.pushNamed(context, '/opt_verification');
+          Navigator.pushNamed(
+            context,
+           '/otp-verification',
+            arguments: {'email': _email},
+          );
         }
       } else {
         CustomSnackBar.show(
@@ -238,7 +237,6 @@ class _SignupScreenState extends State<SignupScreen> {
         );
       }
     } catch (e) {
-      print('Error creating user: $e');
       CustomSnackBar.show(
         context,
         'Erreur lors de la création de l\'utilisateur: $e',
@@ -253,7 +251,6 @@ class _SignupScreenState extends State<SignupScreen> {
   }
 }
 
-// Custom SnackBar widget
 class CustomSnackBar {
   static void show(BuildContext context, String message,
       {Color? backgroundColor, IconData? icon, Color? textColor}) {

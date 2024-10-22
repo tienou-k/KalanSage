@@ -3,55 +3,50 @@ import { NavItem } from './nav-item/nav-item';
 export const navItems: NavItem[] = [
   {
     displayName: 'Dashboard',
-    iconName: 'solar:widget-add-line-duotone',
+    iconName: 'solar:home-line-duotone',
     route: '/dashboard',
   },
   {
     displayName: 'Abonnement',
-    iconName: 'solar:archive-minimalistic-line-duotone',
+    iconName: 'solar:card-line-duotone',
     route: '/abonnement',
   },
   {
     displayName: 'Modules',
-    iconName: 'solar:danger-circle-line-duotone',
+    iconName: 'solar:layers-line-duotone',
     route: '/module',
   },
   {
     displayName: 'Users',
-    iconName: 'solar:bookmark-square-minimalistic-line-duotone',
+    iconName: 'solar:users-group-rounded-line-duotone',
     route: '/user',
   },
   {
     displayName: 'Forum',
-    iconName: 'solar:file-text-line-duotone',
+    iconName: 'solar:chat-dots-line-duotone',
     route: '/forum',
   },
   {
     displayName: 'Partenaire',
-    iconName: 'solar:text-field-focus-line-duotone',
+    iconName: 'solar:book-bookmark-line-duotone',
     route: '/partenaire',
   },
   {
     displayName: 'Live',
-    iconName: 'solar:file-text-line-duotone',
+    iconName: 'solar:play-stream-line-duotone',
     route: '/live',
   },
-  // {
-  //   displayName: 'Parametre',
-  //   iconName: 'solar:tablet-line-duotone',
-  //   route: '/parametre',
-  // },
   {
     navCap: 'Insight',
   },
   {
     displayName: 'Notification',
-    iconName: 'solar:sticker-smile-circle-2-line-duotone',
+    iconName: 'solar:bell-line-duotone',
     route: '/notification',
   },
   {
     displayName: 'Inbox',
-    iconName: 'solar:planet-3-line-duotone',
+    iconName: 'solar:inbox-line-duotone',
     route: '/inbox',
   },
 ];

@@ -13,9 +13,9 @@ import java.util.Optional;
 
 @Repository
 public interface UserModuleRepository extends JpaRepository<UserModule, Long> {
-    List<UserModule> findByUser(User user);
-
-    //boolean existsByUserAndModules(User user, Module module);
     boolean existsByUserAndModule(User user, Module module);
     long countByModule(Module  module);
+    List<UserModule> findByUserId(long userId);
+    Optional<UserModule> findByUserIdAndModuleId(Long userId, Long moduleId);
+    boolean existsByUserIdAndModuleId(Long userId, Long moduleId);
 }

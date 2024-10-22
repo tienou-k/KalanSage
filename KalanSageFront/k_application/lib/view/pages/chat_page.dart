@@ -29,7 +29,7 @@ class _ChatPageState extends State<ChatPage> {
       case 3:
         break;
       case 4:
-        Navigator.pushNamed(context, '/profile');
+        Navigator.pushNamed(context, '/dashboard');
         break;
     }
   }

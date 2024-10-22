@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:k_application/utils/constants.dart';
 
-class ModuleDetailPage extends StatelessWidget {
+class ModuleDetailPage extends StatefulWidget {
   final String title;
   final String lessons;
   final String quizzes;
   final String imagePath;
+  final bool isBookmarked;
 
   const ModuleDetailPage({
     super.key,
@@ -13,13 +14,27 @@ class ModuleDetailPage extends StatelessWidget {
     required this.lessons,
     required this.quizzes,
     required this.imagePath,
+    this.isBookmarked = false,
   });
+
+  @override
+  _ModuleDetailPageState createState() => _ModuleDetailPageState();
+}
+
+class _ModuleDetailPageState extends State<ModuleDetailPage> {
+  late bool _isBookmarked; 
+
+  @override
+  void initState() {
+    super.initState();
+    _isBookmarked = widget.isBookmarked;
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(title),
+        title: Text(widget.title),
         backgroundColor: primaryColor,
       ),
       body: Padding(
@@ -27,18 +42,20 @@ class ModuleDetailPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Course Image
             Center(
-              child: Image.asset(
-                imagePath,
+              child: Image.network(
+                widget
+                    .imagePath, 
                 height: 200,
                 fit: BoxFit.contain,
+                errorBuilder: (context, error, stackTrace) {
+                  return const Icon(Icons.broken_image, size: 200);
+                },
               ),
             ),
             const SizedBox(height: 20),
-            // Course Title
             Text(
-              title,
+              widget.title,
               style: const TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 24,
@@ -47,19 +64,18 @@ class ModuleDetailPage extends StatelessWidget {
               overflow: TextOverflow.ellipsis,
             ),
             const SizedBox(height: 10),
-            // Lessons and Quizzes
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  lessons,
+                  widget.lessons,
                   style: const TextStyle(
                     fontSize: 16,
                     color: Colors.grey,
                   ),
                 ),
                 Text(
-                  quizzes,
+                  widget.quizzes,
                   style: const TextStyle(
                     fontSize: 16,
                     color: Colors.blue,
@@ -69,19 +85,22 @@ class ModuleDetailPage extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 20),
-            // Description or additional content can go here
             const Text(
               'Here you can put more details about the course',
               style: TextStyle(fontSize: 16, color: Colors.black54),
             ),
             const SizedBox(height: 20),
-            // 
             Align(
               alignment: Alignment.bottomRight,
               child: IconButton(
-                icon: const Icon(Icons.bookmark_border),
+                icon: Icon(
+                  _isBookmarked ? Icons.bookmark : Icons.bookmark_border,
+                  color: _isBookmarked ? Colors.blue : Colors.grey,
+                ),
                 onPressed: () {
-                  //
+                  setState(() {
+                    _isBookmarked = !_isBookmarked; 
+                  });
                 },
               ),
             ),

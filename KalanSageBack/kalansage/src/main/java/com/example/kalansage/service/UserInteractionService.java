@@ -4,6 +4,7 @@ import com.example.kalansage.model.Module;
 import com.example.kalansage.model.*;
 import com.example.kalansage.model.userAction.*;
 import com.example.kalansage.repository.*;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -19,8 +20,6 @@ public class UserInteractionService {
     private UserTestRepository userTestRepository;
     @Autowired
     private TestRepository testRepository;
-    @Autowired
-    private UserProgressRepository userProgressRepository;
     @Autowired
     private UserLeconRepository userLeconRepository;
     @Autowired
@@ -41,7 +40,7 @@ public class UserInteractionService {
     @Autowired
     private UserBadgeRepository userBadgeRepository;
     @Autowired
-    private EvaluationRepository evaluationRepository;
+    private ReviewRepository reviewRepository;
 
 
     // Gérer l'interaction avec le test
@@ -66,36 +65,28 @@ public class UserInteractionService {
     }
 
     // Gérer la progression de l'utilisateur
-    public UserProgress creerProgressionUtilisateur(Long userId, int pointsGagnes) {
-        Optional<User> user = userRepository.findById(userId);
-        if (user.isPresent()) {
-            UserProgress userProgress = new UserProgress();
-            userProgress.setUser(user.get());
-            userProgress.setPointsGagne(pointsGagnes);
-            userProgress.setStatus(ProgressStatus.EN_COURS);
-            userProgress.setDateProgress(new Date());
+    @Transactional
+    public void updateProgress(Long userId, Long moduleId, int progress) {
+        UserModule userModule = userModuleRepository.findByUserIdAndModuleId(userId, moduleId)
+                .orElseThrow(() -> new RuntimeException("User not found"));
 
-            return userProgressRepository.save(userProgress);
-        } else {
-            throw new RuntimeException("Utilisateur introuvable.");
+        // Update progress
+        userModule.setProgress(progress);
+
+        // If progress reaches 100, mark as completed
+        if (progress == 100) {
+            userModule.setCompleted(true);
+            userModule.setCompletionDate(new Date());
         }
+
+        userModuleRepository.save(userModule);
     }
 
-    public Optional<UserProgress> getUserProgress(Long userProgressId) {
-        return userProgressRepository.findById(userProgressId);
+    public UserModule getUserModule(Long userId, Long moduleId) {
+        return userModuleRepository.findByUserIdAndModuleId(userId, moduleId)
+                .orElseThrow(() -> new RuntimeException("UserModule not found"));
     }
 
-    public void mettreAJourProgressionUtilisateur(Long userProgressId, int pointsAdditionnels) {
-        Optional<UserProgress> userProgress = userProgressRepository.findById(userProgressId);
-
-        if (userProgress.isPresent()) {
-            UserProgress progression = userProgress.get();
-            progression.setPointsGagne(progression.getPointsGagne() + pointsAdditionnels);
-            userProgressRepository.save(progression);
-        } else {
-            throw new RuntimeException("Progression de l'utilisateur introuvable.");
-        }
-    }
 
     // Gérer l'interaction avec la leçon
     public UserLecon completerLecon(Long userId, Long leconId, int pointsGagnes) {
@@ -163,7 +154,6 @@ public class UserInteractionService {
         if (user.isEmpty() || abonnement.isEmpty()) {
             throw new IllegalArgumentException("Utilisateur ou Abonnement introuvable.");
         }
-        // Check if the user is already subscribed to this abonnement
         Optional<UserAbonnement> existingSubscription = userAbonnementRepository.findByUser_IdAndAbonnement_IdAbonnement(userId, abonnementId);
         if (existingSubscription.isPresent()) {
             throw new IllegalStateException("Vous avez déjà cet abonnement ! 🤗.");
@@ -185,7 +175,6 @@ public class UserInteractionService {
     public UserBadge obtenirBadge(Long userId, Long badgeId) {
         Optional<User> user = userRepository.findById(userId);
         Optional<Badge> badge = badgeRepository.findById(badgeId);
-
         if (user.isEmpty() || badge.isEmpty()) {
             throw new IllegalArgumentException("Utilisateur ou Badge introuvable.");
         }
@@ -193,53 +182,27 @@ public class UserInteractionService {
         userBadge.setUser(user.get());
         userBadge.setBadge(badge.get());
         userBadge.setDateEarned(new Date());
-
         return userBadgeRepository.save(userBadge);
     }
 
     // Soumettre une évaluation
-    public Evaluation soumettreEvaluation(Long userId, Long courseId, String commentaire, int etoiles) {
+    public Review soumettreReview(Long userId, Long courseId, String commentaire, int etoiles) {
         Optional<User> user = userRepository.findById(userId);
         Optional<Module> cours = moduleRepository.findById(courseId);
-
         if (user.isEmpty() || cours.isEmpty()) {
             throw new IllegalArgumentException("Utilisateur ou Cours introuvable.");
         }
-        Evaluation evaluation = new Evaluation();
-        evaluation.setUserId(userId);
-        evaluation.setModule(cours.get());
-        evaluation.setCommentaire(commentaire);
-        evaluation.setEtoiles(etoiles);
-
-        return evaluationRepository.save(evaluation);
+        Review review = new Review();
+        review.setUserId(userId);
+        review.setModule(cours.get());
+        review.setCommentaire(commentaire);
+        review.setEtoiles(etoiles);
+        return reviewRepository.save(review);
     }
 
-    // Mettre à jour les points et vérifier les badges
-    public void mettreAJourPoints(Long userId, int pointsGagnes) {
-        Optional<UserProgress> userProgressOpt = userProgressRepository.findByUser_Id(userId);
-        if (userProgressOpt.isPresent()) {
-            UserProgress userProgress = userProgressOpt.get();
-            userProgress.setPointsGagne(userProgress.getPointsGagne() + pointsGagnes);
-            userProgress.setDateProgress(new Date());
-            userProgressRepository.save(userProgress);
-
-            verifierPourBadge(userId, userProgress.getPointsGagne());
-        } else {
-            // Créer une nouvelle progression de l'utilisateur si elle n'existe pas
-            UserProgress userProgress = new UserProgress();
-            userProgress.setUser(userRepository.findById(userId).orElseThrow(() -> new IllegalArgumentException("Utilisateur introuvable.")));
-            userProgress.setPointsGagne(pointsGagnes);
-            userProgress.setDateProgress(new Date());
-            userProgressRepository.save(userProgress);
-
-            verifierPourBadge(userId, pointsGagnes);
-        }
-    }
 
     private void verifierPourBadge(Long userId, int pointsActuels) {
-        // Logique pour vérifier et attribuer un badge en fonction des points actuels
         if (pointsActuels >= 1000) {
-            // Attribuer un badge pour 1000 points, par exemple
             Badge badge = (Badge) badgeRepository.findByNomBadge("Badge 1000 Points")
                     .orElseThrow(() -> new IllegalArgumentException("Badge introuvable."));
             obtenirBadge(userId, badge.getIdBadge());
@@ -256,8 +219,28 @@ public class UserInteractionService {
                 .collect(Collectors.toList());
     }
 
-    public Abonnement findMostSubscribedAbonnement() {
-        List<Abonnement> abonnements = userAbonnementRepository.findMostSubscribedAbonnement();
+    public Abonnement getMostSubscribedAbonnement() {
+        List<Abonnement> abonnements = userAbonnementRepository.getMostSubscribedAbonnement();
         return abonnements.isEmpty() ? null : abonnements.get(0);
+    }
+
+    public List<Module> getModulesForUser(long userId) {
+        Optional<User> user = userRepository.findById(userId);
+        if (user.isEmpty()) {
+            throw new RuntimeException("User not found");
+        }
+
+        // Fetch all modules where the user is enrolled
+        List<UserModule> enrollments = userModuleRepository.findByUserId(userId);
+
+
+        List<Module> modules = enrollments.stream()
+                .map(UserModule::getModule)
+                .collect(Collectors.toList());
+        return modules;
+    }
+
+    public boolean isUserAlreadyEnrolled(Long userId, Long moduleId) {
+        return userModuleRepository.existsByUserIdAndModuleId(userId, moduleId);
     }
 }

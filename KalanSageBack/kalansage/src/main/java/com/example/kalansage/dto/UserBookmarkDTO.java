@@ -3,9 +3,8 @@ package com.example.kalansage.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.ToString;
 
-import java.time.LocalDateTime;
+import java.util.Date;
 
 @Data
 @AllArgsConstructor
@@ -14,7 +13,7 @@ public class UserBookmarkDTO {
     private Long id;
     private Long userId;
     private Long moduleId;
-    private LocalDateTime bookmarkDate;
+    private Date bookmarkDate;
 
 
 }

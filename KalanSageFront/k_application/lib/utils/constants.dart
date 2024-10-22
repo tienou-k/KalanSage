@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
+import 'dart:convert';
 
+// API URL
 const String apiUrl = 'http://localhost:8080/api';
-
-
 
 // App colors
 const Color primaryColor = Color(0xFF194860);
@@ -24,3 +24,13 @@ const TextStyle footerTextStyle = TextStyle(
   fontSize: 12,
   color: Colors.white54,
 );
+
+
+
+class EncodingUtils {
+  // Method to decode a UTF-8 encoded string
+  static String decode(String input) {
+    return utf8.decode(input.codeUnits);
+  }
+}
+

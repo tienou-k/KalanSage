@@ -19,16 +19,11 @@ class CategorieService {
   // Retrieve all categories
   Future<List<CategorieModel>> fetchCategories() async {
     await _initPrefs();
-
-    // Retrieve the current user from SharedPreferences
     String? currentUserJson = _prefs?.getString('currentUser');
 
     if (currentUserJson == null) {
-      print('No user found. Please log in again.');
       throw Exception('User not authenticated. Token is null.');
     }
-
-    // Parse the JSON to extract the token
     final currentUser = jsonDecode(currentUserJson);
     String? token = currentUser['token'];
 
@@ -48,13 +43,9 @@ class CategorieService {
 
     if (response.statusCode == 200) {
       List<dynamic> jsonData = jsonDecode(response.body);
-
-      // Create a list of categories and retrieve module count
       List<CategorieModel> categories = [];
       for (var json in jsonData) {
         var category = CategorieModel.fromJson(json);
-
-        // Fetch and set the module count for each category
         category.moduleCount =
             await fetchModulesCountInCategorie(category.id.toString());
         categories.add(category);
@@ -62,7 +53,6 @@ class CategorieService {
       return categories;
     } else {
       String errorMessage = 'Failed to load categories: ${response.body}';
-      print(errorMessage);
       throw Exception(errorMessage);
     }
   }
@@ -70,30 +60,23 @@ class CategorieService {
   // Retrieve the count of modules in a specific category
   Future<int> fetchModulesCountInCategorie(String categoryId) async {
     await _initPrefs();
-
     String? currentUserJson = _prefs?.getString('currentUser');
-
     if (currentUserJson == null) {
       throw Exception('User not authenticated. Token is null.');
     }
-
     final currentUser = jsonDecode(currentUserJson);
     String? token = currentUser['token'];
-
     if (token == null) {
       throw Exception('No token found. User not authenticated.');
     }
-
     final headers = {
       'Content-Type': 'application/json',
       'Authorization': 'Bearer $token',
     };
-
     final response = await http.get(
       Uri.parse('$apiUrl/categories/$categoryId/modules/count'),
       headers: headers,
     );
-
     if (response.statusCode == 200) {
       final responseData = jsonDecode(response.body);
       return responseData['moduleCount'];

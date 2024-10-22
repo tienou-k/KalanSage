@@ -19,11 +19,12 @@ public class Categorie {
     private String nomCategorie;
     private String Description;
 
-    @OneToMany(mappedBy = "categorie",
-            cascade = {CascadeType.PERSIST,
-                    CascadeType.MERGE}, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "categorie", cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY)
     @JsonManagedReference
     private List<Module> modules;
 
-
+    @Override
+    public String toString() {
+        return "Categorie [idCategorie=" + idCategorie + ", nomCategorie=" + nomCategorie + "]";
+    }
 }

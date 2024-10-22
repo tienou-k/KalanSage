@@ -6,18 +6,11 @@ import java.util.List;
 
 public interface LeconsService {
 
-    Lecons modifierLecon(Long id, Lecons lecons);
-
+    Lecons modifierLecon(Lecons lecons);
     Lecons creerLecon(Lecons lecons);
-
     void supprimerLecon(Long id);
-
     Lecons getLeconById(Long id);
-
     List<Lecons> findByModule_Id(Long moduleId);
-
     List<Lecons> listerLecons();
-
-
     Long countByModule_Id(Long moduleId);
 }

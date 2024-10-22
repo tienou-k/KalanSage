@@ -1,10 +1,12 @@
 package com.example.kalansage.controller;
 
 import com.example.kalansage.dto.CategorieDTO;
+import com.example.kalansage.dto.ModulesDTO;
 import com.example.kalansage.model.Categorie;
 import com.example.kalansage.model.Module;
 import com.example.kalansage.repository.CategorieRepository;
 import com.example.kalansage.service.CategorieService;
+import com.example.kalansage.service.ModuleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.http.HttpStatus;
@@ -13,7 +15,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -25,7 +26,8 @@ public class CategorieController {
 
     @Autowired
     private CategorieService categorieService;
-
+    @Autowired
+    private ModuleService modulesservice;
     @Autowired
     private CategorieRepository categorieRepository;
 
@@ -82,21 +84,41 @@ public class CategorieController {
     }
 
 
+    // Get modules by category ID
     @GetMapping("/{id}/modules")
     public ResponseEntity<?> getModulesListInCategorie(@PathVariable Long id) {
-        try {
-            List<Module> modules = categorieService.getModulesListInCategorie(id);
-            if (modules.isEmpty()) {
-                return ResponseEntity.ok(new ArrayList<>());
-            }
-            return ResponseEntity.ok(modules);
-        } catch (ResourceNotFoundException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("Catégorie non trouvée avec l'ID : " + id);
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Une erreur s'est produite : " + e.getMessage());
+        if (id == null || id <= 0) {
+            return ResponseEntity.badRequest().body("Invalid category ID.");
         }
+
+        List<Module> modules = modulesservice.getModulesByCategory_Id(id);
+
+        if (modules.isEmpty()) {
+            // Log the event here, if necessary
+            return ResponseEntity.status(HttpStatus.NO_CONTENT).body("No modules found for category ID: " + id);
+        }
+
+        // Map the list of Module entities to a list of ModulesDTO
+        List<ModulesDTO> modulesDTO = modules.stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+
+        return ResponseEntity.ok(modulesDTO);
+    }
+
+    private ModulesDTO convertToDTO(Module module) {
+        if (module == null) {
+            return null;
+        }
+        return new ModulesDTO(
+                module.getId(),
+                module.getTitre(),
+                module.getDescription(),
+                module.getPrix(),
+                module.getImageUrl(),
+                module.getDateCreation(),
+                module.getCategorie().getNomCategorie()
+        );
     }
 
 

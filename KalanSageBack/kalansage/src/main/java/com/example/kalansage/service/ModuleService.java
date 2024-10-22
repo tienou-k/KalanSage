@@ -8,28 +8,13 @@ import java.util.List;
 import java.util.Optional;
 
 public interface ModuleService {
-    Module creerModule(ModulesDTO module);
-
-    Module modifierModule(Long id, ModulesDTO modules);
-
+    Module creerModule(Module module);
+    Module modifierModule(Module modules);
     void supprimerModule(Long idModule);
-
-
-    Optional<Module> trouverModuleParTitre(String titreModule);
-
-
     Optional<ModulesDTO> getModule(Long id);
-
     List<ModulesDTO> listerModule();
-
-    boolean moduleExiste(String titre);
-
-    List<Module> getModuleByCategorie(Long categorieId);
-
-    List<Module> getModulePrix(Long prix);
-
-
     UserModule inscrireAuModule(Long userId, Long moduleId);
-
     List<Module> getTop5Modules();
+    List<Module> getModulesByCategory_Id(Long id);
+    Module getModuleById(Long moduleId);
 }

@@ -18,4 +18,12 @@ public class FileInfo {
     private Long id;
     private String nom;
     private String url;
+
+    private String fileType;
+
+
+    public FileInfo(String nom, String url) {
+        this.nom = nom;
+        this.url = url;
+    }
 }

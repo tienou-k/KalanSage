@@ -14,6 +14,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -85,13 +86,17 @@ public class AbonnementController {
     }
 
     @GetMapping("/most-subscribed")
-    public ResponseEntity<Abonnement> getMostSubscribedAbonnement() {
-        Abonnement mostSubscribed = userInteractionService.findMostSubscribedAbonnement();
-        if (mostSubscribed == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+    public ResponseEntity<Object> getMostSubscribedAbonnement() {
+        Abonnement mostSubscribed = userInteractionService.getMostSubscribedAbonnement();
+
+        if (mostSubscribed != null) {
+            return ResponseEntity.ok(mostSubscribed);
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Collections.singletonMap("message", "Aucun abonnement trouvé"));
         }
-        return ResponseEntity.ok(mostSubscribed);
     }
+
 
     @GetMapping("/users")
     public ResponseEntity<List<User>> getAbonnementUsers() {

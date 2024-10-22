@@ -57,23 +57,32 @@ public class OTPService {
     }
 
     // Verify OTP
+    // Verify OTP
     public boolean verifyOTP(String email, String otp) {
         Optional<User> userOptional = userRepository.findByEmail(email);
+
         if (userOptional.isPresent()) {
             User user = userOptional.get();
+
+            // Find OTP associated with the user
             Optional<OTP> otpOptional = otpRepository.findByUserIdAndOtp(user.getId(), otp);
 
             if (otpOptional.isPresent()) {
                 OTP otpEntity = otpOptional.get();
-                // Check if OTP is still valid (not expired)
+
+                // Check if OTP is still valid (i.e., not expired)
                 if (otpEntity.getOtpExpiry().isAfter(LocalDateTime.now())) {
+                    // Activate the user
                     user.setStatus(true);
                     userRepository.save(user);
+
+                    // Remove the OTP after successful verification
                     otpRepository.delete(otpEntity);
-                    return true;
+                    return true;  // OTP is valid and user is activated
                 }
             }
         }
-        return false;
+        return false;  // OTP verification failed or OTP is expired
     }
+
 }

@@ -1,7 +1,6 @@
-
-
 class ModuleModel {
   final int id;
+  final String userId;
   final String title;
   final double price;
   final String description;
@@ -10,14 +9,14 @@ class ModuleModel {
   final int quiz;
   final String iconUrl;
   int studentCount = 0;
-  //
   final bool isCompleted;
   final bool isInProgress;
   late final bool isEnrolled;
-   bool isBookmarked;
+  bool isBookmarked;
 
   ModuleModel({
     required this.id,
+    required this.userId,
     required this.title,
     required this.price,
     required this.description,
@@ -34,6 +33,7 @@ class ModuleModel {
   // Add a method to update the student count
   ModuleModel copyWith({
     int? id,
+    String? userId,
     String? title,
     double? price,
     String? description,
@@ -42,17 +42,22 @@ class ModuleModel {
     int? quiz,
     String? iconUrl,
     int? studentCount,
+    bool? isCompleted,
+    bool? isInProgress,
+    bool? isEnrolled,
+    bool? isBookmarked,
   }) {
     return ModuleModel(
       id: id ?? this.id,
+      userId: userId ?? this.userId,
       title: title ?? this.title,
       price: price ?? this.price,
       description: description ?? this.description,
       leconCount: leconCount ?? this.leconCount,
-      isCompleted: isCompleted,
-      isInProgress: isInProgress,
-      isBookmarked: isBookmarked,
-      isEnrolled: isEnrolled,
+      isCompleted: isCompleted ?? this.isCompleted,
+      isInProgress: isInProgress ?? this.isInProgress,
+      isBookmarked: isBookmarked ?? this.isBookmarked,
+      isEnrolled: isEnrolled ?? this.isEnrolled,
       imageUrl: imageUrl ?? this.imageUrl,
       quiz: quiz ?? this.quiz,
       iconUrl: iconUrl ?? this.iconUrl,
@@ -61,27 +66,22 @@ class ModuleModel {
 
   factory ModuleModel.fromJson(Map<String, dynamic> json) {
     return ModuleModel(
-      id: json['id'] != null ? json['id'] as int : 0,
-      title: json['titre'] as String? ?? '',
-      description: json['description'] as String? ?? '',
+      id: json['id'] ?? 0,
+      userId: json['userId'] ?? '',
+      title: json['titre'] ?? '',
+      description: json['description'] ?? '',
       price: (json['prix'] != null ? (json['prix'] as num).toDouble() : 0.0),
-      leconCount: (json['lecons'] != null && json['lecons'] is List)
-          ? (json['lecons'] as List).length
-          : 0,
-      imageUrl: json['imageUrl'] ?? '',
-      quiz: json['quiz'] != null ? json['quiz'] as int : 0,
+      leconCount:
+          (json['lecons'] is List) ? (json['lecons'] as List).length : 0,
+      imageUrl: json['imageUrl']?.toString() ?? '',
+      quiz: json['quiz'] ?? 0,
       iconUrl: json['iconUrl'] ?? '',
-      // Handle null values for booleans with null-coalescing operator
-      isCompleted: json['isCompleted'] as bool? ?? false,
-      isInProgress: json['isInProgress'] as bool? ?? false,
-      isEnrolled: json['isEnrolled'] as bool? ?? false,
-      isBookmarked: json['isBookmarked'] as bool? ?? false,
+      isCompleted: json['isCompleted'] ?? false,
+      isInProgress: json['isInProgress'] ?? false,
+      isEnrolled: json['isEnrolled'] ?? false,
+      isBookmarked: json['isBookmarked'] ?? false,
     );
   }
 
-  get image => null;
-
-  get rating => null;
-
-  get duration => null;
+  get skills => null;
 }

@@ -28,4 +28,6 @@ public interface CategorieService {
     Categorie getCategoriebyId(Long idCategorie);
 
     int getModulesCountInCategorie(Long categorieId);
+
+    Categorie getCategorieById(Long id);
 }

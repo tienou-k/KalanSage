@@ -4,6 +4,8 @@ import com.example.kalansage.model.userAction.Test;
 import com.example.kalansage.model.userAction.UserModule;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -18,6 +20,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "MODULES")
+@JsonIgnoreProperties({"categorie"})
 public class Module {
 
     @Id
@@ -27,8 +30,10 @@ public class Module {
     private String titre;
     private String description;
     private double prix;
+    private String imageUrl;
     private Date dateCreation;
     private Integer pointGagnes;
+    private boolean isBookmarked = false;
 
 
     @ManyToOne
@@ -37,6 +42,7 @@ public class Module {
     private Categorie categorie;
 
     @OneToMany(mappedBy = "module", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
     private Set<Lecons> lecons = new HashSet<>();
 
     @OneToMany(mappedBy = "module", cascade = CascadeType.ALL, orphanRemoval = true)
@@ -45,10 +51,16 @@ public class Module {
 
     @OneToMany(mappedBy = "module", cascade = CascadeType.ALL, orphanRemoval = true)
     @JsonIgnore
-    private Set<Evaluation> evaluations = new HashSet<>();
+    private Set<Review> reviews = new HashSet<>();
 
     @OneToOne(mappedBy = "module")
     @JsonIgnore
     private Test test;
+
+    //--------------------Module certificat--------------------------------
+    @Override
+    public String toString() {
+        return "Module [id=" + id + ", titre=" + titre + ", description=" + description + ", prix=" + prix + "]";
+    }
 
 }

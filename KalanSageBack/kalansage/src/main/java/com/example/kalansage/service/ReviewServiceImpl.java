@@ -1,9 +1,9 @@
 package com.example.kalansage.service;
 
-import com.example.kalansage.model.Evaluation;
+import com.example.kalansage.model.Review;
 import com.example.kalansage.model.Module;
 import com.example.kalansage.model.User;
-import com.example.kalansage.repository.EvaluationRepository;
+import com.example.kalansage.repository.ReviewRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,17 +13,17 @@ import java.util.Optional;
 import java.util.Set;
 
 @Service
-public class EvaluationServiceImpl implements EvaluationService {
+public class ReviewServiceImpl implements ReviewService {
 
     @Autowired
-    private EvaluationRepository evaluationRepository;
+    private ReviewRepository reviewRepository;
     @Autowired
     private UserService userService;
     @Autowired
     private ModuleServiceImpl modulesService;
 
-    public Evaluation creerEvaluation(Long userId, Long moduleId, String comment, int rating) {
-        User user = userService.getUserById(userId);
+    public Review creerReview(Long id, Long moduleId, String comment, int rating) {
+        User user = userService.getUser(id);
         Module modules = modulesService.getModuleModel(moduleId);
         if (modules == null) {
             throw new RuntimeException("Course not retrouvéeee");
@@ -31,55 +31,55 @@ public class EvaluationServiceImpl implements EvaluationService {
         if (!userService.hasComplete(user, modules)) {
             throw new RuntimeException("L'utilisateur n'a pas achevé ce cours.");
         }
-        Evaluation evaluation = new Evaluation();
+        Review review = new Review();
         Set<User> userSet = new HashSet<>();
         userSet.add(user);
-        evaluation.setUsers(userSet);
+        review.setUsers(userSet);
 
-        evaluation.setModule(modules);
-        evaluation.setCommentaire(comment);
-        evaluation.setEtoiles(rating);
-        return evaluationRepository.save(evaluation);
+        review.setModule(modules);
+        review.setCommentaire(comment);
+        review.setEtoiles(rating);
+        return reviewRepository.save(review);
     }
 
 
     @Override
-    public Evaluation creerEvaluation(Evaluation evaluation) {
-        return evaluationRepository.save(evaluation);
+    public Review creerReview(Review review) {
+        return reviewRepository.save(review);
     }
 
     @Override
-    public Evaluation modifierEvaluation(Evaluation evaluation) {
-        Optional<Evaluation> existingEvaluation = evaluationRepository.findById(evaluation.getIdEvaluation());
-        if (existingEvaluation.isPresent()) {
-            Evaluation updatedEvaluation = existingEvaluation.get();
-            updatedEvaluation.setEtoiles(evaluation.getEtoiles());
-            updatedEvaluation.setCommentaire(evaluation.getCommentaire());
-            updatedEvaluation.setModule(evaluation.getModule());
-            return evaluationRepository.save(updatedEvaluation);
+    public Review modifierReview(Review review) {
+        Optional<Review> existingReview = reviewRepository.findById(review.getIdReview());
+        if (existingReview.isPresent()) {
+            Review updatedReview = existingReview.get();
+            updatedReview.setEtoiles(review.getEtoiles());
+            updatedReview.setCommentaire(review.getCommentaire());
+            updatedReview.setModule(review.getModule());
+            return reviewRepository.save(updatedReview);
         } else {
-            throw new IllegalArgumentException("Évaluation introuvable avec l'ID : " + evaluation.getIdEvaluation());
+            throw new IllegalArgumentException("Review introuvable avec l'ID : " + review.getIdReview());
         }
     }
 
     @Override
-    public void supprimerEvaluation(Long idEvaluation) {
-        Optional<Evaluation> evaluationOptional = evaluationRepository.findById(idEvaluation);
-        if (evaluationOptional.isPresent()) {
-            evaluationRepository.delete(evaluationOptional.get());
+    public void supprimerReview(Long idReview) {
+        Optional<Review> reviewOptional = reviewRepository.findById(idReview);
+        if (reviewOptional.isPresent()) {
+            reviewRepository.delete(reviewOptional.get());
         } else {
-            throw new IllegalArgumentException("Évaluation introuvable avec l'ID : " + idEvaluation);
+            throw new IllegalArgumentException("Rieview introuvable avec l'ID : " + idReview);
         }
     }
 
     @Override
-    public Optional<Evaluation> getEvaluation(Long idEvaluation) {
-        return evaluationRepository.findById(idEvaluation);
+    public Optional<Review> getReview(Long idReview) {
+        return reviewRepository.findById(idReview);
     }
 
     @Override
-    public List<Evaluation> listerEvaluations() {
-        return evaluationRepository.findAll();
+    public List<Review> listerReviews() {
+        return reviewRepository.findAll();
     }
 }
 

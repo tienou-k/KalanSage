@@ -22,8 +22,8 @@ public class CertificatService {
     @Autowired
     private TestService testService;
 
-    public Certificat issueCertificate(Long userId, Long moduleId) {
-        User user = userService.getUserById(userId);
+    public Certificat issueCertificate(Long id, Long moduleId) {
+        User user = userService.getUser(id);
         Module modules = moduleService.getModuleModel(moduleId);
 
         // Check if user has passed the course's test

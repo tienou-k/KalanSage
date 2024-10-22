@@ -1,5 +1,4 @@
 package com.example.kalansage.service;
-
 import com.example.kalansage.model.Lecons;
 import com.example.kalansage.model.Module;
 import com.example.kalansage.repository.LeconsRepository;
@@ -7,7 +6,6 @@ import com.example.kalansage.repository.ModuleRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import java.util.List;
 import java.util.Optional;
 
@@ -18,34 +16,48 @@ public class LeconsServiceImpl implements LeconsService {
     private LeconsRepository leconsRepository;
     @Autowired
     private ModuleRepository moduleRepository;
+    @Autowired
+    private FilesStorageServiceImpl filesStorageService;
 
     public LeconsServiceImpl(LeconsRepository leconsRepository) {
         this.leconsRepository = leconsRepository;
     }
 
 
+    // Method to save the video
+    @Override
     public Lecons creerLecon(Lecons lecon) {
-        Module module = moduleRepository.findById(lecon.getModule().getId())
-                .orElseThrow(() -> new EntityNotFoundException("Module not found"));
-        lecon.setModule(module);
+        // Check if a module with the same title already exists
+        if (leconsRepository.existsByTitreAndDescriptionAndContenu(lecon.getTitre(), lecon.getContenu(), lecon.getDescription())) {
+            throw new RuntimeException("Une Lecon avec le même"+ lecon.getTitre() +"existe déjà.");
+        }
+        lecon.setTitre(lecon.getTitre().trim());
+        lecon.setDescription(lecon.getDescription());
+        lecon.setContenu(lecon.getContenu());
+        if (lecon.getModule() != null) {
+            Module module = moduleRepository.findModuleByTitre(lecon.getModule().getTitre())
+                    .orElseThrow(() -> new RuntimeException("Module n'existe pas !"));
+            lecon.setModule(module);
+        } else {
+            throw new RuntimeException("Module non spécifiée !");
+        }
         return leconsRepository.save(lecon);
     }
-
 
     public boolean leconExiste(String titre, String description, String contenu) {
         return leconsRepository.existsByTitreAndDescriptionAndContenu(titre, description, contenu);
     }
 
 
-    public Lecons modifierLecon(Long leconId, Lecons updatedLecon) {
-        return leconsRepository.findById(leconId)
-                .map(lecon -> {
-                    lecon.setTitre(updatedLecon.getTitre());
-                    lecon.setDescription(updatedLecon.getDescription());
-                    lecon.setContenu(updatedLecon.getContenu());
-                    return leconsRepository.save(lecon);
-                })
-                .orElseThrow(() -> new RuntimeException("Leçon non trouvée"));
+    @Override
+    public Lecons modifierLecon(Lecons lecon) {
+        // Check if the lesson exists before updating (can be done in the controller as well)
+        Optional<Lecons> existingLecon = leconsRepository.findById(lecon.getIdLecon());
+        if (existingLecon.isPresent()) {
+            return leconsRepository.save(lecon);  // Save the updated lesson
+        } else {
+            throw new EntityNotFoundException("Leçon avec ID " + lecon.getIdLecon() + " n'existe pas.");
+        }
     }
 
 

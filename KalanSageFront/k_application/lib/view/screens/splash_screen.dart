@@ -24,7 +24,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   void initState() {
     super.initState();
     // Initialize the timer for auto-play functionality
-    _timer = Timer.periodic(const Duration(seconds: 3), (Timer timer) {
+    _timer = Timer.periodic(const Duration(seconds: 5), (Timer timer) {
       if (_currentPage < images.length - 1) {
         _currentPage++;
       } else {
@@ -33,7 +33,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
 
       _pageController.animateToPage(
         _currentPage,
-        duration: const Duration(milliseconds: 300),
+        duration: const Duration(milliseconds: 500),
         curve: Curves.easeInOut,
       );
     });

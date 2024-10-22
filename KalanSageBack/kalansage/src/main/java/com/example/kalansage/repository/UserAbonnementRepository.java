@@ -19,7 +19,7 @@ public interface UserAbonnementRepository extends JpaRepository<UserAbonnement, 
     Optional<UserAbonnement> findByUser_IdAndAbonnement_IdAbonnement(Long userId, Long abonnementId);
 
     @Query("SELECT ua.abonnement FROM UserAbonnement ua GROUP BY ua.abonnement ORDER BY COUNT(ua.user) DESC")
-    List<Abonnement> findMostSubscribedAbonnement();
+    List<Abonnement> getMostSubscribedAbonnement();
 
     @Query("SELECT ua.user FROM UserAbonnement ua WHERE ua.abonnement.idAbonnement = :abonnementId")
     List<User> findUsersByAbonnementId(@Param("abonnementId") Long abonnementId);

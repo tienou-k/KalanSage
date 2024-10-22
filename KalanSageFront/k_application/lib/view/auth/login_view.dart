@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:k_application/services/authService.dart';
+import 'package:k_application/services/auth_service.dart';
 import 'package:k_application/utils/constants.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -15,7 +15,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final AuthService _authService = AuthService();
   final _formKey = GlobalKey<FormState>();
   bool _isLoading = false;
-  bool _passwordVisible = false; // Toggle password visibility
+  bool _passwordVisible = false; 
 
   // Handle login logic
   Future<void> _login() async {
@@ -27,24 +27,13 @@ class _LoginScreenState extends State<LoginScreen> {
       try {
         String email = _emailController.text;
         String password = _passwordController.text;
-
-        // Debug: Print the entered email and password
-        print(
-            'Attempting to log in with email: $email and password: $password');
-
-        final user = await _authService.login(email, password);
-
-        // Debug: Check if user is null
+        final user = await _authService.login(email, password, context);
         if (user != null) {
-          print('Login successful. Navigating to home page.');
           Navigator.pushReplacementNamed(context, '/home');
         } else {
-          print('Login failed. No user returned.');
           _showSnackbar('La connexion a échoué. Veuillez réessayer.');
         }
       } catch (error) {
-        // Debug: Log the error
-        print('Error during login: $error');
         _showSnackbar('La connexion a échoué.');
       } finally {
         setState(() {
@@ -52,8 +41,6 @@ class _LoginScreenState extends State<LoginScreen> {
         });
       }
     } else {
-      // Debug: Log validation failure
-      print('Form validation failed');
     }
   }
 
@@ -205,8 +192,7 @@ class _LoginScreenState extends State<LoginScreen> {
               // Forgot password and create account
               TextButton(
                 onPressed: () {
-                  // Debug: Forgot password button pressed
-                  print('Forgot password button pressed');
+                  Navigator.pushNamed(context, '/forgot-password');
                 },
                 child: const Text(
                   'Mot de passe oublié ?',
@@ -216,8 +202,6 @@ class _LoginScreenState extends State<LoginScreen> {
               TextButton(
                 onPressed: () {
                   Navigator.pushNamed(context, '/signup');
-                  // Debug: Create account button pressed
-                  print('Navigating to sign up page');
                 },
                 child: const Text(
                   'Vous n\'avez pas de compte ? Créer',

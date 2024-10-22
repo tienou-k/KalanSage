@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:k_application/models/module_model.dart';
+import 'package:k_application/services/auth_service.dart';
 import 'package:k_application/services/module_service.dart';
 import 'package:k_application/utils/constants.dart';
 import 'package:k_application/view/pages/details_module_page.dart';
@@ -54,7 +55,7 @@ class _CategoryDetailsPage extends State<CategoryDetailsPage> {
               },
             ),
             title: Text(
-              widget.categoryName,
+              EncodingUtils.decode(widget.categoryName),
               style: TextStyle(
                 fontSize: 24,
                 fontWeight: FontWeight.bold,
@@ -78,11 +79,14 @@ class _CategoryDetailsPage extends State<CategoryDetailsPage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.hourglass_empty, size: 80, color: Colors.grey),
+                  Icon(Icons.hourglass_empty,
+                      size: 80, color: const Color.fromARGB(103, 25, 72, 96)),
                   SizedBox(height: 16),
                   Text(
                     'Aucun module disponible dans cette catégorie.',
-                    style: TextStyle(fontSize: 18, color: Colors.grey),
+                    style: TextStyle(
+                        fontSize: 18,
+                        color: const Color.fromARGB(96, 237, 106, 25)),
                     textAlign: TextAlign.center,
                   ),
                 ],
@@ -183,22 +187,6 @@ class _CategoryDetailsPage extends State<CategoryDetailsPage> {
   }
 }
 
-// Helper function to get asset image path based on module name
-String getModuleImage(String moduleName) {
-  switch (moduleName) {
-    case 'Java':
-      return 'assets/images/modules/java.jpg';
-    case 'SpringBoot':
-      return 'assets/images/modules/SpringBoot.png';
-    case 'INFORMATIQUE':
-      return 'assets/images/modules/informatique.jpg';
-    // Add more cases as per your modules
-    default:
-      return 'assets/images/default_module.png';
-  }
-}
-
-// Course Highlight Card Widget
 class CourseHighlightCard extends StatelessWidget {
   final ModuleModel module;
   final VoidCallback onTap;
@@ -211,7 +199,6 @@ class CourseHighlightCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-
     return GestureDetector(
       onTap: onTap,
       child: Card(
@@ -221,64 +208,84 @@ class CourseHighlightCard extends StatelessWidget {
           borderRadius: BorderRadius.circular(12),
         ),
         clipBehavior: Clip.antiAlias,
-        child: Container(
-          width: 230, 
-          padding: const EdgeInsets.all(10.0), 
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Top Row (Icon and Lesson/Quiz Information)
-              Row(
+        child: Stack(
+          children: [
+            // Background Image
+            Positioned.fill(
+              child: Image.network(
+                module.imageUrl,
+                fit: BoxFit.cover,
+                errorBuilder: (context, error, stackTrace) {
+                  return Container(
+                    color: primaryColor,
+                    child: const Center(child: Icon(Icons.error)),
+                  );
+                },
+              ),
+            ),
+            // Content overlaying the background
+            Container(
+              width: 230,
+              padding: const EdgeInsets.all(10.0),
+              decoration: BoxDecoration(
+                // Adding a gradient to make text more readable
+                gradient: LinearGradient(
+                  colors: [
+                    primaryColor.withOpacity(0.6),
+                    Colors.black.withOpacity(0.3),
+                  ],
+                  begin: Alignment.bottomCenter,
+                  end: Alignment.topCenter,
+                ),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  CircleAvatar(
-                    radius: 16,
-                    backgroundColor:
-                        secondaryColor, 
-                    child: Icon(
-                      Icons.school, 
+                  // Top Row (Icon and Lesson/Quiz Information)
+                  Row(
+                    children: [
+                      CircleAvatar(
+                        radius: 16,
+                        backgroundColor: secondaryColor,
+                        child: Icon(
+                          Icons.school,
+                          color: Colors.white,
+                        ),
+                      ),
+                      SizedBox(width: 8),
+                      Text(
+                        '${module.leconCount} leçons • ${module.quiz} quizzes',
+                        style: TextStyle(
+                          fontSize: 12,
+                          color: Colors.grey[300],
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 10),
+                  Text(
+                    EncodingUtils.decode(module.title),
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
                       color: Colors.white,
                     ),
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                  SizedBox(width: 8),
+                  SizedBox(height: 5),
                   Text(
-                    '${module.leconCount} leçons • ${module.quiz} quizzes',
+                    EncodingUtils.decode(module.description),
                     style: TextStyle(
                       fontSize: 12,
-                      color: Colors.grey,
+                      color: Colors.grey[300],
                     ),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                   ),
                 ],
               ),
-              SizedBox(height: 10), 
-              Text(
-                module.title,
-                style: TextStyle(
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
-                maxLines: 2,
-                overflow: TextOverflow.ellipsis,
-              ),
-              SizedBox(height: 5),
-              Text(
-                module.description,
-                style: TextStyle(
-                  fontSize: 12,
-                  color: Colors.grey,
-                ),
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-              ),
-              Align(
-                alignment: Alignment.bottomRight,
-                child: Image.asset(
-                  'assets/images/illustration.png', 
-                  height: 50,
-                  fit: BoxFit.contain,
-                ),
-              ),
-            ],
-          ),
+            ),
+          ],
         ),
       ),
     );
@@ -288,7 +295,7 @@ class CourseHighlightCard extends StatelessWidget {
 // Popular Course Card Widget with Asset Images
 class CourseCard extends StatefulWidget {
   final ModuleModel module;
-
+  
   const CourseCard({
     super.key,
     required this.module,
@@ -299,10 +306,43 @@ class CourseCard extends StatefulWidget {
 }
 
 class _CourseCardState extends State<CourseCard> {
+  bool _isLoading = false;
+
+  Future<void> _updateBookmarkStatus() async {
+    if (!_isLoading) {
+      setState(() => _isLoading = true);
+      try {
+        await AuthService().getCurrentUser();
+        
+        if (widget.module.isBookmarked) {
+          await ModuleService().removeFromBookmarks(widget.module.id.toString());
+        } else {
+          await ModuleService().addToBookmarks(widget.module.id.toString(), widget.module.userId);
+        }
+      } catch (e) {
+        _handleUpdateFailure(e);
+      } finally {
+        setState(() => _isLoading = false);
+      }
+    }
+  }
+
+  void _handleUpdateFailure(dynamic error) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        content: 
+        Text(
+          'Methode non implenté',
+          textAlign: TextAlign.center,
+        ),
+        duration: const Duration(seconds: 2),
+        backgroundColor:secondaryColor ,
+        ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    String imagePath = getModuleImage(widget.module.title);
-
     return Container(
       decoration: BoxDecoration(
         color: Colors.white,
@@ -320,45 +360,62 @@ class _CourseCardState extends State<CourseCard> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            // Display image from assets
             Expanded(
-              child: Image.asset(imagePath, fit: BoxFit.cover),
+              child: Image.network(
+                widget.module.imageUrl,
+                fit: BoxFit.fill,
+                errorBuilder: (context, error, stackTrace) {
+                  return Container(
+                    color: Colors.grey.shade300,
+                    child: const Center(child: Icon(Icons.error)),
+                  );
+                },
+                loadingBuilder: (context, child, loadingProgress) {
+                  if (loadingProgress == null) return child;
+                  return Center(
+                    child: CircularProgressIndicator(),
+                  );
+                },
+              ),
             ),
-            SizedBox(height: 0),
-            Text(widget.module.title,
-                style: TextStyle(fontWeight: FontWeight.bold)),
-            SizedBox(height: 1),
+            const SizedBox(height: 0),
+            Text(
+              EncodingUtils.decode(widget.module.title),
+              style: TextStyle(fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 1),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('${widget.module.leconCount} Lessons',
-                    style: TextStyle(fontSize: 12)),
-                Text('${widget.module.quiz} Quiz',
-                    style: TextStyle(fontSize: 12)),
+                Text(
+                  '${widget.module.leconCount} Lessons',
+                  style: TextStyle(fontSize: 12),
+                ),
+                Text(
+                  '${widget.module.quiz} Quiz',
+                  style: TextStyle(fontSize: 12),
+                ),
               ],
             ),
-            SizedBox(height: 10),
+            const SizedBox(height: 5),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text('${widget.module.price} CFA',
-                    style: TextStyle(
-                      fontSize: 14,
-                      fontWeight: FontWeight.bold,
-                      color: secondaryColor,
-                    )),
-                IconButton(
-                  icon: Icon(
-                    widget.module.isBookmarked
-                        ? Icons.bookmark
-                        : Icons.bookmark_border,
+                Text(
+                  '${widget.module.price} CFA',
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.bold,
                     color: secondaryColor,
                   ),
-                  onPressed: () {
-                    setState(() {
-                      widget.module.isBookmarked = !widget.module.isBookmarked;
-                      ModuleService().updateBookmarkStatus(widget.module);
-                    });
+                ),
+                IconButton(
+                  icon: Icon(
+                    widget.module.isBookmarked ? Icons.bookmark : Icons.bookmark_border,
+                    color: secondaryColor,
+                  ),
+                  onPressed: () async {
+                    await _updateBookmarkStatus();
                   },
                 ),
               ],

@@ -38,12 +38,12 @@ public class User extends Utilisateur {
     //---------------------Utilisateur evaluation-----------------------------------------
     @ManyToMany
     @JoinTable(
-            name = "user_evaluation",
+            name = "user_review",
             joinColumns = @JoinColumn(name = "user_id"),
-            inverseJoinColumns = @JoinColumn(name = "evaluation_id")
+            inverseJoinColumns = @JoinColumn(name = "review_id")
     )
     @JsonIgnore
-    private Set<Evaluation> evaluations = new HashSet<>();
+    private Set<Review> reviews = new HashSet<>();
 
     //---------------------Utilisateur live session-----------------------------------------
     @OneToMany

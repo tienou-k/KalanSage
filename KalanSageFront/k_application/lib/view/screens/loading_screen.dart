@@ -45,7 +45,7 @@ class _SplashScreenState extends State<SplashScreen> {
                 ),
                 // Subtitle
                 const Text(
-                  'L\'éducation est la clé',
+                  'L\'éducation est la clé de l\'avenir',
                   style: TextStyle(
                     fontSize: 18,
                     color: Colors.white70,

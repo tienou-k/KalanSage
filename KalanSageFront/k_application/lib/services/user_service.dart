@@ -1,4 +1,5 @@
 import 'package:http/http.dart' as http;
+import 'package:k_application/models/module_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
 import '../models/user_model.dart';
@@ -98,19 +99,40 @@ class UserService {
   Future<Map<String, dynamic>> updateUser(
       int userId, Map<String, dynamic> userData) async {
     final token = await _getCurrentUserToken();
-    final response = await http.put(
+    final request = http.MultipartRequest(
+      'PUT',
       Uri.parse('$apiUrl/users/modifier-user/$userId'),
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': 'Bearer $token',
-      },
-      body: jsonEncode(userData),
     );
-
+    if (userData['nom'] != null) request.fields['nom'] = userData['nom'];
+    if (userData['prenom'] != null) {
+      request.fields['prenom'] = userData['prenom'];
+    }
+    if (userData['email'] != null) request.fields['email'] = userData['email'];
+    if (userData['username'] != null) {
+      request.fields['username'] = userData['username'];
+    }
+    if (userData['password'] != null) {
+      request.fields['password'] = userData['password'];
+    }
+    if (userData['status'] != null) {
+      request.fields['status'] = userData['status'].toString();
+    }
+    if (userData['telephone'] != null) {
+      request.fields['telephone'] = userData['telephone'];
+    }
+    if (userData['file'] != null) {
+      request.files.add(
+        await http.MultipartFile.fromPath('file', userData['file'].path),
+      );
+    }
+    request.headers['Authorization'] = 'Bearer $token';
+    final response = await request.send();
     if (response.statusCode == 200) {
-      return jsonDecode(response.body);
+      final responseData = await response.stream.bytesToString();
+      return jsonDecode(responseData);
     } else {
-      throw Exception('Failed to update user: ${response.body}');
+      throw Exception(
+          'Failed to update user: ${await response.stream.bytesToString()}');
     }
   }
 
@@ -312,7 +334,7 @@ Future<Map<String, dynamic>> enrollInModule(int moduleId) async {
     }
   }
 
-  verifyOTP(Map<String, String> map) {}
+
 
    // Assuming you have a method to get current user ID or user-related info
   Future<bool> isUserEnrolledInModule(int userId, int moduleId) async {
@@ -331,8 +353,26 @@ Future<Map<String, dynamic>> enrollInModule(int moduleId) async {
         throw Exception('Failed to load enrollment status');
       }
     } catch (e) {
-      print('Error checking enrollment: $e');
       return false;
     }
   }
+
+  Future<List<ModuleModel>> getModulesForUser(int userId) async {
+    try {
+      // Assuming this is a network call
+      final response = await http.get(Uri.parse('$apiUrl/modules/$userId'));
+      if (response.statusCode == 200) {
+        var data = jsonDecode(response.body);
+        // Parse and return the data
+        return (data as List)
+            .map((module) => ModuleModel.fromJson(module))
+            .toList();
+      } else {
+        throw Exception('Failed to load modules');
+      }
+    } catch (e) {
+      throw Exception('Error fetching modules: $e');
+    }
+  }
+
 }

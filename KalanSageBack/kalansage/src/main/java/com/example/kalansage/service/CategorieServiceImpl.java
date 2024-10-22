@@ -4,12 +4,14 @@ import com.example.kalansage.dto.CategorieDTO;
 import com.example.kalansage.model.Categorie;
 import com.example.kalansage.model.Module;
 import com.example.kalansage.repository.CategorieRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 
 @Service
@@ -71,6 +73,19 @@ public class CategorieServiceImpl implements CategorieService {
         return categorieRepository.findById(categorieId)
                 .map(categorie -> categorie.getModules().size())
                 .orElse(0);
+    }
+
+    // Implement the getCategorieById method
+    @Override
+    public Categorie getCategorieById(Long id) {
+        // Fetch the category by its ID using the repository
+        Optional<Categorie> categorieOptional = categorieRepository.findById(id);
+        // Check if the category was found
+        if (categorieOptional.isPresent()) {
+            return categorieOptional.get();
+        } else {
+            throw new EntityNotFoundException("Category with ID " + id + " not found");
+        }
     }
 
     @Override

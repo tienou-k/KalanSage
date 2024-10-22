@@ -41,6 +41,7 @@ export class ModuleComponent implements OnInit {
     this.fetchModules();
   }
 
+  //-------------------------------- //--------------------------------
   fetchModules(): void {
     this.moduleService.listerModules().subscribe({
       next: (modules) => {
@@ -49,7 +50,8 @@ export class ModuleComponent implements OnInit {
           date: new Date(module.dateCreation).toLocaleDateString(),
           titre: module.titre,
           description: module.description,
-          image: module.image,
+          // Directly use the imageUrl from the response or fall back to the default image if not available
+          image: module.imageUrl ? module.imageUrl : '',
           prix: module.prix,
           nomCategorie: module.nomCategorie,
         }));
@@ -68,8 +70,13 @@ export class ModuleComponent implements OnInit {
     this.setPagedItems(event.pageIndex, event.pageSize);
   }
 
-  openModuleDetails(id: number): void {
+ /* openModuleDetails(id: number): void {
     this.router.navigate(['/modules', id]);
+  }*/
+  openModuleDetails(id: number): void {
+    this.router.navigate(['/modules', id], {
+      state: { image: this.items.find((item) => item.id === id)?.image },
+    });
   }
 
   openCreateDialog(module?: any): void {

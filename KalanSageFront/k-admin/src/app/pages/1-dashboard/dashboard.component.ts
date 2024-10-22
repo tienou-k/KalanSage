@@ -74,9 +74,8 @@ export class DashboardComponent implements OnInit {
   }
 
   fetchTopModules(): void {
-    this.moduleService.getTop5Modules().subscribe(
+    this.userService.getTop().subscribe(
       (modules) => {
-        // Assuming the backend returns an array of modules with 'titre', 'inscris', and 'review'
         this.topModules = modules;
       },
       (error) => {

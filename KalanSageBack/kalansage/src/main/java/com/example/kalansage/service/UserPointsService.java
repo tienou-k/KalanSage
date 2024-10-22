@@ -15,7 +15,7 @@ public class UserPointsService {
     private UserService userService;
 
     public void awardPoints(Long userId, int points) {
-        User user = userService.getUserById(userId);
+        User user = userService.getUser(userId);
         UserPoints userPoints = user.getUserPoints();
 
         if (userPoints == null) {

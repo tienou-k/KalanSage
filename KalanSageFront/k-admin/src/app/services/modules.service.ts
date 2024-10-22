@@ -8,7 +8,7 @@ import { AuthService } from './auth-service.service';
 })
 export class ModuleService {
   private apiUrl = 'http://localhost:8080/api/modules';
-  private categoriesUrl = 'http://localhost:8080/api/admins/categories';
+  private categoriesUrl = 'http://localhost:8080/api/categories';
 
   constructor(private http: HttpClient, private authService: AuthService) {}
 
@@ -63,11 +63,7 @@ export class ModuleService {
     });
   }
 
-  getTopCourses(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/modules/top`, {
-      headers: this.getAuthHeaders(),
-    });
-  }
+  
 
   // Fetch a single module by ID
   getModuleById(id: number): Observable<any> {
@@ -81,11 +77,7 @@ export class ModuleService {
       headers: this.getAuthHeaders(),
     });
   }
-  /* getUsersByModule(moduleId: number): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/${moduleId}/user-count`, {
-      headers: this.getAuthHeaders(),
-    });
-  }*/
+  
   // Fetch all categories with proper authorization headers
   getCategories(): Observable<any[]> {
     const headers = this.getAuthHeaders();

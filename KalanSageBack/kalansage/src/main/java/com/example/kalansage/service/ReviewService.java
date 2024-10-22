@@ -8,7 +8,7 @@ import java.util.Optional;
 public interface ReviewService {
     Review creerReview(Review review);
 
-    Review modifierReview(Review Review);
+    Review modifierReview(Review review);
 
     void supprimerReview(Long idReview);
 

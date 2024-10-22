@@ -12,19 +12,19 @@ import java.util.Set;
 @Entity
 @NoArgsConstructor
 @AllArgsConstructor
-@Table(name = "EVALUATION")
+@Table(name = "Review")
 public class Review {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
-    private Long idEvaluation;
+    private Long idReview;
     private int etoiles;
     private String commentaire;
 
 
     @ManyToMany
     @JoinTable(
-            name = "user_evaluation",
-            joinColumns = @JoinColumn(name = "evaluation_id"),
+            name = "user_review",
+            joinColumns = @JoinColumn(name = "review_id"),
             inverseJoinColumns = @JoinColumn(name = "user_id")
     )
     @EqualsAndHashCode.Exclude
@@ -32,11 +32,6 @@ public class Review {
     @JsonIgnore
     private Set<User> users = new HashSet<>();
 
-
-    /*@ManyToOne
-    @JoinColumn(name = "modules_id")
-    @JsonBackReference
-    private Module modules;*/
     @ManyToOne
     @JoinColumn(name = "module_id", nullable = false)
     @JsonBackReference

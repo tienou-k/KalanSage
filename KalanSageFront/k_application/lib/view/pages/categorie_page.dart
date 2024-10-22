@@ -41,7 +41,7 @@ class _CategoriePage extends State<CategoriePage> {
         Navigator.pushNamed(context, '/chats');
         break;
       case 4:
-        Navigator.pushNamed(context, '/profile');
+        Navigator.pushNamed(context, '/dashboard');
         break;
     }
   }

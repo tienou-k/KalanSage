@@ -22,11 +22,13 @@ export class ModuleDetailComponent implements OnInit {
   lecons: any[] = [];
   quizzes: any[] = [];
   student: any;
+  isLoading: boolean = false;
   studentCount: number = 0;
   leconCount: number = 0;
   quizCount: number = 0;
   moduleDetails: any = {
     titre: '',
+    image: '',
     duration: '',
     apprenants: 0,
     level: '',
@@ -34,6 +36,7 @@ export class ModuleDetailComponent implements OnInit {
     quiz: 0,
     prix: 0,
     description: '',
+    nomCategorie: '',
   };
   selectedTabIndex = 0;
   selectedLessonIndex: number | null = null;
@@ -54,11 +57,16 @@ export class ModuleDetailComponent implements OnInit {
   ngOnInit(): void {
     this.moduleId = Number(this.route.snapshot.paramMap.get('id'));
     this.fetchModuleDetails(this.moduleId);
+    this.route.queryParamMap.subscribe((params) => {
+      if (params.has('image')) {
+        this.moduleDetails.image = params.get('image') || '';
+      }
+    });
+    this.fetchModuleDetails(this.moduleId);
     this.getLeconsByModule();
     this.getQuizzesByModule();
     this.getStudentsCount();
   }
-
   fetchModuleDetails(id: number): void {
     this.moduleService.getModuleById(id).subscribe(
       (module) => {
@@ -105,13 +113,12 @@ export class ModuleDetailComponent implements OnInit {
     );
   }
 
-
   onTabChange(index: number): void {
     this.selectedTabIndex = index;
   }
 
   startCourse(): void {
-    console.log('Module started:', this.moduleDetails.titre);
+    //
   }
 
   goBack(): void {
@@ -137,5 +144,18 @@ export class ModuleDetailComponent implements OnInit {
     dialogRef.afterClosed().subscribe(() => {
       console.log('The video player dialog was closed');
     });
+  }
+
+  getImageUrl(image: string): string {
+    if (!image) return '';
+    try {
+      const basePath = '/static/images_du_projet/modules/';
+      const imageUrl = basePath + image;
+      console.log('Generated Image URL:', imageUrl); // Log the full image URL
+      return imageUrl;
+    } catch (error) {
+      console.error('Error processing image URL:', error);
+      return ''; // Or return a default image path
+    }
   }
 }

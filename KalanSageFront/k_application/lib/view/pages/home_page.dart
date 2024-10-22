@@ -54,7 +54,7 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       _searchQuery = query;
       if (_searchQuery.isEmpty) {
-        _filteredModules = _modules; // Show all if the search is empty
+        _filteredModules = _modules; 
       } else {
         _filteredModules = _modules
             .where((module) =>
@@ -81,7 +81,7 @@ class _HomePageState extends State<HomePage> {
         Navigator.pushNamed(context, '/chats');
         break;
       case 4:
-        Navigator.pushNamed(context, '/profile');
+        Navigator.pushNamed(context, '/dashboard');
         break;
     }
   }
@@ -113,7 +113,7 @@ class _HomePageState extends State<HomePage> {
                     const SizedBox(height: 20),
                     TextField(
                       onChanged:
-                          _onSearch, // Call the search method on input change
+                          _onSearch,
                       decoration: InputDecoration(
                         hintText: 'Rechercher...',
                         prefixIcon:
@@ -140,7 +140,7 @@ class _HomePageState extends State<HomePage> {
                         childAspectRatio: 0.75,
                       ),
                       itemCount:
-                          _filteredModules.length, // Use filteredModules here
+                          _filteredModules.length,
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
                       itemBuilder: (context, index) {
@@ -172,7 +172,7 @@ class _HomePageState extends State<HomePage> {
                         ),
                         GestureDetector(
                           onTap: () {
-                            Navigator.pushNamed(context, '/mescours');
+                            Navigator.pushNamed(context, '/mes_modules');
                           },
                           child: const Text(
                             'voir',
