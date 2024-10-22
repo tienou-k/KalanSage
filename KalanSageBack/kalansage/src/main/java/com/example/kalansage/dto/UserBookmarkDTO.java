@@ -3,13 +3,18 @@ package com.example.kalansage.dto;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
+
+import java.time.LocalDateTime;
 
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class ModuleResponseDTO {
+public class UserBookmarkDTO {
     private Long id;
-    private String titre;
-    private String description;
-    private double prix;
+    private Long userId;
+    private Long moduleId;
+    private LocalDateTime bookmarkDate;
+
+
 }

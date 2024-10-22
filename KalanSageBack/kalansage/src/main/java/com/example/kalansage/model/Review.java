@@ -13,7 +13,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name = "EVALUATION")
-public class Evaluation {
+public class Review {
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long idEvaluation;
