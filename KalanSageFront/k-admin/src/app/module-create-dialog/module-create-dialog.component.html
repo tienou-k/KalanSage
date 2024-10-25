@@ -6,16 +6,15 @@
     <mat-icon>close</mat-icon>
   </button>
 </div>
-<!--  -->
+
 <form [formGroup]="moduleForm" class="module-form">
   <div class="form-container">
     <!-- Image Upload Section -->
     <div class="image-upload">
       <label class="section-label">Couverture du module</label>
-      <div class="image-dropzone">
+      <div class="image-dropzone" aria-label="Upload module cover image">
         <div class="upload-text">
           <input type="file" (change)="onFileSelected($event)" />
-          <!-- <mat-icon color="accent">image</mat-icon> -->
           <p>
             Glisser déposer ici, ou
             <span class="select-text">Sélectionner</span>
@@ -27,7 +26,7 @@
           *ngIf="imagePreviewUrl"
           [src]="imagePreviewUrl"
           class="custom-image"
-          alt="Image Preview"
+          alt="Aperçu de l'image"
         />
       </div>
     </div>
@@ -58,9 +57,9 @@
             {{ category.nomCategorie }}
           </mat-option>
           <!-- Option to add new category -->
-          <mat-option (click)="openAddCategoryDialog()"
-            >+ Ajouter une nouvelle catégorie</mat-option
-          >
+          <mat-option (click)="openAddCategoryDialog()">
+            + Ajouter une nouvelle catégorie
+          </mat-option>
         </mat-select>
         <mat-error
           *ngIf="
@@ -95,13 +94,14 @@
             />
           </mat-form-field>
           <div class="actions">
-            <button mat-raised-button (click)="addNewCategory()" class="button submit" >
+            <button mat-raised-button (click)="addNewCategory()" class="button submit">
               Ajouter
             </button>
-            <button mat-button (click)="closeCategoryDialog()" class="button reset" >Annuler</button>
+            <button mat-button (click)="closeCategoryDialog()" class="button reset">Annuler</button>
           </div>
         </div>
       </ng-template>
+
       <!-- Description and Price Section -->
       <div class="bottom-section">
         <mat-form-field appearance="outline" class="description-field">
@@ -144,7 +144,6 @@
           </button>
         </div>
       </div>
-      <!-- </div> -->
     </div>
   </div>
 </form>

@@ -31,7 +31,7 @@ class _CustomBottomNavBarState extends State<CustomBottomNavBar> {
             'assets/icons/grid_view.svg', 1), 
         _buildBottomNavItem(
             'assets/icons/book.svg', 2), 
-        _buildBottomNavItem('assets/icons/chat_bubble_outline.svg',
+        _buildBottomNavItem('assets/icons/bookmarked.svg',
             3), 
         _buildBottomNavItem(
             'assets/icons/User.svg', 4),

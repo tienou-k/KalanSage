@@ -3,9 +3,11 @@ package com.example.kalansage.controller;
 
 import com.example.kalansage.dto.AbonnementDTO;
 import com.example.kalansage.model.Abonnement;
+import com.example.kalansage.model.Module;
 import com.example.kalansage.model.User;
 import com.example.kalansage.repository.AbonnementRepository;
 import com.example.kalansage.service.AbonnementService;
+import com.example.kalansage.service.ModuleServiceImpl;
 import com.example.kalansage.service.UserInteractionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -27,7 +29,7 @@ public class AbonnementController {
     @Autowired
     private UserInteractionService userInteractionService;
     @Autowired
-    private AbonnementRepository abonnementRepository;
+    private ModuleServiceImpl moduleServiceimpl;
 
     @PostMapping("/creer-abonnement")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
@@ -95,6 +97,12 @@ public class AbonnementController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(Collections.singletonMap("message", "Aucun abonnement trouvé"));
         }
+    }
+
+    @GetMapping("/top5")
+    public ResponseEntity<List<Module>> getTop5Modules() {
+        List<Module> topModules = moduleServiceimpl.getTop5Modules();
+        return ResponseEntity.ok(topModules);
     }
 
 

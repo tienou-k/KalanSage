@@ -33,7 +33,7 @@
   <div class="course-header-right" >
 <img
   *ngIf="!isLoading && moduleDetails.image"
-  [src]="getImageUrl(moduleDetails.image)"
+ [src]="moduleDetails.imageUrl"
   [alt]="moduleDetails.titre"
   class="course-image"
 />

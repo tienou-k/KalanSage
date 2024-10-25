@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:k_application/models/module_model.dart';
 import 'package:k_application/services/module_service.dart';
-import 'package:k_application/utils/constants.dart';
 import 'package:k_application/view/custom_nav_bar.dart';
 import 'package:k_application/view/pages/detail_categorie_page.dart';
 import 'package:k_application/view/pages/details_module_page.dart';
@@ -45,7 +44,7 @@ class _HomePageState extends State<HomePage> {
         _isLoading = false;
       });
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error fetching modules: $e')),
+        SnackBar(content: Text('Erreur dans la récupération des modules: $e')),
       );
     }
   }
@@ -70,6 +69,7 @@ class _HomePageState extends State<HomePage> {
     });
     switch (index) {
       case 0:
+      //nous sommes ici...................
         break;
       case 1:
         Navigator.pushNamed(context, '/categorie');
@@ -111,21 +111,6 @@ class _HomePageState extends State<HomePage> {
                     const SizedBox(height: 20),
                     const SliderBanner(),
                     const SizedBox(height: 20),
-                    TextField(
-                      onChanged:
-                          _onSearch,
-                      decoration: InputDecoration(
-                        hintText: 'Rechercher...',
-                        prefixIcon:
-                            const Icon(Icons.search, color: secondaryColor),
-                        filled: true,
-                        fillColor: Colors.grey.shade200,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(12),
-                          borderSide: BorderSide.none,
-                        ),
-                      ),
-                    ),
                     const SizedBox(height: 20),
                     CategoriesSection(),
                     const SizedBox(height: 20),

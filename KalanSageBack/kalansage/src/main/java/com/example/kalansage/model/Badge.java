@@ -17,7 +17,6 @@ public class Badge {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idBadge;
-
     private String nomBadge;
     private int seuilDePoints;
 

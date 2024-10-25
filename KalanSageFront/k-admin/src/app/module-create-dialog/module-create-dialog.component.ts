@@ -88,7 +88,6 @@ export class ModuleCreateDialogComponent implements OnInit {
     );
   }
 
-
   openAddCategoryDialog(): void {
     const dialogRef = this.dialog.open(this.addCategoryDialog, {
       height: '80%',
@@ -135,9 +134,9 @@ export class ModuleCreateDialogComponent implements OnInit {
         titre: this.moduleForm.value.title,
         description: this.moduleForm.value.description,
         prix: this.moduleForm.value.price,
-        categorieId: this.moduleForm.value.category,
+        nomCategorie: this.moduleForm.value.category,
         dateCreation: new Date(),
-        image: this.selectedFile,
+        imageUrl: this.selectedFile,
       };
 
       if (this.editMode && this.moduleId) {

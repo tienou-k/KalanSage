@@ -1,7 +1,7 @@
 package com.example.kalansage.controller;
 
 
-import com.example.kalansage.model.Abonnement;
+
 import com.example.kalansage.model.Module;
 import com.example.kalansage.model.Review;
 import com.example.kalansage.model.User;
@@ -9,7 +9,6 @@ import com.example.kalansage.model.userAction.UserBadge;
 import com.example.kalansage.model.userAction.UserLecon;
 import com.example.kalansage.model.userAction.UserModule;
 import com.example.kalansage.model.userAction.UserTest;
-import com.example.kalansage.service.ModuleServiceImpl;
 import com.example.kalansage.service.UserInteractionService;
 import com.example.kalansage.service.UserPointsService;
 import lombok.extern.slf4j.Slf4j;
@@ -32,8 +31,7 @@ public class UserInteractionController {
 
     @Autowired
     private UserInteractionService userInteractionService;
-    @Autowired
-    private ModuleServiceImpl moduleServiceimpl;
+
     @Autowired
     private UserPointsService userPointsService;
     // Take a quiz
@@ -170,21 +168,7 @@ public class UserInteractionController {
         }
     }
 
-    @GetMapping("/most-subscribed")
-    public ResponseEntity<Abonnement> getMostSubscribedAbonnement() {
-        Abonnement mostSubscribed = userInteractionService.getMostSubscribedAbonnement();
-        if (mostSubscribed == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
-        }
-        return ResponseEntity.ok(mostSubscribed);
-    }
 
-    @GetMapping("/top5")
-    public ResponseEntity<List<Module>> getTop5Modules() {
-        List<Module> topModules = moduleServiceimpl.getTop5Modules();
-        return ResponseEntity.ok(topModules);
-    }
-    
     @PostMapping("/submit-review/{userId}/{courseId}")
     public ResponseEntity<Review> submitReview(
             @PathVariable Long userId,

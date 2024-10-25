@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:k_application/models/categorie_model.dart';
 import 'package:k_application/services/cartegorie_service.dart';
 
@@ -33,7 +34,7 @@ class _CategoriesSectionState extends State<CategoriesSection> {
             fontWeight: FontWeight.bold,
           ),
         ),
-        const SizedBox(height: 10),
+        const SizedBox(height: 20),
         // Categories Row
         FutureBuilder<List<CategorieModel>>(
           future: _categories,
@@ -50,7 +51,7 @@ class _CategoriesSectionState extends State<CategoriesSection> {
               scrollDirection: Axis.horizontal,
               child: Row(
                 children: snapshot.data!.map((category) {
-                  return _buildCategoryChip(category.nomCategorie);
+                  return _buildCategoryChip(category);
                 }).toList(),
               ),
             );
@@ -59,8 +60,7 @@ class _CategoriesSectionState extends State<CategoriesSection> {
       ],
     );
   }
-
-  Widget _buildCategoryChip(String label) {
+  Widget _buildCategoryChip(CategorieModel category) {
     return Padding(
       padding: const EdgeInsets.only(right: 10),
       child: Column(
@@ -68,13 +68,18 @@ class _CategoriesSectionState extends State<CategoriesSection> {
           CircleAvatar(
             radius: 25,
             backgroundColor: const Color.fromARGB(48, 25, 72, 96),
-            child: const Icon(Icons.category, color: Colors.black, size: 20),
+            child: SvgPicture.asset(
+              category.getIconPath(), 
+              color: Colors.black,
+              height: 20,
+              width: 20,
+            ),
           ),
-          const SizedBox(height: 2),
-          Text(
-            label,
-            style: const TextStyle(color: Colors.black, fontSize: 14),
-          ),
+          const SizedBox(height: 20),
+          // Text(
+          //   category.nomCategorie,
+          //   style: const TextStyle(color: Colors.black, fontSize: 14),
+          // ),
         ],
       ),
     );

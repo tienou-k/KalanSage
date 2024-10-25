@@ -17,12 +17,15 @@ class _CategoriePage extends State<CategoriePage> {
   int _currentIndex = 1;
   final CategorieService _categorieService = CategorieService();
   late Future<List<CategorieModel>> _categories;
+  final List<CategorieModel> _filteredCategories = [];
 
   @override
   void initState() {
     super.initState();
     _categories = _categorieService.fetchCategories();
   }
+
+
 
   void _onTabSelected(int index) {
     setState(() {
@@ -33,6 +36,7 @@ class _CategoriePage extends State<CategoriePage> {
         Navigator.pushNamed(context, '/home');
         break;
       case 1:
+        // Stay on this page
         break;
       case 2:
         Navigator.pushNamed(context, '/mes_modules');
@@ -60,13 +64,13 @@ class _CategoriePage extends State<CategoriePage> {
                 color: Colors.grey.withOpacity(0.5),
                 spreadRadius: 1,
                 blurRadius: 4,
-                offset: Offset(0, 2),
+                offset: const Offset(0, 2),
               ),
             ],
           ),
           child: AppBar(
             backgroundColor: Colors.white,
-            title: Text(
+            title: const Text(
               'Categories',
               style: TextStyle(
                 fontSize: 24,
@@ -86,6 +90,7 @@ class _CategoriePage extends State<CategoriePage> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             TextField(
+              cursorColor: primaryColor,
               decoration: InputDecoration(
                 hintText: 'Rechercher....',
                 prefixIcon: const Icon(Icons.search, color: secondaryColor),
@@ -116,9 +121,9 @@ class _CategoriePage extends State<CategoriePage> {
                   } else if (snapshot.hasError) {
                     return Center(child: Text('Error: ${snapshot.error}'));
                   } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                    return const Center(child: Text('No categories found'));
+                    return const Center(
+                        child: Text('Aucune catégorie trouvée'));
                   }
-
                   return GridView.builder(
                     gridDelegate:
                         const SliverGridDelegateWithFixedCrossAxisCount(
@@ -127,9 +132,9 @@ class _CategoriePage extends State<CategoriePage> {
                       mainAxisSpacing: 20,
                       childAspectRatio: 1.0,
                     ),
-                    itemCount: snapshot.data!.length,
+                    itemCount: _filteredCategories.length,
                     itemBuilder: (context, index) {
-                      final category = snapshot.data![index];
+                      final category = _filteredCategories[index];
                       return _buildCategoryCard(
                         category.nomCategorie,
                         '${category.moduleCount} Modules',

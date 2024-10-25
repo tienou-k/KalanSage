@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
@@ -47,47 +48,82 @@ public class AuthenticationController {
     @PostMapping("/login")
     public ResponseEntity<?> createAuthenticationToken(@RequestBody LoginRequest authRequest) {
         try {
+            // Check if the user exists
+            Utilisateur user = utilisateurService.findByEmail(authRequest.getEmail());
+            if (user == null) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
+                        Map.of("message", "Utilisateur non trouvé")
+                );
+            }
+            // Attempt to authenticate
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(authRequest.getEmail(), authRequest.getMotDePasse())
+            );
+            // If authentication is successful, load user details
+            final UserDetails userDetails = customUserDetailsService.loadUserByUsername(authRequest.getEmail());
+            // Extract the role from the user details
+            String role = userDetails.getAuthorities().iterator().next().getAuthority();
+            // Generate the JWT access token and refresh token
+            final String accessToken = jwtUtil.generateToken(userDetails, role);
+            final String refreshToken = jwtUtil.generateRefreshToken(userDetails);
+            // Create JWT response including userId
+            JwtResponse jwtResponse = new JwtResponse(accessToken, role, refreshToken, user.getId());
+            return ResponseEntity.ok().body(jwtResponse);
+        } catch (BadCredentialsException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
+                    Map.of("message", "Mot de passe incorrect")
+            );
+        } catch (AuthenticationException e) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(
+                    Map.of("message", "Erreur d'authentification")
+            );
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(
+                    Map.of("message", "Erreur lors de l'authentification!")
+            );
+        }
+    }
+  /*  @PostMapping("/login")
+    public ResponseEntity<?> createAuthenticationToken(@RequestBody LoginRequest authRequest) {
+        try {
             authenticationManager.authenticate(
                     new UsernamePasswordAuthenticationToken(authRequest.getEmail(), authRequest.getMotDePasse())
             );
             final UserDetails userDetails = customUserDetailsService.loadUserByUsername(authRequest.getEmail());
-
             // Extract the role from the user details
             String role = userDetails.getAuthorities().iterator().next().getAuthority();
-
+            // Fetch the user to get userId
+            Utilisateur user = utilisateurService.findByEmail(authRequest.getEmail());
             // Generate the JWT access token and refresh token
             final String accessToken = jwtUtil.generateToken(userDetails, role);
             final String refreshToken = jwtUtil.generateRefreshToken(userDetails);
-
-            // Send both access and refresh tokens in the response
-            JwtResponse jwtResponse = new JwtResponse(accessToken, role, refreshToken);
+            // Create JWT response including userId
+            JwtResponse jwtResponse = new JwtResponse(accessToken, role, refreshToken, user.getId()); // Assuming getId() returns userId
             return ResponseEntity.ok().body(jwtResponse);
         } catch (AuthenticationException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Mot de passe ou email incorrect");
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erreur lors de l'authentification!");
         }
-    }
+    }*/
 
     // Refresh token endpoint: generates a new access token using a valid refresh token
     @PostMapping("/refresh-token")
     public ResponseEntity<?> refreshAccessToken(@RequestBody Map<String, String> request) {
         String refreshToken = request.get("refreshToken");
-
         if (refreshToken == null || refreshToken.isEmpty()) {
             return ResponseEntity.badRequest().body("Refresh token is missing");
         }
-
         try {
             // Validate the refresh token
             if (jwtUtil.validateRefreshToken(refreshToken)) {
                 // Extract username from refresh token
                 String username = jwtUtil.extractUsername(refreshToken);
                 UserDetails userDetails = customUserDetailsService.loadUserByUsername(username);
-
                 // Generate a new access token
-                String newAccessToken = jwtUtil.generateToken(userDetails, userDetails.getAuthorities().iterator().next().getAuthority());
-
+                String newAccessToken = jwtUtil.generateToken(
+                        userDetails,
+                        userDetails.getAuthorities().iterator().next().getAuthority());
                 // Return the new access token
                 Map<String, String> response = new HashMap<>();
                 response.put("accessToken", newAccessToken);

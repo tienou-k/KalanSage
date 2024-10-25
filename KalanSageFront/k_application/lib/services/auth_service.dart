@@ -14,6 +14,7 @@ class AuthService {
   // Initialize SharedPreferences
   Future<void> _initPrefs() async {
     _prefs = await SharedPreferences.getInstance();
+    debugPrint('SharedPreferences initialized');
   }
 
   // Ensure prefs is initialized before calling any methods
@@ -23,54 +24,56 @@ class AuthService {
     }
   }
 
- 
-  // Login method
+// Login method
   Future<Map<String, dynamic>?> login(
       String email, String password, BuildContext context) async {
     await _ensurePrefsInitialized();
-
     final headers = {'Content-Type': 'application/json'};
     final body = jsonEncode({
       'email': email,
       'motDePasse': password,
     });
 
-    final response = await http.post(
-      Uri.parse('$apiUrl/auth/login'),
-      headers: headers,
-      body: body,
-    );
+    try {
+      final response = await http.post(
+        Uri.parse('$apiUrl/auth/login'),
+        headers: headers,
+        body: body,
+      );
 
-    if (response.statusCode == 200) {
-      debugPrint('Login successful, processing response...');
-      final responseData = jsonDecode(response.body);
+      if (response.statusCode == 200) {
+        final responseData = json.decode(utf8.decode(response.bodyBytes));
+        if (responseData['accessToken'] != null && responseData['id'] != null) {
+          final user = {
+            'token': responseData['accessToken'],
+            'role': responseData['role'],
+            'status': responseData['status'],
+            'id': responseData['id'],
+          };
 
-      if (responseData['accessToken'] != null) {
-        final user = {
-          'token': responseData['accessToken'],
-          'role': responseData['role'],
-          'status': responseData['status'],
-        };
-
-        await _prefs?.setString('currentUser', jsonEncode(user));
-
-        if (user['status'] == false) {
-          // Navigate to OTP verification screen if user is not active
-          Navigator.pushNamed(context, '/otp_verification', arguments: email);
+          await _prefs?.setString('currentUser', jsonEncode(user));
+          debugPrint('Saved User: ${_prefs?.getString('currentUser')}');
+          if (user['status'] == false) {
+            Navigator.pushNamed(context, '/otp_verification', arguments: email);
+          } else {
+            return user;
+          }
         } else {
-          return user;
+          throw Exception('Access token or user ID is missing.');
         }
       } else {
-        throw Exception('No access token found in login response.');
+        final errorData = json.decode(utf8.decode(response.bodyBytes));
+        String errorMessage = errorData['message'] ??
+            'Une erreur s\'est produite. Veuillez réessayer.';
+        throw Exception(errorMessage);
       }
-    } else {
-      // Detailed error handling based on response data
-      final errorData = jsonDecode(response.body);
-      if (errorData['message'] != null) {
-        throw Exception(errorData['message']);
+    } catch (error) {
+      debugPrint('Login error: $error');
+      if (error is Exception) {
+        rethrow;
       }
-      throw Exception('Login failed. Please try again.');
     }
+
     return null;
   }
 
@@ -78,49 +81,70 @@ class AuthService {
   Future<Map> fetchUserProfile() async {
     await _ensurePrefsInitialized();
 
-    final currentUser = getCurrentUser();
+    final currentUser = await getCurrentUser();
     if (currentUser == null || currentUser['token'] == null) {
-      throw Exception('Aucun jeton trouvé. Veuillez vous reconnecter.');
+      throw Exception('No user logged in. Please log in again.');
     }
+
     final token = currentUser['token'];
     final headers = {'Authorization': 'Bearer $token'};
-    final response = await http.get(
-      Uri.parse('$apiUrl/auth/profil'),
-      headers: headers,
-    );
-    if (response.statusCode == 200) {
-      final profileData = jsonDecode(response.body);
-      final updatedUser = {
-        ...currentUser,
-        ...profileData,
-      };
-      await _prefs?.setString('currentUser', jsonEncode(updatedUser));
-      return updatedUser;
-    } else {
-      final errorData = jsonDecode(response.body);
-      throw Exception('Failed to fetch user profile: ${errorData['message']}');
+
+    try {
+      final response = await http.get(
+        Uri.parse('$apiUrl/auth/profil'),
+        headers: headers,
+      );
+
+      if (response.statusCode == 200) {
+        final profileData = jsonDecode(response.body);
+        final updatedUser = {
+          ...currentUser,
+          ...profileData,
+        };
+        await _prefs?.setString('currentUser', jsonEncode(updatedUser));
+        return updatedUser;
+      } else {
+        final errorData = jsonDecode(response.body);
+        throw Exception(
+            'Failed to fetch user profile: ${errorData['message']}');
+      }
+    } catch (e) {
+      debugPrint('Error fetching user profile: $e');
+      throw Exception('An error occurred while fetching the profile: $e');
     }
+  }
+
+  // Get current user data
+  Future<Map<String, dynamic>?> getCurrentUser() async {
+    await _ensurePrefsInitialized();
+    final currentUser = _prefs?.getString('currentUser');
+    if (currentUser != null) {
+      final userMap = jsonDecode(currentUser);
+      debugPrint('Current user retrieved: $userMap');
+      return userMap;
+    }
+    debugPrint('No current user found in SharedPreferences');
+    return null;
   }
 
   // Logout method
   Future<void> logout() async {
     await _ensurePrefsInitialized();
     await _prefs?.remove('currentUser');
+    debugPrint(
+        'User logged out and current user removed from SharedPreferences');
   }
 
   // Check if user is logged in
   bool isLoggedIn() {
     final currentUser = getCurrentUser();
-    return currentUser != null && currentUser['token'] != null;
+    return currentUser != null;
   }
 
-  // Get current user data
-  Map<String, dynamic>? getCurrentUser() {
-    final currentUser = _prefs?.getString('currentUser');
-    if (currentUser != null) {
-      return jsonDecode(currentUser);
-    }
-    return null;
+  // Get current user ID
+  Future<int?> getCurrentUserId() async {
+    final currentUser = await getCurrentUser();
+    return currentUser?['id'];
   }
 
   // Verify OTP
@@ -143,6 +167,4 @@ class AuthService {
       return {'status': 'error', 'message': 'Error: $e'};
     }
   }
-
-  verifyPassword(currentUser, String text) {}
 }

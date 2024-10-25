@@ -14,6 +14,7 @@ class ModuleModel {
   late final bool isEnrolled;
   bool isBookmarked;
 
+
   ModuleModel({
     required this.id,
     required this.userId,
@@ -83,5 +84,5 @@ class ModuleModel {
     );
   }
 
-  get skills => null;
+ 
 }

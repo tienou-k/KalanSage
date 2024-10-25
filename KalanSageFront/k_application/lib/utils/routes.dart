@@ -1,9 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:k_application/view/auth/login_view.dart';
 import 'package:k_application/view/auth/otp_view.dart';
+import 'package:k_application/view/auth/password_reset.dart';
 import 'package:k_application/view/auth/sign_up.dart';
 import 'package:k_application/view/pages/categorie_page.dart';
-import 'package:k_application/view/pages/chat_page.dart';
+import 'package:k_application/view/pages/bookmark_page.dart';
 import 'package:k_application/view/pages/home_page.dart';
 import 'package:k_application/view/pages/mes_modules.dart';
 import 'package:k_application/view/pages/profile_home.dart';
@@ -15,6 +16,7 @@ import 'package:k_application/view/screens/splash_screen.dart';
 class AppRoutes {
   static const String splash = '/';
   static const String login = '/login';
+  static const String forgotPassword = '/forgot-password';
   static const String signup = '/signup';
   static const String logout = '/logout';
   static const String welcome = '/welcome';
@@ -43,6 +45,8 @@ class AppRoutes {
         return MaterialPageRoute(builder: (_) => const WelcomeScreen());
       case login:
         return MaterialPageRoute(builder: (_) => const LoginScreen());
+        case forgotPassword:
+        return MaterialPageRoute(builder: (_) => const PasswordReset());
       case signup:
         return MaterialPageRoute(builder: (_) => const SignupScreen());
       case otpverification:

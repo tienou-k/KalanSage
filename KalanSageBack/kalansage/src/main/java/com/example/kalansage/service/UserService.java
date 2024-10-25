@@ -32,4 +32,6 @@ public interface UserService {
     //User getUserById(Long userId);
 
     boolean hasComplete(User user, Module modules);
+
+
 }

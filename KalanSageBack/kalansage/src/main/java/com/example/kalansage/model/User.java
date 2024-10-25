@@ -18,6 +18,14 @@ import java.util.Set;
 @AllArgsConstructor
 @NoArgsConstructor
 public class User extends Utilisateur {
+    private String resetToken;
+
+    public void setResetToken(String resetToken) {
+        this.resetToken = resetToken;
+    }
+    public String getResetToken() {
+        return resetToken;
+    }
 
     //----------Utilisateur abonnement---------------------------------------
     @ManyToMany(fetch = FetchType.LAZY)

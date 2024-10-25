@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { MaterialModule } from 'src/app/material.module';
 import { LeconService } from 'src/app/services/lecon.service';
 import { ModuleService } from 'src/app/services/modules.service';
@@ -19,6 +19,7 @@ import { MatDialog } from '@angular/material/dialog';
 })
 export class ModuleDetailComponent implements OnInit {
   moduleId: number;
+  imageUrl: string;
   lecons: any[] = [];
   quizzes: any[] = [];
   student: any;
@@ -45,6 +46,7 @@ export class ModuleDetailComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
+    private router: Router,
     private moduleService: ModuleService,
     private leconService: LeconService,
     private quizService: QuizService,
@@ -54,19 +56,18 @@ export class ModuleDetailComponent implements OnInit {
     private dialog: MatDialog
   ) {}
 
-  ngOnInit(): void {
-    this.moduleId = Number(this.route.snapshot.paramMap.get('id'));
-    this.fetchModuleDetails(this.moduleId);
-    this.route.queryParamMap.subscribe((params) => {
-      if (params.has('image')) {
-        this.moduleDetails.image = params.get('image') || '';
-      }
-    });
-    this.fetchModuleDetails(this.moduleId);
-    this.getLeconsByModule();
-    this.getQuizzesByModule();
-    this.getStudentsCount();
-  }
+  // ngOnInit(): void {
+  //   this.moduleId = Number(this.route.snapshot.paramMap.get('id'));
+  //   this.fetchModuleDetails(this.moduleId);
+  //   this.route.queryParamMap.subscribe((params) => {
+  //     if (params.has('image')) {
+  //       this.moduleDetails.image = params.get('image') || '';
+  //     }
+  //   });
+  //   this.getLeconsByModule();
+  //   this.getQuizzesByModule();
+  //   this.getStudentsCount();
+  // }
   fetchModuleDetails(id: number): void {
     this.moduleService.getModuleById(id).subscribe(
       (module) => {
@@ -76,6 +77,16 @@ export class ModuleDetailComponent implements OnInit {
         console.error('Error fetching module details:', error);
       }
     );
+  }
+  ngOnInit(): void {
+    // Get module ID from the route parameters
+    this.moduleId = Number(this.route.snapshot.paramMap.get('id') || '');
+    this.fetchModuleDetails(this.moduleId);
+    const navigation = this.router.getCurrentNavigation();
+     this.moduleDetails.image = navigation?.extras?.state?.['imageUrl'] || '';
+    this.getLeconsByModule();
+    this.getQuizzesByModule();
+    this.getStudentsCount();
   }
 
   getLeconsByModule(): void {
@@ -144,18 +155,5 @@ export class ModuleDetailComponent implements OnInit {
     dialogRef.afterClosed().subscribe(() => {
       console.log('The video player dialog was closed');
     });
-  }
-
-  getImageUrl(image: string): string {
-    if (!image) return '';
-    try {
-      const basePath = '/static/images_du_projet/modules/';
-      const imageUrl = basePath + image;
-      console.log('Generated Image URL:', imageUrl); // Log the full image URL
-      return imageUrl;
-    } catch (error) {
-      console.error('Error processing image URL:', error);
-      return ''; // Or return a default image path
-    }
   }
 }

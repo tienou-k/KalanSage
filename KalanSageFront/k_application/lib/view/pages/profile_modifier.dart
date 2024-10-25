@@ -21,7 +21,8 @@ class _ProfileModifierState extends State<ProfileModifier> {
   final TextEditingController _prenomController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _phoneController = TextEditingController();
-  final TextEditingController _currentPasswordController = TextEditingController();
+  final TextEditingController _currentPasswordController =
+      TextEditingController();
   final TextEditingController _newPasswordController = TextEditingController();
 
   bool _isLoading = true;
@@ -54,110 +55,130 @@ class _ProfileModifierState extends State<ProfileModifier> {
         _phoneController.text = convertedProfile['telephone'] ?? '';
         _isLoading = false;
       });
-    // ignore: empty_catches
-    } catch (e) {
-    }
+      // ignore: empty_catches
+    } catch (e) {}
   }
 
   Future<void> _updateUserProfile() async {
-  if (_formKey.currentState?.validate() ?? false) {
-    try {
-      final updatedUser = {
-        'nom': _nomController.text,
-        'prenom': _prenomController.text,
-        'email': _emailController.text,
-        'telephone': _phoneController.text,
-        'newPassword': _newPasswordController.text,
-      };
-      await _userService.updateUser(_currentUser['id'], updatedUser);
+    if (_formKey.currentState?.validate() ?? false) {
+      try {
+        final updatedUser = {
+          'nom': _nomController.text,
+          'prenom': _prenomController.text,
+          'email': _emailController.text,
+          'telephone': _phoneController.text,
+          'newPassword': _newPasswordController.text,
+        };
+        await _userService.updateUser(_currentUser['id'], updatedUser);
 
-      // Show success alert dialog with customized style
-      showDialog(
-        context: context,
-        builder: (BuildContext context) {
-          return AlertDialog(
-            backgroundColor: Colors.green[50],
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(15.0),
-            ),
-            title: Row(
-              children: [
-                Icon(Icons.check_circle, color: Colors.green, size: 30),
-                SizedBox(width: 10),
-                Text(
-                  'Success',
-                  style: TextStyle(
-                    color: Colors.green[800],
-                    fontWeight: FontWeight.bold,
+        // Show success alert dialog with customized style
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              backgroundColor: Colors.green[50],
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(15.0),
+              ),
+              title: Row(
+                children: [
+                  Icon(Icons.check_circle, color: Colors.green, size: 30),
+                  SizedBox(width: 10),
+                  Text(
+                    'Success',
+                    style: TextStyle(
+                      color: Colors.green[800],
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ],
+              ),
+              content: Text(
+                'Vos informations ont été mis à jour avec succès!',
+                style: TextStyle(
+                  color: Colors.green[800],
+                  fontSize: 16,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+              actions: <Widget>[
+                Center(
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.green,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                      ),
+                    ),
+                    child: Text(
+                      'OK',
+                      style: TextStyle(color: Colors.white),
+                    ),
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => DashboardScreen(),
+                        ),
+                      );
+                    },
                   ),
                 ),
               ],
-            ),
-            content: Text(
-              'Vos informations ont été mis à jour avec succès!',
-              style: TextStyle(
-                color: Colors.green[800],
-                fontSize: 16,
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-            actions: <Widget>[
-              Center(
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.green,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10.0),
-                    ),
-                  ),
-                  child: Text(
-                    'OK',
-                    style: TextStyle(color: Colors.white),
-                  ),
-                  onPressed: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => DashboardScreen( ),
-                        ),
-                      );
-                  },
-                ),
-              ),
-            ],
-            actionsAlignment: MainAxisAlignment.center,
-          );
-        },
-      );
-    } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(
-          content: Text('Failed to update profile: $e'),
-          backgroundColor: Colors.red,
-        ),
-      );
+              actionsAlignment: MainAxisAlignment.center,
+            );
+          },
+        );
+      } catch (e) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Failed to update profile: $e'),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
     }
   }
-}
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.white,
-        elevation: 1,
-        centerTitle: true,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back, color: Colors.black),
-          onPressed: () {
-            Navigator.of(context).pop();
-          },
-        ),
-        title: Text(
-          'Mes informations',
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+     appBar: PreferredSize(
+        preferredSize: Size.fromHeight(kToolbarHeight),
+        child: Container(
+          decoration: BoxDecoration(
+            color: primaryColor,
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.5),
+                spreadRadius: 1,
+                blurRadius: 4,
+                offset: Offset(0, 2),
+              ),
+            ],
+          ),
+          child: AppBar(
+            backgroundColor: Colors.white,
+            leading: IconButton(
+              icon: Icon(Icons.arrow_back),
+              onPressed: () {
+                Navigator.of(context).pop();
+              },
+            ),
+            title: Text(
+              'Mes informations',
+              style: TextStyle(
+                fontSize: 24,
+                fontWeight: FontWeight.bold,
+                color: Colors.black,
+              ),
+            ),
+            centerTitle: true,
+            elevation: 0,
+          ),
         ),
       ),
+      backgroundColor: Colors.white,
       body: _isLoading
           ? Center(child: CircularProgressIndicator())
           : SingleChildScrollView(

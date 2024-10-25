@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:k_application/models/lecon_model.dart';
 import 'package:k_application/models/module_model.dart';
 import 'package:k_application/services/module_service.dart';
-import 'package:k_application/services/user_service.dart';
 import 'package:k_application/utils/constants.dart';
+import 'package:k_application/view/pages/elements/inscrire_button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:video_player/video_player.dart';
 
@@ -22,8 +22,6 @@ class _DetailModulePageState extends State<DetailModulePage>
   late Future<List<LeconModel>> _lessons;
   LeconModel? _selectedLesson;
 
-  bool _isEnrolling = false;
-  bool _isAlreadyEnrolled = false;
   SharedPreferences? _prefs;
 
   @override
@@ -32,63 +30,10 @@ class _DetailModulePageState extends State<DetailModulePage>
     _loadPrefs();
     _tabController = TabController(length: 3, vsync: this);
     _lessons = ModuleService().getLeconsByModule(widget.module.id);
-    _checkEnrollmentStatus();
   }
 
   void _loadPrefs() async {
     _prefs = await SharedPreferences.getInstance();
-  }
-
-  void _checkEnrollmentStatus() async {
-    final userId = await _getCurrentUserId();
-    if (userId != null) {
-      try {
-        bool isEnrolled = await UserService()
-            .isUserEnrolledInModule(userId, widget.module.id);
-        setState(() {
-          _isAlreadyEnrolled = isEnrolled;
-        });
-      } catch (e) {
-        // Handle error if needed
-      }
-    }
-  }
-
-  void _enrollUser() async {
-    setState(() {
-      _isEnrolling = true;
-    });
-
-    try {
-      final moduleId = widget.module.id;
-      final result = await UserService().enrollInModule(moduleId);
-
-      if (result['success'] == true) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Inscription réussie !')),
-        );
-        _checkEnrollmentStatus();
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Échec de l\'inscription.')),
-        );
-      }
-    } catch (e) {
-      String errorMessage = 'Erreur lors de l\'inscription.';
-      if (e.toString().contains('User is already enrolled in this module')) {
-        errorMessage = 'Vous êtes déjà inscrit à ce module.';
-      } else {
-        errorMessage = 'Erreur: ${e.toString()}';
-      }
-
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(errorMessage)),
-      );
-    } finally {
-      setState(() {
-        _isEnrolling = false;
-      });
-    }
   }
 
   Future<int?> _getCurrentUserId() async {
@@ -103,13 +48,13 @@ class _DetailModulePageState extends State<DetailModulePage>
       appBar: _buildAppBar(),
       body: Column(
         children: [
-          _buildLessonVideoPreview(),
+          _buildLessonVideoPreview(), // Show lesson preview
           SizedBox(height: 8),
           _buildTabBar(),
           Expanded(child: _buildTabBarView()),
         ],
       ),
-      bottomNavigationBar: _buildEnrollButton(),
+      bottomNavigationBar: InscrireButton(module: widget.module),
     );
   }
 
@@ -198,7 +143,7 @@ class _DetailModulePageState extends State<DetailModulePage>
             lessons: _lessons,
             onSelectLesson: (lesson) {
               setState(() {
-                _selectedLesson = lesson;
+                _selectedLesson = lesson; // Store selected lesson
               });
             },
             unlockAllLessons: widget.module.price == 0,
@@ -208,35 +153,9 @@ class _DetailModulePageState extends State<DetailModulePage>
       ),
     );
   }
-
-  Widget _buildEnrollButton() {
-    return Padding(
-      padding: const EdgeInsets.all(16.0),
-      child: ElevatedButton(
-        onPressed: _isEnrolling || _isAlreadyEnrolled ? null : _enrollUser,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: primaryColor,
-          padding: const EdgeInsets.symmetric(horizontal: 80, vertical: 15),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-        ),
-        child: _isEnrolling
-            ? CircularProgressIndicator(color: Colors.white)
-            : Text(
-                _isAlreadyEnrolled ? 'Déjà inscrit' : 'S\'inscrire',
-                style: TextStyle(
-                  fontSize: 16,
-                  color: Colors.white,
-                ),
-              ),
-      ),
-    );
-  }
 }
-
 class VideoPlayerWidget extends StatefulWidget {
-  final String videoUrl;
+  final String? videoUrl;
 
   const VideoPlayerWidget({super.key, required this.videoUrl});
 
@@ -245,7 +164,7 @@ class VideoPlayerWidget extends StatefulWidget {
 }
 
 class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
-  late VideoPlayerController _controller;
+  late VideoPlayerController? _controller;
   bool _hasError = false;
 
   @override
@@ -254,18 +173,17 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
     _initializeVideo();
   }
 
-Future<void> _initializeVideo() async {
-    if (widget.videoUrl.isNotEmpty) {
-      _controller = VideoPlayerController.networkUrl(Uri.parse(widget.videoUrl))
-        ..initialize().then((_) {
-          setState(() {});
-          print("Video initialized: ${widget.videoUrl}");
-        }).catchError((error) {
-          setState(() {
-            _hasError = true;
-          });
-          print('Error initializing video: $error');
-        });
+  Future<void> _initializeVideo() async {
+    if (widget.videoUrl != null && widget.videoUrl!.isNotEmpty) {
+      _controller =
+          VideoPlayerController.networkUrl(Uri.parse(widget.videoUrl!))
+            ..initialize().then((_) {
+              setState(() {});
+            }).catchError((error) {
+              setState(() {
+                _hasError = true;
+              });
+            });
     } else {
       setState(() {
         _hasError = true;
@@ -274,26 +192,24 @@ Future<void> _initializeVideo() async {
     }
   }
 
-
-
   @override
   void dispose() {
-    _controller.dispose();
+    _controller?.dispose();
     super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
-    if (_hasError) {
+    if (_hasError || widget.videoUrl == null || widget.videoUrl!.isEmpty) {
       return Center(
-        child: Text('Error loading video', style: TextStyle(color: Colors.red)),
+        child: Text('No loading video', style: TextStyle(color: Colors.red)),
       );
     }
 
-    return _controller.value.isInitialized
+    return _controller != null && _controller!.value.isInitialized
         ? AspectRatio(
-            aspectRatio: _controller.value.aspectRatio,
-            child: VideoPlayer(_controller),
+            aspectRatio: _controller!.value.aspectRatio,
+            child: VideoPlayer(_controller!),
           )
         : Center(child: CircularProgressIndicator());
   }
@@ -367,13 +283,13 @@ class ModulesTab extends StatelessWidget {
                 Icon(
                   Icons.info_outline,
                   size: 64,
-                  color: primaryColor,
+                  color: Colors.grey,
                 ),
                 Text(
                   'Aucune leçon disponible.',
                   style: TextStyle(
                     fontSize: 14,
-                    color: secondaryColor,
+                    color: Colors.grey,
                   ),
                 ),
               ],
@@ -386,18 +302,36 @@ class ModulesTab extends StatelessWidget {
           itemCount: lessonsList.length,
           itemBuilder: (context, index) {
             final lesson = lessonsList[index];
-            final isUnlocked = unlockAllLessons || lesson.isUnlocked;
-            String videoUrl = lesson.videoPath;
-            if (videoUrl.isEmpty) {
-              videoUrl = 'No video available'; 
-            }
-            return ListTile(
-              title: Text(EncodingUtils.decode(lesson.title)),
-              onTap: isUnlocked
-                  ? () => onSelectLesson(lesson)
-                  : null, // If lesson is locked, disable tap
-              tileColor: isUnlocked ? Colors.transparent : Colors.grey[300],
-              subtitle: Text(isUnlocked ? '' : 'Verrouillé'),
+            final isUnlocked = unlockAllLessons || lesson.videoPath != null;
+            final isCompleted = lesson.quiz != null;
+
+            return Container(
+              margin: EdgeInsets.symmetric(vertical: 5.0),
+              decoration: BoxDecoration(
+                border: Border(
+                  bottom: BorderSide(
+                      color: const Color.fromARGB(82, 224, 224, 224)),
+                ),
+              ),
+              child: ListTile(
+                title: Text(
+                  '${index + 1}. ${EncodingUtils.decode(lesson.titre)}',
+                  style: TextStyle(
+                    color: isUnlocked ? Colors.black : Colors.grey,
+                    decoration: isUnlocked ? null : TextDecoration.lineThrough,
+                  ),
+                ),
+                subtitle: Text(
+                  EncodingUtils.decode( lesson.description ),
+                  style:
+                      TextStyle(color: isUnlocked ? Colors.black : Colors.grey),
+                ),
+                trailing: isUnlocked
+                    ? Icon(Icons.play_arrow, color: Colors.black)
+                    : Icon(Icons.lock, color: Colors.grey),
+                onTap: isUnlocked ? () => onSelectLesson(lesson) : null,
+                // Disable tap if lesson is locked
+              ),
             );
           },
         );
@@ -441,3 +375,7 @@ class FilesTab extends StatelessWidget {
     );
   }
 }
+
+//
+
+

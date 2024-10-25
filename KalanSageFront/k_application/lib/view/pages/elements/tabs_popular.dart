@@ -10,8 +10,6 @@ class TabSection extends StatefulWidget {
 
 class _TabSectionState extends State<TabSection> {
   int _selectedTabIndex = 0;
-
-  // Helper method to build each tab
   Widget _buildTab(String title, int index) {
     bool isSelected = _selectedTabIndex == index;
 
@@ -29,7 +27,7 @@ class _TabSectionState extends State<TabSection> {
           border: Border.all(
             color: isSelected ? Colors.transparent : Colors.black,
           ),
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(8),
           boxShadow: isSelected
               ? [BoxShadow(color: Colors.grey.withOpacity(0.3), blurRadius: 5)]
               : [],
@@ -51,10 +49,10 @@ class _TabSectionState extends State<TabSection> {
       scrollDirection: Axis.horizontal, 
       child: Row(
         children: [
-          _buildTab('Tous les cours', 0),
-          _buildTab('Cours populaire', 1),
-          _buildTab('Nouveau cours', 2),
-          _buildTab('Autre cours', 3),
+          _buildTab('Toutes les Modules', 0),
+          _buildTab('Modules populaire', 1),
+          _buildTab('Nouvelles Modules', 2),
+          _buildTab('Autre Modules', 3),
         ],
       ),
     );

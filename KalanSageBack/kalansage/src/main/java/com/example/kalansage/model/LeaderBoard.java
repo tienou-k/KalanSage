@@ -16,8 +16,8 @@ public class LeaderBoard {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idLeaderBoard;
-
     private String nomLeaderBoard;
+    private String point;
 
     @ManyToMany
     @JoinTable(

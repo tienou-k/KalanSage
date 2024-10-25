@@ -6,18 +6,26 @@ import com.example.kalansage.model.User;
 import com.example.kalansage.repository.UserRepository;
 import jakarta.persistence.EntityManager;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
+
 
 import javax.management.Notification;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class UserServiceImpl implements UserService {
 
-
+    @Autowired
+    private JavaMailSender mailSender;
     private final UserRepository userRepository;
     private UserService userService;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
 
     @Autowired
@@ -107,5 +115,37 @@ public class UserServiceImpl implements UserService {
         return false;
     }
 
+    public String generateResetToken(String email) {
+        Optional<User> user = userRepository.findByEmail(email);
+        if (user.isPresent()) {
+            String token = UUID.randomUUID().toString();
+            // Save token in the database with an expiration time if necessary
+            //user.get().setResetToken(token);
+           // userRepository.save(user.get());
+            return token;
+        }
+        return null;
+    }
+
+    public void sendPasswordResetEmail(String email, String token) {
+        String resetLink = "http://yourapp.com/reset-password?token=" + token; // Modify with your frontend link
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(email);
+        message.setSubject("Demande de réinitialisation du mot de passe");
+        message.setText("Pour réinitialiser votre mot de passe, cliquez sur le lien ci-dessous:\n" + resetLink);
+        mailSender.send(message);
+    }
+
+    public boolean resetPassword(String token, String newPassword) {
+        Optional<User> userOptional = userRepository.findByResetToken(token);
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+            user.setMotDePasse(passwordEncoder.encode(newPassword));
+            user.setResetToken(null); // Clear the token after use
+            userRepository.save(user);
+            return true;
+        }
+        return false;
+    }
 
 }

@@ -99,7 +99,7 @@ class _DashboardScreen extends State<DashboardScreen>
             unselectedLabelColor: Colors.grey,
             tabs: const [
               Tab(text: 'STATS'),
-              Tab(text: 'BADGES'),
+              Tab(text: 'RANG'),
               Tab(text: 'NOTIFICATIONS'),
             ],
           ),
@@ -131,7 +131,7 @@ class _DashboardScreen extends State<DashboardScreen>
         children: [
           CircleAvatar(
             radius: 30,
-            backgroundImage: AssetImage('assets/profile_picture.png'),
+            backgroundImage: AssetImage('assets/images/profile.png'),
           ),
           const SizedBox(width: 16),
           Column(
@@ -189,17 +189,17 @@ class _DashboardScreen extends State<DashboardScreen>
         children: [
           Row(
             children: [
-              InfoCard(icon: Icons.flash_on, label: '55 Quizzes'),
+              InfoCard(icon: Icons.bar_chart, label: '#2 Leaderboard' ),
               const SizedBox(width: 16),
-              InfoCard(icon: Icons.bar_chart, label: '#2 Leaderboard'),
+              InfoCard(icon: Icons.quiz, label: '55 Quizzes'),
             ],
           ),
           const SizedBox(height: 16),
           Row(
             children: [
-              InfoCard(icon: Icons.flash_on, label: '55 Quizzes'),
+              InfoCard(icon: Icons.emoji_events, label: '55 Badges'),
               const SizedBox(width: 16),
-              InfoCard(icon: Icons.bar_chart, label: '#2 Leaderboard'),
+              InfoCard(icon: Icons.balance, label: '12 Challenges'),
             ],
           ),
           const SizedBox(height: 16),

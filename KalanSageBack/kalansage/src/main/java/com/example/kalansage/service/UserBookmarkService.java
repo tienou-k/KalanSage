@@ -8,6 +8,7 @@ import com.example.kalansage.repository.ModuleRepository;
 import com.example.kalansage.repository.UserBookmarkRepository;
 import com.example.kalansage.repository.UserRepository;
 import jakarta.persistence.EntityNotFoundException;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -42,8 +43,11 @@ public class UserBookmarkService {
 
 
     // Remove a bookmark
+    @Transactional // Ensure transaction management
     public void removeBookmark(User user, Module module) {
-        userBookmarkRepository.deleteByUserAndModule(user, module);
+        UserBookmark bookmark = userBookmarkRepository.findByUserAndModule(user, module)
+                .orElseThrow(() -> new RuntimeException("Bookmark not found"));
+        userBookmarkRepository.delete(bookmark);
     }
 
     // Check if a module is bookmarked by a user

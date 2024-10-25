@@ -10,7 +10,7 @@
 
   <!-- Card Grid -->
   <div class="card-grid">
-    <mat-card *ngFor="let item of pagedItems" class="card module-card-content" (click)="openModuleDetails(item.id)">
+    <mat-card *ngFor="let item of pagedItems" class="card module-card-content" (click)="openModuleDetails(item.id, item.image)">
        <img mat-card-image [src]="item.image" alt="{{item.titre}}" class="module-image"/>
       <mat-card-content class="card-content">
         <h4 class="card-title">{{ item.titre }}</h4>

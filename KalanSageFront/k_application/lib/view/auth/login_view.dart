@@ -15,18 +15,20 @@ class _LoginScreenState extends State<LoginScreen> {
   final AuthService _authService = AuthService();
   final _formKey = GlobalKey<FormState>();
   bool _isLoading = false;
-  bool _passwordVisible = false; 
+  bool _passwordVisible = false;
 
-  // Handle login logic
-  Future<void> _login() async {
+
+//login logic 
+Future<void> _login() async {
     if (_formKey.currentState!.validate()) {
       setState(() {
-        _isLoading = true;
+        _isLoading = true; 
       });
 
       try {
         String email = _emailController.text;
         String password = _passwordController.text;
+
         final user = await _authService.login(email, password, context);
         if (user != null) {
           Navigator.pushReplacementNamed(context, '/home');
@@ -34,23 +36,34 @@ class _LoginScreenState extends State<LoginScreen> {
           _showSnackbar('La connexion a échoué. Veuillez réessayer.');
         }
       } catch (error) {
-        _showSnackbar('La connexion a échoué.');
+        debugPrint('Error: $error');
+        String errorMessage;
+
+        if (error is Exception) {
+          errorMessage =
+              error.toString().split(': ').last; 
+        } else {
+          errorMessage = 'Une erreur s\'est produite. Veuillez réessayer.';
+        }
+        _showSnackbar(errorMessage);
       } finally {
         setState(() {
-          _isLoading = false;
+          _isLoading = false; 
         });
       }
-    } else {
     }
   }
-
   // Show Snackbar
   void _showSnackbar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: Text(message),
+        content: Text(
+          message,
+          textAlign: TextAlign.center,
+          ),
         backgroundColor: Colors.red,
         duration: const Duration(seconds: 5),
+        
       ),
     );
   }
@@ -123,8 +136,13 @@ class _LoginScreenState extends State<LoginScreen> {
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: TextFormField(
                   controller: _emailController,
+                  cursorColor: primaryColor,
                   decoration: InputDecoration(
                     labelText: 'Email',
+                    labelStyle: TextStyle(color: Colors.grey), 
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: primaryColor),
+                    ),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
                     ),
@@ -140,11 +158,19 @@ class _LoginScreenState extends State<LoginScreen> {
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: TextFormField(
                   controller: _passwordController,
-                  obscureText: !_passwordVisible, // Password visibility
+                  obscureText: !_passwordVisible,
+                  cursorColor: primaryColor,
                   decoration: InputDecoration(
                     labelText: 'Mot de passe',
+                    labelStyle:
+                        TextStyle(color: Colors.grey), 
+                    focusedBorder: OutlineInputBorder(
+                      borderSide: BorderSide(color: primaryColor),
+                    ),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
+                      borderSide: BorderSide(
+                          color: Colors.grey), 
                     ),
                     prefixIcon: const Icon(Icons.lock),
                     suffixIcon: IconButton(
@@ -152,6 +178,8 @@ class _LoginScreenState extends State<LoginScreen> {
                         _passwordVisible
                             ? Icons.visibility
                             : Icons.visibility_off,
+                        color:
+                            primaryColor,
                       ),
                       onPressed: () {
                         setState(() {
@@ -165,7 +193,6 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
               const SizedBox(height: 30),
-
               // Login button
               _isLoading
                   ? const CircularProgressIndicator()
@@ -218,3 +245,4 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 }
+

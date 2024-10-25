@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -51,52 +52,57 @@ public class ModulesController {
 
 
     // Method for creating a module, including image upload
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @PostMapping(path = "/creer-module", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> creerModule(
             @RequestParam("titre") String titre,
             @RequestParam("description") String description,
-            @RequestParam("prix") double prix,
-            @RequestParam("categorieId") Long categorieId,
+            @RequestParam("prix") String prix,
+            @RequestParam("nomCategorie") String nomCategorie,
             @RequestParam(value = "file", required = false) MultipartFile file) throws IOException {
 
-        // Verify if the category exists
-        Optional<Categorie> categorie = categorieRepository.findById(categorieId);
-        if (categorie.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(Collections.singletonMap("message", "Categorie with ID " + categorieId + " does not exist!"));
-        }
+        // Validate category ID
+        try {
+            Optional<Categorie> categorie = categorieRepository.findByNomCategorie(nomCategorie);
 
-        FileInfo fileInfo = null;
-        if (file != null && !file.isEmpty()) {
-            // Validate the image type (only allow PNG or JPEG for example)
-            String fileExtension = getExtension(Objects.requireNonNull(file.getOriginalFilename()));
-            if (!fileExtension.equalsIgnoreCase("png") && !fileExtension.equalsIgnoreCase("jpg")
-                    && !fileExtension.equalsIgnoreCase("jpeg")) {
+            if (categorie.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body(Collections.singletonMap("message", "The file must be in PNG or JPEG format."));
+                        .body(Collections.singletonMap("message", "Categorie avec  " + nomCategorie + " n'existe pas!"));
             }
 
-            // Rename the file according to a specific format (e.g., titre_module1.png)
-            String renamedFile = titre.replace(" ", "_") + "1." + fileExtension;
+            FileInfo fileInfo = null;
+            if (file != null && !file.isEmpty()) {
+                String fileExtension = getExtension(Objects.requireNonNull(file.getOriginalFilename()));
+                if (!fileExtension.equalsIgnoreCase("png") && !fileExtension.equalsIgnoreCase("jpg")
+                        && !fileExtension.equalsIgnoreCase("jpeg")) {
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                            .body(Collections.singletonMap("message", "The file must be in PNG or JPEG format."));
+                }
+                String renamedFile = titre.replace("", "") + "1." + fileExtension;
+                fileInfo = filesStorageService.saveFileInSpecificFolderWithCustomName(file, "", renamedFile);
+            }
 
-            // Save the file to a specific folder
-            String specificFolderPath = "";
-            fileInfo = filesStorageService.saveFileInSpecificFolderWithCustomName(file, specificFolderPath, renamedFile);
+            Module module = new Module();
+            module.setTitre(titre);
+            module.setDescription(description);
+            module.setPrix(Double.parseDouble(prix)); // Convert BigDecimal to double
+            module.setDateCreation(new Date());
+            module.setCategorie(categorie.get());
+            module.setImageUrl(fileInfo != null ? fileInfo.getUrl() : null);
+
+            try {
+                Module createdModule = modulesservice.creerModule(module);
+                return ResponseEntity.ok(createdModule);
+            } catch (Exception e) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                        .body(Collections.singletonMap("message", "An error occurred while creating the module: " + e.getMessage()));
+            }
+        } catch (NumberFormatException e) {
+            return ResponseEntity.badRequest().body("Nom de categorie invalid ");
         }
-
-        // Create and save the module
-        Module module = new Module();
-        module.setTitre(titre);
-        module.setDescription(description);
-        module.setPrix(prix);
-        module.setDateCreation(new Date());
-        module.setCategorie(categorie.get());
-        module.setImageUrl(fileInfo != null ? fileInfo.getUrl() : null);
-
-        Module createdModule = modulesservice.creerModule(module);
-        return ResponseEntity.ok(createdModule);
     }
+
+
 
     // Helper method to extract file extension
     private String getExtension(String filename) {
@@ -154,19 +160,17 @@ public class ModulesController {
     }
 
 
-    @DeleteMapping("/supprimer-module/{id}")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
+    @DeleteMapping("/suprimer-module/{id}")
     public ResponseEntity<?> supprimerModule(@PathVariable Long id) {
-        String currentUserRole = SecurityContextHolder.getContext().getAuthentication().getAuthorities().iterator().next().getAuthority();
-        if (!"ROLE_ADMIN".equalsIgnoreCase(currentUserRole)) {
-            return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Seuls les ADMIN peuvent supprimer des module.");
-        }
-
-        try {
-            modulesservice.supprimerModule(id);
-            return ResponseEntity.ok("Module supprimer avec succcès.");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error de suppression.");
+        // Logic to delete the module by id
+        Optional<Module> moduleOptional = modulesRepository.findById(id);
+        if (moduleOptional.isPresent()) {
+            modulesRepository.delete(moduleOptional.get());
+            return ResponseEntity.ok(Collections.singletonMap("message", "Module supprimé successfully."));
+        } else {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body(Collections.singletonMap("message", "Oups Module "+id+ " n'existe pas !."));
         }
     }
 
@@ -194,13 +198,13 @@ public class ModulesController {
     }
 
 
-    @GetMapping("/module/{moduleId}/lecons")
+    @GetMapping("/{moduleId}/lecons")
     public ResponseEntity<List<Lecons>> getLeconsByModule(@PathVariable Long moduleId) {
         List<Lecons> leconsList = leconsService.findByModule_Id(moduleId);
         return ResponseEntity.ok(leconsList);
     }
 
-    @GetMapping("/module/{moduleId}/lecons/count")
+    @GetMapping("/{moduleId}/lecons/count")
     public ResponseEntity<Long> getLeconsCountByModule(@PathVariable Long moduleId) {
         Long leconsCount = leconsService.countByModule_Id(moduleId);
         return ResponseEntity.ok(leconsCount);

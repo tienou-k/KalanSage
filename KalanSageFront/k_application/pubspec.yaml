@@ -15,6 +15,7 @@ dependencies:
   shared_preferences: ^2.0.6
   lottie: ^2.0.0
   video_player: ^2.4.5
+  flutter_sticky_widgets: ^0.0.3
  # firebase_core: ^1.13.0
   #firebase_messaging: ^11.2.1
 
@@ -22,6 +23,7 @@ dev_dependencies:
   flutter_test:
     sdk: flutter
   flutter_lints: ^4.0.0
+  flutter_launcher_icons: ^0.13.1
 
 flutter:
   uses-material-design: true
@@ -32,18 +34,10 @@ flutter:
     - assets/images/profile.png
     - assets/images/slider/
     #---------------------------------------------
-    - assets/images/modules/
-    - assets/images/modules/figma.png
-    - assets/images/modules/html.png
-    - assets/images/modules/js.png
-    - assets/images/modules/java.jpg
-    - assets/images/modules/SpringBoot.png
-    - assets/images/modules/informatique.jpg
-    #---------------------------------------------
     - assets/icons/home.svg
     - assets/icons/grid_view.svg
     - assets/icons/book.svg
-    - assets/icons/chat_bubble_outline.svg
+    - assets/icons/bookmarked.svg
     - assets/icons/User.svg
     - assets/icons/dev.svg
     - assets/icons/com.svg

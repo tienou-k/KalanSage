@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:k_application/models/module_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -257,7 +258,7 @@ class UserService {
   }
 
 // Enroll in a module using current user's ID
-Future<Map<String, dynamic>> enrollInModule(int moduleId) async {
+  Future<Map<String, dynamic>> enrollInModule(int moduleId) async {
     final userId = await _getCurrentUserId();
     if (userId == null) {
       throw Exception('User is not authenticated.');
@@ -279,7 +280,6 @@ Future<Map<String, dynamic>> enrollInModule(int moduleId) async {
       throw Exception('Failed to enroll in module: ${response.body}');
     }
   }
-
 
   // Subscribe to an abonnement
   Future<void> subscribeToAbonnement(int userId, int abonnementId) async {
@@ -334,21 +334,17 @@ Future<Map<String, dynamic>> enrollInModule(int moduleId) async {
     }
   }
 
-
-
-   // Assuming you have a method to get current user ID or user-related info
+  // Assuming you have a method to get current user ID or user-related info
   Future<bool> isUserEnrolledInModule(int userId, int moduleId) async {
     try {
       final response = await http.get(
-        Uri.parse(
-            '$apiUrl/check?userId=$userId&moduleId=$moduleId'),
+        Uri.parse('$apiUrl/check?userId=$userId&moduleId=$moduleId'),
       );
 
       if (response.statusCode == 200) {
         // Parse the response
         var data = jsonDecode(response.body);
-        return data[
-            'isEnrolled']; 
+        return data['isEnrolled'];
       } else {
         throw Exception('Failed to load enrollment status');
       }
@@ -375,4 +371,56 @@ Future<Map<String, dynamic>> enrollInModule(int moduleId) async {
     }
   }
 
+// Request  password reset link
+  Future<void> requestPasswordReset(String email, BuildContext contect) async {
+    final headers = {'Content-Type': 'application/json'};
+    final body = jsonEncode({
+      'email': email,
+    });
+    try {
+      final response = await http.post(
+        Uri.parse('$apiUrl/users/reset-password-request'),
+        headers: headers,
+        body: body,
+      );
+      if (response.statusCode == 200) {
+        final responseData = jsonDecode(response.body);
+        // check
+      } else {
+        final errorData = jsonDecode(response.body);
+        throw Exception(
+            errorData['message'] ?? 'Envoyer de mail échec. Please try again.');
+      }
+    } catch (e) {
+      debugPrint('envoi de mail error: $e');
+      throw Exception('An error occured during the request: $e');
+    }
+    return;
+  }
+
+  // Reset the password with email and new password
+  Future<void> resetPassword(String email, String newPassword) async {
+    try {
+      final url = Uri.parse('$apiUrl/users/reset-password');
+
+      // Prepare the request body
+      final body = jsonEncode({
+        'email': email,
+        'newPassword': newPassword,
+      });
+
+      final response = await http.post(
+        url,
+        headers: {"Content-Type": "application/json"},
+        body: body,
+      );
+
+      if (response.statusCode == 200) {
+      } else {
+        throw Exception('Failed to reset password');
+      }
+    } catch (e) {
+      throw Exception('Error resetting password: $e');
+    }
+  }
 }

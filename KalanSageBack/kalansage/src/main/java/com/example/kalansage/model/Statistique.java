@@ -29,8 +29,5 @@ public class Statistique {
     @JoinColumn(name = "user_id")
     private Utilisateur utilisateur;
 
-    @ManyToOne
-    @JoinColumn(name = "abonnement_id")
-    private Abonnement abonnement;
 
 }

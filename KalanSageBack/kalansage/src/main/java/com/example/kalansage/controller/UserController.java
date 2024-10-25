@@ -1,6 +1,7 @@
 package com.example.kalansage.controller;
 
 
+import com.example.kalansage.dto.PasswordResetRequest;
 import com.example.kalansage.model.FileInfo;
 import com.example.kalansage.model.Role;
 import com.example.kalansage.model.User;
@@ -10,10 +11,13 @@ import com.example.kalansage.repository.UserRepository;
 import com.example.kalansage.service.AbonnementService;
 import com.example.kalansage.service.FilesStorageServiceImpl;
 import com.example.kalansage.service.UserService;
+import com.example.kalansage.service.UserServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.SimpleMailMessage;
+import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
@@ -27,9 +31,12 @@ import java.util.*;
 @RequestMapping("/api/users")
 public class UserController {
 
-
+    @Autowired
+    private JavaMailSender mailSender;
     @Autowired
     private UserService userService;
+    @Autowired
+    private UserServiceImpl userServiceImpl;
     @Autowired
     private AbonnementService abonnementService;
     @Autowired
@@ -271,5 +278,48 @@ public class UserController {
         List<User> users = userService.listerUsers();
         return ResponseEntity.ok(users);
     }
+
+    // ---------------------------------------------------
+    @PostMapping("/reset-password-request")
+    public ResponseEntity<?> resetPasswordRequest(@RequestBody PasswordResetRequest request) {
+        String email = request.getEmail(); // Extract email from the request body
+        String token = userServiceImpl.generateResetToken(email);
+        if (token != null) {
+            userServiceImpl.sendPasswordResetEmail(email, token);
+            return ResponseEntity.ok(Collections.singletonMap("message", "Vous avez reçu un courriel sur "+email+" envoyé pour la réinitialisation du mot de passe."));
+        }
+        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                .body(Collections.singletonMap("message", "Aucun utilisateur " + email + " n'a été trouvé avec cet email."));
+    }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<?> resetPassword(@RequestBody PasswordResetRequest request) {
+        // Find the user by their email
+        Optional<User> userOptional = userRepository.findByEmail(request.getEmail());
+        if (userOptional.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Utilisateur non trouvé.");
+        }
+
+        User user = userOptional.get();
+
+        // Set the new password provided by the user
+        String newPassword = request.getNewPassword();
+        user.setMotDePasse(passwordEncoder.encode(newPassword));
+        userRepository.save(user);
+
+        sendPasswordResetEmail(user.getEmail());
+
+        return ResponseEntity.ok("Le mot de passe a été réinitialisé avec succès pour " + user.getEmail() + ".");
+    }
+
+
+    private void sendPasswordResetEmail(String toEmail) {
+        SimpleMailMessage message = new SimpleMailMessage();
+        message.setTo(toEmail);
+        message.setSubject("Réinitialisation de mot de passe");
+        message.setText("Votre mot de passe à été reinitialiser ! ");
+        mailSender.send(message);
+    }
+
 
 }

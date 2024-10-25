@@ -21,12 +21,6 @@ public class DataInitializer {
     private RoleRepository roleRepository;
 
     @Autowired
-    private ModuleRepository ModuleRepository;
-
-    @Autowired
-    private LeconsRepository leconsRepository;
-
-    @Autowired
     private AbonnementRepository abonnementRepository;
 
     @Autowired
@@ -45,8 +39,6 @@ public class DataInitializer {
     public void initData() {
         initializeRoles();
         initializeCategories();
-        initializeModule();
-        initializeLecons();
         initializeAbonnements();
         initializeAdmin();
         System.out.println("Données initialisées avec succès.");
@@ -69,84 +61,49 @@ public class DataInitializer {
         if (categorieRepository.findAll().isEmpty()) {
             Categorie cat1 = new Categorie();
             cat1.setNomCategorie("Programming");
-            cat1.setDescription("Cours liés aux langages et frameworks de programmation.");
+            cat1.setDescription("Module liés aux langages et frameworks de programmation.");
 
             Categorie cat2 = new Categorie();
             cat2.setNomCategorie("Data Science");
-            cat2.setDescription("Cours liés à l'analyse de données, apprentissage automatique et IA.");
+            cat2.setDescription("Module liés à l'analyse de données, apprentissage automatique et IA.");
 
-            categorieRepository.saveAll(Arrays.asList(cat1, cat2));
+            Categorie cat3 = new Categorie();
+            cat3.setNomCategorie("Design");
+            cat3.setDescription("Module du design graphique");
+
+            Categorie cat4 = new Categorie();
+            cat4.setNomCategorie("Marketing");
+            cat4.setDescription("Modules du context de marking .");
+
+            Categorie cat5 = new Categorie();
+            cat5.setNomCategorie("Communication");
+            cat5.setDescription("TOus ce qui concerne la communication");
+
+            Categorie cat6 = new Categorie();
+            cat6.setNomCategorie("Finance");
+            cat6.setDescription("Module  qui vous permet d'avoir un niveau expert en finance");
+
+            Categorie cat7 = new Categorie();
+            cat7.setNomCategorie("Redaction de contenu");
+            cat7.setDescription("La redaction Web et ecrite pour ce module");
+
+            Categorie cat8 = new Categorie();
+            cat8.setNomCategorie("Photographie");
+            cat8.setDescription("Module de la photographie en tous ");
+
+            Categorie cat9 = new Categorie();
+            cat9.setNomCategorie("Reseau");
+            cat9.setDescription("Acquerir des competences en reseau et telecom");
+
+            categorieRepository.saveAll(Arrays.asList(cat1, cat2, cat3, cat4, cat5, cat6, cat7, cat8, cat9));
             System.out.println("Catégories initialisées.");
         }
     }
 
-    private void initializeModule() {
-        if (ModuleRepository.findAll().isEmpty()) {
-            Optional<Categorie> programmingCategory = categorieRepository.findByNomCategorie("Programming");
-
-            if (programmingCategory.isPresent()) {
-                Module module1 = new Module();
-                module1.setTitre("Introduction à Spring Boot");
-                module1.setDescription("Apprenez les bases de Spring Boot.");
-                module1.setDateCreation(new Date());
-                module1.setCategorie(programmingCategory.get());
-
-                Module module2 = new Module();
-                module2.setTitre("Programmation avancée en Java");
-                module2.setDescription("Approfondir les concepts de programmation Java.");
-                module2.setDateCreation(new Date());
-                module2.setCategorie(programmingCategory.get());
-
-                ModuleRepository.saveAll(Arrays.asList(module1, module2));
-                System.out.println("Modules d'exemple initialisés.");
-            } else {
-                System.out.println("Erreur : Categorie 'Programming' non retrouvée");
-            }
-        }
-    }
 
 
-    private void initializeLecons() {
-        // Vérifie si des leçons existent déjà
-        if (leconsRepository.findAll().isEmpty()) {
-            Optional<Module> moduleOptional = ModuleRepository.findById(1L);
-            if (moduleOptional.isPresent()) {
-                Module module = moduleOptional.get();
-                // Création de la première leçon
-                Lecons lecons1 = new Lecons();
-                lecons1.setTitre("Nouvelle Leçon");
-                lecons1.setDescription("Description de la nouvelle leçon");
-                lecons1.setContenu("Vidéo de la Leçon");
-                lecons1.setModule(module);
-                // Création du quiz associé à la première leçon
-                Quiz quiz1 = new Quiz();
-                quiz1.setQuestions("Quelles sont les bases de Spring Boot?");
-                quiz1.setLecon(lecons1);
-                lecons1.setQuiz(quiz1); // Association du quiz à la leçon
 
-                // Création de la deuxième leçon
-                Lecons lecons2 = new Lecons();
-                lecons2.setTitre("Nouvelle Leçon 2");
-                lecons2.setDescription("Description de la deuxième leçon");
-                lecons2.setContenu("Contenu de la deuxième leçon");
-                lecons2.setModule(module);
 
-                // Création du quiz associé à la deuxième leçon
-                Quiz quiz2 = new Quiz();
-                quiz2.setQuestions("Quels sont les avantages de Spring Boot?");
-                quiz2.setLecon(lecons2);
-                lecons2.setQuiz(quiz2);
-
-                // Sauvegarde des leçons et des quiz
-                leconsRepository.saveAll(Arrays.asList(lecons1, lecons2));
-                System.out.println("Leçons et quiz créés et associés au module : " + module.getTitre());
-            } else {
-                System.out.println("Aucun module trouvé pour attribuer les leçons.");
-            }
-        } else {
-            System.out.println("Leçons déjà créées. Initialisation des leçons sautée.");
-        }
-    }
 
 
     private void initializeAbonnements() {
@@ -177,7 +134,7 @@ public class DataInitializer {
                 Admin defaultAdmin = new Admin();
                 defaultAdmin.setNom("Admin");
                 defaultAdmin.setPrenom("ADMIN");
-                defaultAdmin.setEmail("admin@gmail.com");
+                defaultAdmin.setEmail("kontere13e@gmail.com");
                 defaultAdmin.setUsername("admin");
                 defaultAdmin.setMotDePasse(passwordEncoder.encode("admin123"));
                 defaultAdmin.setDateInscription(new Date());

@@ -143,15 +143,23 @@ public class FilesStorageServiceImpl implements FilesStorageService {
         }
         Path destinationFile = mfolderPath.resolve(customFileName).normalize().toAbsolutePath();
         Files.copy(file.getInputStream(), destinationFile, StandardCopyOption.REPLACE_EXISTING);
+
+        // Adjust file URL construction
         String fileUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
                 .path("/images_du_projet/modules/")
-                .path(folderPath + "/")
-                .path(customFileName)
+                .path(customFileName) // Ensure folderPath is not added again
                 .toUriString();
+
+        // Log for debugging
+        System.out.println("Folder path: " + mfolderPath);
+        System.out.println("Destination file: " + destinationFile);
+        System.out.println("File URL: " + fileUrl);
 
         // Return file information with URL
         return new FileInfo(customFileName, fileUrl);
     }
+
+
     @Override
     public FileInfo saveFileInSpecificFolderWithCustomNameVideo(MultipartFile file, String folderPath, String customFileName) throws IOException {
         // Check if file is a valid video

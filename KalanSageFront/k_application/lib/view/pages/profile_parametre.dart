@@ -3,6 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:k_application/services/auth_service.dart';
 import 'package:k_application/utils/constants.dart';
 import 'package:k_application/view/custom_nav_bar.dart';
+import 'package:k_application/view/pages/abonnement_page.dart';
 import 'package:k_application/view/pages/profile_modifier.dart';
 
 class ProfileSettings extends StatefulWidget {
@@ -21,8 +22,6 @@ class _ProfileSettings extends State<ProfileSettings> {
   void initState() {
     super.initState();
   }
-
-
 
   void _onTabSelected(int index) {
     setState(() {
@@ -49,7 +48,7 @@ class _ProfileSettings extends State<ProfileSettings> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-       appBar: PreferredSize(
+      appBar: PreferredSize(
         preferredSize: Size.fromHeight(kToolbarHeight),
         child: Container(
           decoration: BoxDecoration(
@@ -85,13 +84,12 @@ class _ProfileSettings extends State<ProfileSettings> {
         ),
       ),
       backgroundColor: Colors.white,
-      body: Column(
-        children: [
-          Spacer(),
-          // Profile Menu Items Card
-          Expanded(
-            flex: 4,
-            child: Padding(
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            // Profile Menu Items Card
+            SizedBox(height: 90),
+            Padding(
               padding: const EdgeInsets.symmetric(horizontal: 16.0),
               child: Container(
                 padding: const EdgeInsets.all(16),
@@ -110,32 +108,43 @@ class _ProfileSettings extends State<ProfileSettings> {
                   children: [
                     _buildMenuItem(
                       'assets/icons/User Heart Rounded.svg',
-                        'Profile', const Color(0xFFEEF2FF),
-                        onTap: (){
-                          Navigator.push(
+                      'Profile',
+                      const Color(0xFFEEF2FF),
+                      onTap: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => ProfileModifier(),
+                          ),
+                        );
+                      },
+                    ),
+                    _buildMenuItem('assets/icons/Wallet 2.svg', 'Abonnement',
+                        const Color(0xFFD5F4E6), onTap: () {
+                      Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => ProfileModifier(),
+                          builder: (context) => AbonnementPage(),
                         ),
                       );
-                        }
-                        ),
-                    _buildMenuItem('assets/icons/Wallet 2.svg',
-                        'Abonnement', const Color(0xFFD5F4E6)),
-                    _buildMenuItem('assets/icons/langueAdd.svg', 'Langue',
-                        const Color.fromARGB(29, 9, 40, 175)),
-                    _buildMenuItem('assets/icons/Document Add.svg', 'Mes Points',
-                        const Color(0xFFFFE5E5)),
+                    }),
+                    _buildMenuItem(
+                      'assets/icons/langueAdd.svg',
+                      'Langue',
+                      const Color.fromARGB(29, 9, 40, 175),
+                    ),
+                    _buildMenuItem(
+                      'assets/icons/Document Add.svg',
+                      'Mes Points',
+                      const Color(0xFFFFE5E5),
+                    ),
                   ],
                 ),
               ),
             ),
-          ),
 
-          // Light/Dark and Deconnexion Card at the bottom
-          Expanded(
-            flex: 3,
-            child: Align(
+            // Light/Dark and Deconnexion Card at the bottom
+            Align(
               alignment: Alignment.bottomCenter,
               child: Padding(
                 padding:
@@ -196,8 +205,8 @@ class _ProfileSettings extends State<ProfileSettings> {
                 ),
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
       bottomNavigationBar: CustomBottomNavBar(
         currentIndex: _currentIndex,

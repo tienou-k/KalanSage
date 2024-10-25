@@ -14,15 +14,11 @@ import java.util.Optional;
 @Repository
 public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByEmail(String email);
-
     Optional<User> findByUsername(String username);
-
     Optional<User> findByEmailOrUsername(String email, String username);
-
     List<User> findByRole(Role role);
-
     @Query("SELECT u FROM User u JOIN u.abonnementUser a")
     List<User> findAllAbonnementUsers();
-
     User findUserById(Long id);
+    Optional<User> findByResetToken(String resetToken);
 }

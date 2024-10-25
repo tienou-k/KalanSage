@@ -45,8 +45,13 @@ public class SecurityConfig {
                         // Public endpoints
                         .requestMatchers(
                                 "/api/users/creer-user",
-                                "api/auth/**",
-                                "/images_du_projet/modules/**"
+                                "/api/auth/**",
+                                "/api/files/**",
+                                "/api/users/reset-password-request",
+                                "/api/users/reset-password",
+                                "/images_du_projet/modules/**",
+                                "images_du_projet/**",
+                                "/images_du_projet/videos_lecons/**"
                         ).permitAll()
                         // General auth endpoints
 
@@ -55,6 +60,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/admins/partenaires/**").hasAuthority("ROLE_ADMIN")
                         .requestMatchers("/api/categories/creer-categorie").hasAuthority("ROLE_ADMIN")
                         .requestMatchers("/api/modules/").hasAuthority("ROLE_ADMIN")
+                        .requestMatchers("/api/modules/creer-module").hasAuthority("ROLE_ADMIN")
                         .requestMatchers("/api/lecons/").hasAuthority("ROLE_ADMIN")
                         .requestMatchers("/api/admins/abonnements/**").hasAuthority("ROLE_ADMIN")
                         .requestMatchers("/api/forums/**").hasAuthority("ROLE_ADMIN")
@@ -84,8 +90,7 @@ public class SecurityConfig {
 
         configuration.setAllowedOrigins(Arrays.asList(
                 "http://localhost:4200",  // Angular IP (development)
-                "http://localhost:59875/",  // Flutter App IP
-                "http://192.168.1.6"// Phone IP
+                "http://localhost:63593/"  // Flutter App IP
         ));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));

@@ -26,8 +26,20 @@ class CategorieModel {
         return 'assets/icons/dev.svg';
       case 'Data Science':
         return 'assets/icons/science.svg';
-      case 'Design Graphique':
+      case 'Design':
+        return 'assets/icons/art_design.svg';
+        case 'Marketing':
+        return 'assets/icons/marketing.svg';
+        case 'Communication':
+        return 'assets/icons/com.svg';
+        case 'Finance':
+        return 'assets/icons/finanace.svg';
+        case 'Redaction de contenu':
+        return 'assets/icons/content.svg';
+        case 'Photographie':
         return 'assets/icons/photo.svg';
+        case 'Reseau':
+        return 'assets/icons/reseau.svg';
       default:
         return 'assets/icons/default_icon.svg';
     }

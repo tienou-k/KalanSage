@@ -15,38 +15,58 @@ export class ModuleService {
   // Utility method to get the authorization header using the access token from AuthService
   private getAuthHeaders(): HttpHeaders {
     const token = this.authService.getAccessToken();
+    console.log('Access Token:', token); // for debugging
     return new HttpHeaders({
       Authorization: `Bearer ${token}`,
       'Content-Type': 'application/json',
     });
   }
-
   // Create a new module
-  creerModule(moduleData: any): Observable<any> {
-    return this.http.post<any>(`${this.apiUrl}/creer-module`, moduleData, {
-      headers: this.getAuthHeaders(),
+  creerModule(moduleData: any, file?: File): Observable<any> {
+    const formData = new FormData();
+    formData.append('titre', moduleData.titre);
+    formData.append('description', moduleData.description);
+    formData.append('prix', moduleData.prix);
+    formData.append('nomCategorie', moduleData.nomCategorie);
+    if (file) {
+      formData.append('file', file, file.name);
+    }
+    return this.http.post<any>(`${this.apiUrl}/creer-module`, formData, {
+      headers: new HttpHeaders({
+        Authorization: `Bearer ${this.authService.getAccessToken()}`,
+      }),
     });
   }
 
-  // Delete a module by ID
-  supprimerModule(moduleId: number): Observable<any> {
-    return this.http.delete<any>(
-      `${this.apiUrl}/supprimer-module/${moduleId}`,
+  // Update an existing module
+  modifierModule(
+    moduleId: number,
+    moduleData: any,
+    file?: File
+  ): Observable<any> {
+    const formData = new FormData();
+    formData.append('titre', moduleData.titre);
+    formData.append('description', moduleData.description);
+    formData.append('prix', moduleData.prix);
+    if (file) {
+      formData.append('file', file, file.name);
+    }
+    return this.http.put<any>(
+      `${this.apiUrl}/modifier-module/${moduleId}`,
+      formData,
       {
-        headers: this.getAuthHeaders(),
+        headers: new HttpHeaders({
+          Authorization: `Bearer ${this.authService.getAccessToken()}`,
+        }),
       }
     );
   }
-
-  // Update an existing module
-  modifierModule(moduleId: number, moduleData: any): Observable<any> {
-    return this.http.put<any>(
-      `${this.apiUrl}/modifier-module/${moduleId}`,
-      moduleData,
-      {
-        headers: this.getAuthHeaders(),
-      }
-    );
+  
+  // Delete a module by ID
+  supprimerModule(moduleId: number): Observable<any> {
+    return this.http.delete<any>(`${this.apiUrl}/suprimer-module/${moduleId}`, {
+      headers: this.getAuthHeaders(), // Ensure headers include authorization
+    });
   }
 
   // Fetch the list of all modules
@@ -63,8 +83,6 @@ export class ModuleService {
     });
   }
 
-  
-
   // Fetch a single module by ID
   getModuleById(id: number): Observable<any> {
     return this.http.get<any>(`${this.apiUrl}/module-par/${id}`, {
@@ -77,7 +95,7 @@ export class ModuleService {
       headers: this.getAuthHeaders(),
     });
   }
-  
+
   // Fetch all categories with proper authorization headers
   getCategories(): Observable<any[]> {
     const headers = this.getAuthHeaders();

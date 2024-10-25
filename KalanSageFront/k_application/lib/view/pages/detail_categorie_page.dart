@@ -215,6 +215,8 @@ class CourseHighlightCard extends StatelessWidget {
               child: Image.network(
                 module.imageUrl,
                 fit: BoxFit.cover,
+                width: double.infinity,
+                height: double.infinity,
                 errorBuilder: (context, error, stackTrace) {
                   return Container(
                     color: primaryColor,
@@ -292,10 +294,9 @@ class CourseHighlightCard extends StatelessWidget {
   }
 }
 
-// Popular Course Card Widget with Asset Images
 class CourseCard extends StatefulWidget {
   final ModuleModel module;
-  
+
   const CourseCard({
     super.key,
     required this.module,
@@ -312,32 +313,49 @@ class _CourseCardState extends State<CourseCard> {
     if (!_isLoading) {
       setState(() => _isLoading = true);
       try {
-        await AuthService().getCurrentUser();
-        
-        if (widget.module.isBookmarked) {
-          await ModuleService().removeFromBookmarks(widget.module.id.toString());
-        } else {
-          await ModuleService().addToBookmarks(widget.module.id.toString(), widget.module.userId);
+        debugPrint('Fetching current user...');
+        Map<String, dynamic>? currentUser =
+            await AuthService().getCurrentUser();
+
+        if (currentUser == null || currentUser['userId'] == null) {
+          throw Exception('Current user is null or does not have userId');
         }
+        String currentUserId = currentUser['userId'].toString();
+
+        if (widget.module.isBookmarked) {
+          await ModuleService().removeFromBookmarks(
+            widget.module.id.toString(),
+            currentUserId,
+          );
+        } else {
+          await ModuleService().addToBookmarks(
+            widget.module.id.toString(),
+            currentUserId,
+          );
+        }
+        setState(() {
+          widget.module.isBookmarked = !widget.module.isBookmarked;
+        });
       } catch (e) {
         _handleUpdateFailure(e);
+        debugPrint('Bookmark update failed: $e'); // Debug print
       } finally {
         setState(() => _isLoading = false);
       }
     }
   }
 
+  // Error handling method for bookmark update failure
   void _handleUpdateFailure(dynamic error) {
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
-        content: 
-        Text(
-          'Methode non implenté',
+        content: Text(
+          'Failed to update bookmark. Please try again.',
           textAlign: TextAlign.center,
         ),
-        duration: const Duration(seconds: 2),
-        backgroundColor:secondaryColor ,
-        ),
+        duration: const Duration(seconds: 3), 
+        backgroundColor: Colors.red,
+      ),
     );
   }
 
@@ -363,7 +381,9 @@ class _CourseCardState extends State<CourseCard> {
             Expanded(
               child: Image.network(
                 widget.module.imageUrl,
-                fit: BoxFit.fill,
+                fit: BoxFit.cover,
+                width: double.infinity,
+                height: double.infinity,
                 errorBuilder: (context, error, stackTrace) {
                   return Container(
                     color: Colors.grey.shade300,
@@ -411,7 +431,9 @@ class _CourseCardState extends State<CourseCard> {
                 ),
                 IconButton(
                   icon: Icon(
-                    widget.module.isBookmarked ? Icons.bookmark : Icons.bookmark_border,
+                    widget.module.isBookmarked
+                        ? Icons.bookmark
+                        : Icons.bookmark_border,
                     color: secondaryColor,
                   ),
                   onPressed: () async {
