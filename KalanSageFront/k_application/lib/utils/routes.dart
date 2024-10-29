@@ -61,7 +61,7 @@ class AppRoutes {
       case mesModules:
         return MaterialPageRoute(builder: (_) => MesModulesPage());
       case chats:
-        return MaterialPageRoute(builder: (_) => ChatPage());
+        return MaterialPageRoute(builder: (_) => FavorisPage());
       case profile:
         return MaterialPageRoute(builder: (_) => DashboardScreen());
         case profileSettings:

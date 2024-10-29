@@ -41,7 +41,7 @@ class CategorieModel {
         case 'Reseau':
         return 'assets/icons/reseau.svg';
       default:
-        return 'assets/icons/default_icon.svg';
+        return 'assets/icons/default.svg';
     }
   }
 }

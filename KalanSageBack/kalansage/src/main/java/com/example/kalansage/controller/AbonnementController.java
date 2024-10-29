@@ -2,13 +2,12 @@ package com.example.kalansage.controller;
 
 
 import com.example.kalansage.dto.AbonnementDTO;
+import com.example.kalansage.exception.ErrorResponse;
 import com.example.kalansage.model.Abonnement;
 import com.example.kalansage.model.Module;
 import com.example.kalansage.model.User;
 import com.example.kalansage.repository.AbonnementRepository;
-import com.example.kalansage.service.AbonnementService;
-import com.example.kalansage.service.ModuleServiceImpl;
-import com.example.kalansage.service.UserInteractionService;
+import com.example.kalansage.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +25,8 @@ public class AbonnementController {
 
     @Autowired
     private AbonnementService abonnementService;
+    @Autowired
+    private AbonnementServiceImpl abonnementServiceimpl;
     @Autowired
     private UserInteractionService userInteractionService;
     @Autowired
@@ -111,6 +112,7 @@ public class AbonnementController {
         List<User> abonnementUsers = userInteractionService.getAbonnementUsers();
         return ResponseEntity.ok(abonnementUsers);
     }
+
 
     private boolean isAdmin() {
         String currentUserRole = SecurityContextHolder.getContext().getAuthentication().getAuthorities().iterator().next().getAuthority();

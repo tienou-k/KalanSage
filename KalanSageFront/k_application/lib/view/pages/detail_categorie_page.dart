@@ -309,39 +309,44 @@ class CourseCard extends StatefulWidget {
 class _CourseCardState extends State<CourseCard> {
   bool _isLoading = false;
 
-  Future<void> _updateBookmarkStatus() async {
-    if (!_isLoading) {
-      setState(() => _isLoading = true);
-      try {
-        debugPrint('Fetching current user...');
-        Map<String, dynamic>? currentUser =
-            await AuthService().getCurrentUser();
+ Future<void> _updateBookmarkStatus() async {
+    if (_isLoading) return; // Prevent multiple taps during loading
+    setState(() => _isLoading = true);
+    try {
+      debugPrint('Fetching current user...');
+      Map<String, dynamic>? currentUser = await AuthService().getCurrentUser();
 
-        if (currentUser == null || currentUser['userId'] == null) {
-          throw Exception('Current user is null or does not have userId');
-        }
-        String currentUserId = currentUser['userId'].toString();
-
-        if (widget.module.isBookmarked) {
-          await ModuleService().removeFromBookmarks(
-            widget.module.id.toString(),
-            currentUserId,
-          );
-        } else {
-          await ModuleService().addToBookmarks(
-            widget.module.id.toString(),
-            currentUserId,
-          );
-        }
-        setState(() {
-          widget.module.isBookmarked = !widget.module.isBookmarked;
-        });
-      } catch (e) {
-        _handleUpdateFailure(e);
-        debugPrint('Bookmark update failed: $e'); // Debug print
-      } finally {
-        setState(() => _isLoading = false);
+      if (currentUser == null || currentUser['userId'] == null) {
+        throw Exception('Current user is null or does not have userId');
       }
+      String currentUserId = currentUser['userId'].toString();
+      if (widget.module.isBookmarked) {
+        await ModuleService()
+            .removeFromBookmarks(widget.module.id.toString(), currentUserId);
+      } else {
+        await ModuleService()
+            .addToBookmarks(widget.module.id.toString(), currentUserId);
+      }
+      setState(() {
+        widget.module.isBookmarked = !widget.module.isBookmarked;
+      });
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text(
+            widget.module.isBookmarked
+                ? 'Added to bookmarks!'
+                : 'Removed from bookmarks!',
+            textAlign: TextAlign.center,
+          ),
+          duration: const Duration(seconds: 2),
+          backgroundColor: Colors.green,
+        ),
+      );
+    } catch (e) {
+      _handleUpdateFailure(e);
+      debugPrint('Bookmark update failed: $e');
+    } finally {
+      setState(() => _isLoading = false);
     }
   }
 

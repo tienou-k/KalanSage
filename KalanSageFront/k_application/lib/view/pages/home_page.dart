@@ -21,7 +21,7 @@ class _HomePageState extends State<HomePage> {
   List<ModuleModel> _modules = [];
   List<ModuleModel> _filteredModules = [];
   bool _isLoading = true;
-  String _searchQuery = ''; 
+  String _searchQuery = '';
 
   @override
   void initState() {
@@ -36,7 +36,7 @@ class _HomePageState extends State<HomePage> {
       setState(() {
         _modules =
             fetchedModules.map((json) => ModuleModel.fromJson(json)).toList();
-        _filteredModules = _modules; 
+        _filteredModules = _modules;
         _isLoading = false;
       });
     } catch (e) {
@@ -53,7 +53,7 @@ class _HomePageState extends State<HomePage> {
     setState(() {
       _searchQuery = query;
       if (_searchQuery.isEmpty) {
-        _filteredModules = _modules; 
+        _filteredModules = _modules;
       } else {
         _filteredModules = _modules
             .where((module) =>
@@ -69,7 +69,7 @@ class _HomePageState extends State<HomePage> {
     });
     switch (index) {
       case 0:
-      //nous sommes ici...................
+        //nous sommes ici...................
         break;
       case 1:
         Navigator.pushNamed(context, '/categorie');
@@ -117,6 +117,7 @@ class _HomePageState extends State<HomePage> {
                     const TabSection(),
                     const SizedBox(height: 20),
                     // GridView.builder with filtered modules
+                    const SizedBox(height: 10),
                     GridView.builder(
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: crossAxisCount,
@@ -124,8 +125,7 @@ class _HomePageState extends State<HomePage> {
                         mainAxisSpacing: 15,
                         childAspectRatio: 0.75,
                       ),
-                      itemCount:
-                          _filteredModules.length,
+                      itemCount: _filteredModules.length,
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),
                       itemBuilder: (context, index) {

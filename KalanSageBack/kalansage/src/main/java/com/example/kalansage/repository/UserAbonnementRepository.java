@@ -24,4 +24,6 @@ public interface UserAbonnementRepository extends JpaRepository<UserAbonnement, 
     @Query("SELECT ua.user FROM UserAbonnement ua WHERE ua.abonnement.idAbonnement = :abonnementId")
     List<User> findUsersByAbonnementId(@Param("abonnementId") Long abonnementId);
 
+    List<UserAbonnement> findByUserId(Long userId);
+
 }

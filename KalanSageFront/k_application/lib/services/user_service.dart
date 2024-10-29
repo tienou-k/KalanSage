@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:k_application/models/abonnement_model.dart';
 import 'package:k_application/models/module_model.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
@@ -252,7 +253,7 @@ class UserService {
     final currentUser = _prefs?.getString('currentUser');
     if (currentUser != null) {
       final userMap = jsonDecode(currentUser);
-      return userMap['id']; // Assuming the token contains a user ID.
+      return userMap['id']; 
     }
     return null;
   }
@@ -278,6 +279,30 @@ class UserService {
       throw Exception('User is already enrolled in this module.');
     } else {
       throw Exception('Failed to enroll in module: ${response.body}');
+    }
+  }
+
+  //Abonnement list
+  Future<List<Abonnement>> fetchAbonnements() async {
+    final userId = await _getCurrentUserId();
+    if (userId == null) {
+      throw Exception('User is not authenticated.');
+    }
+    final token = await _getCurrentUserToken();
+    final response = await http.get(
+      Uri.parse('$apiUrl/user/list-abonnements'),
+      headers: {
+        'Authorization': 'Bearer $token',
+        'Content-Type': 'application/json',
+      },
+    );
+    if (response.statusCode == 200) {
+      final List<dynamic> abonnementsJson = json.decode(response.body);
+      return abonnementsJson.map((json) => Abonnement.fromJson(json)).toList();
+    } else {
+      // Handle unauthorized response
+      throw Exception(
+          'Failed to load abonnements: ${response.statusCode} ${response.body}');
     }
   }
 
@@ -421,6 +446,49 @@ class UserService {
       }
     } catch (e) {
       throw Exception('Error resetting password: $e');
+    }
+  }
+
+//
+ Future<List<Abonnement>> fetchUserSubscription(int userId) async {
+    try {
+      final token = await _getCurrentUserToken();
+      final response = await http.get(
+        Uri.parse('$apiUrl/user/abonnements/$userId'),
+        headers: {
+          'Authorization': 'Bearer $token',
+          'Content-Type': 'application/json',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        // Log the response body for debugging
+        print('Subscription response received: ${response.body}');
+        final List<dynamic> abonnementsJson = json.decode(response.body);
+
+        if (abonnementsJson.isEmpty) {
+          print('No subscriptions found.');
+          return [];
+        }
+
+        // Map JSON data to List<Abonnement>
+        return abonnementsJson
+            .map((json) => Abonnement.fromJson(json))
+            .toList();
+      } else if (response.statusCode == 404) {
+        print('404 Not Found: No abonnement found for user ID $userId');
+        return []; // Return an empty list if no subscriptions are found
+      } else {
+        // Log the error response for further investigation
+        print(
+            'Failed to load subscription, status code: ${response.statusCode}');
+        print('Response body: ${response.body}');
+        throw Exception('Failed to load subscription');
+      }
+    } catch (error) {
+      // Log any error that occurs within the try block
+      print("Error fetching user subscription: $error");
+      return []; // Return an empty list to indicate an error
     }
   }
 }

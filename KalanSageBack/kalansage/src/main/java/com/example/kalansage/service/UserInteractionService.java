@@ -243,4 +243,8 @@ public class UserInteractionService {
     public boolean isUserAlreadyEnrolled(Long userId, Long moduleId) {
         return userModuleRepository.existsByUserIdAndModuleId(userId, moduleId);
     }
+
+    public List<UserAbonnement> getUserAbonnementsByUserId(Long userId) {
+        return userAbonnementRepository.findByUserId(userId);
+    }
 }

@@ -17,4 +17,6 @@ public interface AbonnementRepository extends JpaRepository<Abonnement, Long> {
 
     @Query("SELECT a FROM Abonnement a ORDER BY SIZE(a.abonne) DESC")
     Abonnement findMostSubscribedAbonnement();
+
+
 }

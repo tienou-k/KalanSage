@@ -23,18 +23,17 @@ class _CustomBottomNavBarState extends State<CustomBottomNavBar> {
       backgroundColor: Colors.white,
       type: BottomNavigationBarType.fixed,
       currentIndex: widget.currentIndex,
-      onTap: widget.onTap,
+      onTap: (index) {
+        if (index != widget.currentIndex) {
+          widget.onTap(index);
+        }
+      },
       items: [
-        _buildBottomNavItem(
-            'assets/icons/home.svg', 0),
-        _buildBottomNavItem(
-            'assets/icons/grid_view.svg', 1), 
-        _buildBottomNavItem(
-            'assets/icons/book.svg', 2), 
-        _buildBottomNavItem('assets/icons/bookmarked.svg',
-            3), 
-        _buildBottomNavItem(
-            'assets/icons/User.svg', 4),
+        _buildBottomNavItem('assets/icons/home.svg', 0),
+        _buildBottomNavItem('assets/icons/grid_view.svg', 1),
+        _buildBottomNavItem('assets/icons/book.svg', 2),
+        _buildBottomNavItem('assets/icons/bookmarked.svg', 3),
+        _buildBottomNavItem('assets/icons/User.svg', 4),
       ],
       selectedItemColor: primaryColor,
       unselectedItemColor: Colors.grey,
@@ -43,7 +42,6 @@ class _CustomBottomNavBarState extends State<CustomBottomNavBar> {
     );
   }
 
-  // Helper method to build each Bottom Navigation Item with Underline Effect
   BottomNavigationBarItem _buildBottomNavItem(String assetPath, int index) {
     bool isSelected = widget.currentIndex == index;
 
@@ -60,14 +58,14 @@ class _CustomBottomNavBarState extends State<CustomBottomNavBar> {
           const SizedBox(height: 4),
           isSelected
               ? Container(
-                  width: 20, 
-                  height: 3, 
+                  width: 20,
+                  height: 3,
                   decoration: BoxDecoration(
                     color: secondaryColor,
-                    borderRadius: BorderRadius.circular(2), 
+                    borderRadius: BorderRadius.circular(2),
                   ),
                 )
-              : Container(), 
+              : Container(),
         ],
       ),
       label: '',

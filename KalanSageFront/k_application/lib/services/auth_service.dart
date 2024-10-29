@@ -52,7 +52,6 @@ class AuthService {
           };
 
           await _prefs?.setString('currentUser', jsonEncode(user));
-          debugPrint('Saved User: ${_prefs?.getString('currentUser')}');
           if (user['status'] == false) {
             Navigator.pushNamed(context, '/otp_verification', arguments: email);
           } else {
@@ -68,7 +67,6 @@ class AuthService {
         throw Exception(errorMessage);
       }
     } catch (error) {
-      debugPrint('Login error: $error');
       if (error is Exception) {
         rethrow;
       }
@@ -109,7 +107,6 @@ class AuthService {
             'Failed to fetch user profile: ${errorData['message']}');
       }
     } catch (e) {
-      debugPrint('Error fetching user profile: $e');
       throw Exception('An error occurred while fetching the profile: $e');
     }
   }
@@ -120,10 +117,8 @@ class AuthService {
     final currentUser = _prefs?.getString('currentUser');
     if (currentUser != null) {
       final userMap = jsonDecode(currentUser);
-      debugPrint('Current user retrieved: $userMap');
       return userMap;
     }
-    debugPrint('No current user found in SharedPreferences');
     return null;
   }
 
@@ -131,21 +126,23 @@ class AuthService {
   Future<void> logout() async {
     await _ensurePrefsInitialized();
     await _prefs?.remove('currentUser');
-    debugPrint(
-        'User logged out and current user removed from SharedPreferences');
   }
 
   // Check if user is logged in
-  bool isLoggedIn() {
-    final currentUser = getCurrentUser();
-    return currentUser != null;
+  Future<bool> isLoggedIn() async {
+    await _ensurePrefsInitialized(); 
+    final currentUser = await getCurrentUser(); 
+    return currentUser !=
+        null; 
   }
+
 
   // Get current user ID
   Future<int?> getCurrentUserId() async {
     final currentUser = await getCurrentUser();
     return currentUser?['id'];
   }
+
 
   // Verify OTP
   Future<Map<String, dynamic>> verifyOTP(Map<String, String> otpData) async {
@@ -167,4 +164,5 @@ class AuthService {
       return {'status': 'error', 'message': 'Error: $e'};
     }
   }
+
 }

@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:k_application/models/abonnement_model.dart';
 import 'package:k_application/services/auth_service.dart';
+import 'package:k_application/services/user_service.dart';
 import 'package:k_application/utils/constants.dart';
 import 'package:k_application/view/custom_nav_bar.dart';
 import 'package:k_application/view/pages/profile_parametre.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -15,27 +18,101 @@ class _DashboardScreen extends State<DashboardScreen>
     with SingleTickerProviderStateMixin {
   int _currentIndex = 4;
   final AuthService _authService = AuthService();
+  late Future<List<Abonnement>> abonnements;
+  final UserService _userService = UserService();
   String? _userPrenom;
   String? _userEmail;
-  late TabController _tabController; 
+  late TabController _tabController;
+  SharedPreferences? _prefs;
+  bool isLoading = false;
+  bool hasError = true;
 
   @override
   void initState() {
     super.initState();
-    _tabController =
-        TabController(length: 3, vsync: this); 
+    _loadPrefs();
+    _tabController = TabController(length: 3, vsync: this);
     _fetchUserProfile();
+    // abonnements = _userService.fetchUserSubscription(userId);
   }
 
+// getting user profile info
   Future<void> _fetchUserProfile() async {
     try {
       final userProfile = await _authService.fetchUserProfile();
+
       setState(() {
         _userPrenom = userProfile['prenom'];
         _userEmail = userProfile['email'];
       });
-    // ignore: empty_catches
+      // ignore: empty_catches
     } catch (error) {}
+  }
+
+  void _loadPrefs() async {
+    _prefs = await SharedPreferences.getInstance();
+  }
+
+  Future<int?> _getCurrentUserId() async {
+    _prefs = await SharedPreferences.getInstance();
+    return _prefs?.getInt('userId');
+  }
+
+  // Future<void> fetchUserSubscription() async {
+  //   try {
+  //     final userId = await _getCurrentUserId();
+  //     print("Current user ID: $userId");
+
+  //     if (userId == null) {
+  //       setState(() {
+  //         _isLoading = false;
+  //         _hasError = true;
+  //       });
+  //       _showErrorMessage('Utilisateur non connecté');
+  //       return;
+  //     }
+
+  //     // Fetch the user's subscriptions
+  //     List<Abonnement> userSubscriptions =
+  //         await _userService.fetchUserSubscription(userId);
+  //     print("User subscription data: $userSubscriptions");
+
+  //     if (userSubscriptions.isEmpty) {
+  //       print('No subscription data available for user ID: $userId');
+  //       setState(() {
+  //         _isLoading = false;
+  //         _hasError = true;
+  //       });
+  //       _showErrorMessage('Aucune information d\'abonnement trouvée.');
+  //       return;
+  //     }
+
+  //     // Assume we are interested in the first subscription in the list
+  //     Abonnement firstSubscription = userSubscriptions.first;
+
+  //     setState(() {
+  //       _userSubscriptionTitle = firstSubscription.typeAbonnement;
+  //       _userSubscriptionPrice = firstSubscription.prix;
+  //       _isLoading = false;
+  //       _hasError = false;
+  //     });
+  //   } catch (error) {
+  //     print("Error fetching user subscription: $error");
+  //     setState(() {
+  //       _userSubscriptionTitle = null;
+  //       _userSubscriptionPrice = null;
+  //       _isLoading = false;
+  //       _hasError = true;
+  //     });
+  //     _showErrorMessage(
+  //         'Erreur lors de la récupération des abonnements: $error');
+  //   }
+  // }
+
+  // errormessage shower
+  void _showErrorMessage(String message) {
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text(message)));
   }
 
   void _onTabSelected(int index) {
@@ -44,7 +121,7 @@ class _DashboardScreen extends State<DashboardScreen>
     });
     switch (index) {
       case 0:
-       Navigator.pushNamed(context, '/home');
+        Navigator.pushNamed(context, '/home');
         break;
       case 1:
         Navigator.pushNamed(context, '/categorie');
@@ -56,7 +133,6 @@ class _DashboardScreen extends State<DashboardScreen>
         Navigator.pushNamed(context, '/chats');
         break;
       case 4:
-       
         break;
     }
   }
@@ -108,9 +184,9 @@ class _DashboardScreen extends State<DashboardScreen>
             child: TabBarView(
               controller: _tabController,
               children: [
-                _buildStatsTab(), 
+                _buildStatsTab(),
                 _buildBadgesTab(),
-                _buildNotificationsTab(), 
+                _buildNotificationsTab(),
               ],
             ),
           ),
@@ -122,6 +198,7 @@ class _DashboardScreen extends State<DashboardScreen>
       ),
     );
   }
+
   // Build profile section widget
   Widget _buildProfileSection() {
     return Container(
@@ -161,13 +238,13 @@ class _DashboardScreen extends State<DashboardScreen>
             ),
             padding: const EdgeInsets.all(12),
             child: Column(
-              children: const [
+              children: [
                 Text(
-                  'Abonnement',
+                   'Free Plan',
                   style: TextStyle(color: Colors.white70),
                 ),
                 Text(
-                  '9,9/m',
+                  "0.0",
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 18,
@@ -189,9 +266,9 @@ class _DashboardScreen extends State<DashboardScreen>
         children: [
           Row(
             children: [
-              InfoCard(icon: Icons.bar_chart, label: '#2 Leaderboard' ),
+              InfoCard(icon: Icons.bar_chart, label: '#2 Classement'),
               const SizedBox(width: 16),
-              InfoCard(icon: Icons.quiz, label: '55 Quizzes'),
+              InfoCard(icon: Icons.quiz, label: '55 Quiz'),
             ],
           ),
           const SizedBox(height: 16),
@@ -207,7 +284,7 @@ class _DashboardScreen extends State<DashboardScreen>
           Align(
             alignment: Alignment.centerLeft,
             child: Text(
-              'STRONGEST TOPICS',
+              'Modules en Progressions',
               style: TextStyle(
                 fontSize: 16,
                 color: Colors.black54,
@@ -216,9 +293,9 @@ class _DashboardScreen extends State<DashboardScreen>
             ),
           ),
           const SizedBox(height: 8),
-          TopicProgress(title: 'Module 1', progress: 0.28, correct: 28),
-          TopicProgress(title: 'Module 2', progress: 0.35, correct: 35),
-          TopicProgress(title: 'Module 3', progress: 0.40, correct: 40),
+          TopicProgress(title: 'Module 1', progress: 0.98, correct: 98),
+          TopicProgress(title: 'Module 2', progress: 0.75, correct: 75),
+          TopicProgress(title: 'Module 3', progress: 0.30, correct: 30),
         ],
       ),
     );
@@ -324,7 +401,8 @@ class TopicProgress extends StatelessWidget {
   final double progress;
   final int correct;
 
-  const TopicProgress({super.key, 
+  const TopicProgress({
+    super.key,
     required this.title,
     required this.progress,
     required this.correct,
@@ -360,7 +438,8 @@ class AchievementTile extends StatelessWidget {
   final String date;
   final String score;
 
-  const AchievementTile({super.key, 
+  const AchievementTile({
+    super.key,
     required this.iconColor,
     required this.title,
     required this.date,

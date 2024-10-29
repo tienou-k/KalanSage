@@ -97,11 +97,6 @@ class _MesModulesPageState extends State<MesModulesPage> {
   // Filter modules based on selected tab
   List<ModuleModel> _filterModules(String tabName) {
     switch (tabName) {
-      case 'Favoris':
-        return _modules
-            .where((module) =>
-                module.isBookmarked == true && module.isEnrolled == false)
-            .toList();
       case 'Inscris':
         return _modules.where((module) => module.isEnrolled == true).toList();
       case 'En cours':
@@ -129,14 +124,12 @@ class _MesModulesPageState extends State<MesModulesPage> {
     }
   }
 
-  // Method to handle user enrollment logic
+  // s'inscrire à une module logic
   void _enrollUser(int moduleId) async {
     setState(() {
     });
-
     try {
       final result = await UserService().enrollInModule(moduleId);
-
       if (result['success'] == true) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -160,7 +153,6 @@ class _MesModulesPageState extends State<MesModulesPage> {
       } else {
         errorMessage = 'Erreur: ${e.toString()}';
       }
-
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(errorMessage),
@@ -168,8 +160,7 @@ class _MesModulesPageState extends State<MesModulesPage> {
         ),
       );
     } finally {
-      setState(() {
-        
+      setState(() { 
       });
     }
   }
@@ -177,6 +168,7 @@ class _MesModulesPageState extends State<MesModulesPage> {
 
   // Helper method to build the tabs with horizontal scroll
   Widget _buildTab(String title) {
+    
     return GestureDetector(
       onTap: () {
         setState(() {
@@ -185,7 +177,9 @@ class _MesModulesPageState extends State<MesModulesPage> {
         });
       },
       child: Container(
+        
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        
         decoration: BoxDecoration(
           color: _selectedTab == title ? primaryColor : Colors.white,
           borderRadius: BorderRadius.circular(8),
@@ -253,8 +247,6 @@ class _MesModulesPageState extends State<MesModulesPage> {
               child: Row(
                 children: [
                   _buildTab('Tous'),
-                  const SizedBox(width: 10),
-                  _buildTab('Favoris'),
                   const SizedBox(width: 10),
                   _buildTab('Inscris'),
                   const SizedBox(width: 10),

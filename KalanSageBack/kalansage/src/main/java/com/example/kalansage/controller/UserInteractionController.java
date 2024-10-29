@@ -2,13 +2,14 @@ package com.example.kalansage.controller;
 
 
 
+import com.example.kalansage.exception.ErrorResponse;
+import com.example.kalansage.model.Abonnement;
 import com.example.kalansage.model.Module;
 import com.example.kalansage.model.Review;
 import com.example.kalansage.model.User;
-import com.example.kalansage.model.userAction.UserBadge;
-import com.example.kalansage.model.userAction.UserLecon;
-import com.example.kalansage.model.userAction.UserModule;
-import com.example.kalansage.model.userAction.UserTest;
+import com.example.kalansage.model.userAction.*;
+import com.example.kalansage.service.AbonnementService;
+import com.example.kalansage.service.AbonnementServiceImpl;
 import com.example.kalansage.service.UserInteractionService;
 import com.example.kalansage.service.UserPointsService;
 import lombok.extern.slf4j.Slf4j;
@@ -31,9 +32,12 @@ public class UserInteractionController {
 
     @Autowired
     private UserInteractionService userInteractionService;
-
+    @Autowired
+    private AbonnementServiceImpl abonnementServiceimpl;
     @Autowired
     private UserPointsService userPointsService;
+    @Autowired
+    private AbonnementService abonnementService;
     // Take a quiz
 
 
@@ -194,13 +198,36 @@ public class UserInteractionController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
         }
     }
+    @GetMapping("/list-abonnements")
+    public ResponseEntity<List<Abonnement>> listerAbonnements() {
+        return ResponseEntity.ok(abonnementService.listerAbonnements());
+    }
     @GetMapping("/users/{abonnementId}")
-    public ResponseEntity<List<User>> getUsersByAbonnement(@PathVariable Long abonnementId) {
+    public ResponseEntity<?> getUsersByAbonnement(@PathVariable Long abonnementId) {
         List<User> users = userInteractionService.getUsersByAbonnement(abonnementId);
+
+        // Check if the user list is empty
         if (users.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+            ErrorResponse errorResponse = new ErrorResponse(
+                    HttpStatus.NOT_FOUND.toString(), // Set the HTTP status code
+                    "Aucun utilisateur trouvé pour l'abonnement ID: " + abonnementId // Set the error message
+            );
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse); // Return the error response
         }
+        // Return the list of users with an OK status
         return ResponseEntity.ok(users);
     }
-
+    @GetMapping("/abonnements/{userId}")
+    public ResponseEntity<?> getUserAbonnementsByUserId(@PathVariable Long userId) {
+        List<UserAbonnement> userAbonnements = userInteractionService.getUserAbonnementsByUserId(userId);
+        if (userAbonnements.isEmpty()) {
+            ErrorResponse errorResponse = new ErrorResponse(
+                    HttpStatus.NOT_FOUND.toString(),
+                    "Aucun abonnement trouvé pour l'utilisateur ID: " + userId
+            );
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse.getMessage());
+        }
+        return ResponseEntity.ok(userAbonnements);
+    }
 }
+

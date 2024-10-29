@@ -12,4 +12,6 @@ public class ErrorResponse {
     private String message;
 
 
+    public ErrorResponse(int i, String message) {
+    }
 }

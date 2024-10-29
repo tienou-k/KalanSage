@@ -50,9 +50,9 @@ class _TabSectionState extends State<TabSection> {
       child: Row(
         children: [
           _buildTab('Toutes les Modules', 0),
-          _buildTab('Modules populaire', 1),
-          _buildTab('Nouvelles Modules', 2),
-          _buildTab('Autre Modules', 3),
+          _buildTab('Modules Gratuites', 1),
+          _buildTab('Modules populaire', 2),
+          _buildTab('Nouvelles Modules', 3),
         ],
       ),
     );

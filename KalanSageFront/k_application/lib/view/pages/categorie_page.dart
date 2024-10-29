@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/svg.dart';
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:k_application/models/categorie_model.dart';
 import 'package:k_application/services/cartegorie_service.dart';
 import 'package:k_application/utils/constants.dart';
@@ -17,15 +17,30 @@ class _CategoriePage extends State<CategoriePage> {
   int _currentIndex = 1;
   final CategorieService _categorieService = CategorieService();
   late Future<List<CategorieModel>> _categories;
-  final List<CategorieModel> _filteredCategories = [];
+  List<CategorieModel> _filteredCategories = [];
+  String _searchQuery = '';
 
   @override
   void initState() {
     super.initState();
     _categories = _categorieService.fetchCategories();
+    _categories.then((data) {
+      setState(() {
+        _filteredCategories = data;
+      });
+    });
   }
 
-
+  void _onSearch(String query) {
+    setState(() {
+      _searchQuery = query;
+      _filteredCategories = _filteredCategories.where((category) {
+        return category.nomCategorie
+            .toLowerCase()
+            .contains(query.toLowerCase());
+      }).toList();
+    });
+  }
 
   void _onTabSelected(int index) {
     setState(() {
@@ -101,6 +116,7 @@ class _CategoriePage extends State<CategoriePage> {
                   borderSide: BorderSide.none,
                 ),
               ),
+              onChanged: _onSearch,
             ),
             const SizedBox(height: 20),
             const Text(

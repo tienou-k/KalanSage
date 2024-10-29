@@ -13,6 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/bookmarks")
 public class UserBookmarkController {
@@ -43,6 +45,24 @@ public class UserBookmarkController {
         UserBookmark userBookmark = userBookmarkService.addBookmark(user.getId(), module.getId());
         return new UserBookmarkDTO(userBookmark.getId(), user.getId(), module.getId(), userBookmark.getBookmarkDate());
     }
+    // New method to retrieve bookmarked modules
+    @GetMapping("/bookmarked-modules/{userId}")
+    public ResponseEntity<List<UserBookmarkDTO>> getBookmarkedModules(@PathVariable Long userId) {
+        // Fetch the user
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + userId));
+        // Get the bookmarks for this user
+        List<UserBookmark> bookmarks = userBookmarkService.getBookmarksByUserId(user.getId());
+        // Map bookmarks to DTOs and return
+        List<UserBookmarkDTO> dtoList = bookmarks.stream()
+                .map(bookmark -> new UserBookmarkDTO(
+                        bookmark.getId(),
+                        bookmark.getUser().getId(),
+                        bookmark.getModule().getId(),
+                        bookmark.getBookmarkDate()))
+                .toList();
+        return ResponseEntity.ok(dtoList);
+    }
 
     // Remove a bookmark
     @DeleteMapping("/remove/{moduleId}")
@@ -50,14 +70,11 @@ public class UserBookmarkController {
         // Fetch the user and verify existence
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + id));
-
         // Fetch the module and verify existence
         Module module = moduleRepository.findById(moduleId)
                 .orElseThrow(() -> new EntityNotFoundException("Module not found with id: " + moduleId));
-
         // Remove the bookmark
         userBookmarkService.removeBookmark(user, module);
-
         // Return a success message
         return ResponseEntity.ok("Bookmark removed successfully.");
     }
