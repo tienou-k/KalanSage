@@ -206,4 +206,8 @@ public class ModuleServiceImpl implements ModuleService {
         return userBookRepository.existsByModuleIdAndUserId(moduleId, id);
     }
 
+    public List<Module> fetchPopularModules() {
+        return userModuleRepository.findTop10ByOrderByUserIdDesc();
+    }
+
 }

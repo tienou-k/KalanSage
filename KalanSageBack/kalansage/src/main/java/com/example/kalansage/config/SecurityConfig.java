@@ -40,7 +40,7 @@ public class SecurityConfig {
         http
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
 
-                .csrf(AbstractHttpConfigurer::disable) // Disable CSRF for stateless APIs
+                .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         // Public endpoints
                         .requestMatchers(
@@ -51,7 +51,7 @@ public class SecurityConfig {
                                 "/api/users/reset-password",
                                 "/images_du_projet/modules/**",
                                 "images_du_projet/**",
-                                "/images_du_projet/videos_lecons/**"
+                                "src/main/resources/static/images_du_projet/videos_lecons"
                         ).permitAll()
                         // General auth endpoints
 
@@ -90,7 +90,7 @@ public class SecurityConfig {
 
         configuration.setAllowedOrigins(Arrays.asList(
                 "http://localhost:4200",  // Angular IP (development)
-                "http://localhost:65092/"  // Flutter App IP
+                "http://localhost:54118/"  // Flutter App IP
         ));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));

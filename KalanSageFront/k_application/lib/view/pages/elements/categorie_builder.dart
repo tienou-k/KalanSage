@@ -57,7 +57,11 @@ class _CategoriesSectionState extends State<CategoriesSection> {
           future: _categories,
           builder: (context, snapshot) {
             if (snapshot.connectionState == ConnectionState.waiting) {
-              return const Center(child: CircularProgressIndicator());
+              return const Center(child: CircularProgressIndicator(
+                valueColor: AlwaysStoppedAnimation<Color>(
+                    secondaryColor),
+                strokeWidth: 5.0,
+              ));
             } else if (snapshot.hasError) {
               return Center(child: Text('Error: ${snapshot.error}'));
             } else if (!snapshot.hasData || snapshot.data!.isEmpty) {

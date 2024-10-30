@@ -229,11 +229,8 @@ public class UserInteractionService {
         if (user.isEmpty()) {
             throw new RuntimeException("User not found");
         }
-
         // Fetch all modules where the user is enrolled
         List<UserModule> enrollments = userModuleRepository.findByUserId(userId);
-
-
         List<Module> modules = enrollments.stream()
                 .map(UserModule::getModule)
                 .collect(Collectors.toList());
@@ -246,5 +243,9 @@ public class UserInteractionService {
 
     public List<UserAbonnement> getUserAbonnementsByUserId(Long userId) {
         return userAbonnementRepository.findByUserId(userId);
+    }
+
+    public boolean userExists(Long userId) {
+        return userRepository.existsById(userId);
     }
 }

@@ -65,11 +65,8 @@ public class LeconsController {
             }
 
             // Rename the file according to a specific format (e.g., titre_module1.png)
-            String renamedFile = titre.replace(" ", "_") + "1." + fileExtension;
-
-            // Save the file to a specific folder
-            String specificFolderPath = "";
-            fileInfo = filesStorageService.saveFileInSpecificFolderWithCustomNameVideo(file, specificFolderPath, renamedFile);
+            String renamedFile = titre.replace(" ", "") + "1." + fileExtension;
+            fileInfo = filesStorageService.saveFileInSpecificFolderWithCustomNameVideo(file, "",renamedFile);
         }
 
         // Create and save the module

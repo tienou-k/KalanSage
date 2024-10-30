@@ -142,7 +142,9 @@ class _OTPVerificationScreenState extends State<OTPVerificationScreen> {
                 ),
               ),
               child: _isLoading
-                  ? CircularProgressIndicator(color: Colors.white)
+                  ? CircularProgressIndicator(
+                    color: Colors.white,
+                    )
                   : Text(
                       _isTimerFinished
                           ? 'Rafraîchir'

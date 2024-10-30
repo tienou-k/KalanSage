@@ -102,8 +102,6 @@ public class ModulesController {
         }
     }
 
-
-
     // Helper method to extract file extension
     private String getExtension(String filename) {
         return filename.substring(filename.lastIndexOf('.') + 1);
@@ -187,7 +185,6 @@ public class ModulesController {
     }
 
     @PostMapping("/inscris-module/{userId}/{moduleId}")
-
     public ResponseEntity<?> enrollUserInModule(@PathVariable Long userId, @PathVariable Long moduleId) {
         try {
             UserModule userModule = moduleServiceimpl.inscrireAuModule(userId, moduleId);
@@ -197,12 +194,14 @@ public class ModulesController {
         }
     }
 
-
     @GetMapping("/{moduleId}/lecons")
     public ResponseEntity<List<Lecons>> getLeconsByModule(@PathVariable Long moduleId) {
         List<Lecons> leconsList = leconsService.findByModule_Id(moduleId);
+        // Log the fetched lessons for debugging
+        System.out.println("Fetched lessons for module " + moduleId + ": " + leconsList);
         return ResponseEntity.ok(leconsList);
     }
+
 
     @GetMapping("/{moduleId}/lecons/count")
     public ResponseEntity<Long> getLeconsCountByModule(@PathVariable Long moduleId) {
@@ -273,6 +272,10 @@ public ResponseEntity<List<ModulesDTO>> getAllModules() {
         }
     }
 
-
+    @GetMapping("/popular")
+    public ResponseEntity<List<Module>> getPopularModules() {
+        List<Module> popularModules = moduleServiceimpl.fetchPopularModules();
+        return ResponseEntity.ok(popularModules);
+    }
 
 }

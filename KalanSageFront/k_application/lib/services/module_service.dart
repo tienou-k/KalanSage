@@ -87,8 +87,8 @@ class ModuleService {
     }
   }
 
-  // Fetch the top 5 modules
-  Future<List<Map<String, dynamic>>> getTop5Modules() async {
+  // Fetch the top  modules
+ Future<List<ModuleModel>> fetchPopularModules() async {
     String? token = await _getToken();
 
     if (token == null) {
@@ -96,18 +96,20 @@ class ModuleService {
     }
 
     final response = await http.get(
-      Uri.parse('$apiUrl/modules/top5'),
+      Uri.parse('$apiUrl/modules/popular'),
       headers: {
         'Authorization': 'Bearer $token',
       },
     );
 
     if (response.statusCode == 200) {
-      return List<Map<String, dynamic>>.from(jsonDecode(response.body));
+       List<dynamic> jsonResponse = json.decode(response.body);
+      return jsonResponse.map((data) => ModuleModel.fromJson(data)).toList();
     } else {
-      throw Exception('Failed to fetch top 5 modules: ${response.body}');
+      throw Exception('Echec recuperation: ${response.body}');
     }
   }
+
 // Fetch a single module by ID and return as ModuleModel
   Future<ModuleModel> getModuleById(int id) async {
     String? token = await _getToken();
@@ -130,30 +132,6 @@ class ModuleService {
       throw Exception('Failed to fetch module by ID: ${response.body}');
     }
   }
-
-  // Fetch a single module by ID
-  // Future<Map<String, dynamic>> getModuleById(int id) async {
-  //   String? token = await _getToken();
-
-  //   if (token == null) {
-  //     throw Exception('User is not authenticated. Token is null.');
-  //   }
-
-  //   final response = await http.get(
-  //     Uri.parse('$apiUrl/modules/module-par/$id'),
-  //     headers: {
-  //       'Authorization': 'Bearer $token',
-  //     },
-  //   );
-
-  //   if (response.statusCode == 200) {
-  //     return jsonDecode(response.body);
-  //   } else {
-  //     throw Exception('Failed to fetch module by ID: ${response.body}');
-  //   }
-  // }
-
-
 
   // Fetch top modules
   Future<List<Map<String, dynamic>>> getTopModules() async {
@@ -225,7 +203,7 @@ class ModuleService {
     );
     if (response.statusCode == 200) {
       return int.parse(
-          response.body); // Ensure the response body is parsed as an integer
+          response.body); 
     } else {
       throw Exception('Failed to fetch user count: ${response.body}');
     }

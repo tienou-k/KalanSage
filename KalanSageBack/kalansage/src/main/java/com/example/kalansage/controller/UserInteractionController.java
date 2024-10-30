@@ -3,10 +3,8 @@ package com.example.kalansage.controller;
 
 
 import com.example.kalansage.exception.ErrorResponse;
-import com.example.kalansage.model.Abonnement;
+import com.example.kalansage.model.*;
 import com.example.kalansage.model.Module;
-import com.example.kalansage.model.Review;
-import com.example.kalansage.model.User;
 import com.example.kalansage.model.userAction.*;
 import com.example.kalansage.service.AbonnementService;
 import com.example.kalansage.service.AbonnementServiceImpl;
@@ -228,6 +226,19 @@ public class UserInteractionController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse.getMessage());
         }
         return ResponseEntity.ok(userAbonnements);
+    }
+
+    @GetMapping("/is-enrolled/{userId}/{moduleId}")
+    public ResponseEntity<?> checkEnrollment(@PathVariable Long userId, @PathVariable Long moduleId) {
+        // Check if the user exists
+        if (!userInteractionService.userExists(userId)) {
+            return ResponseEntity
+                    .status(404)
+                    .body("Oops! User avec ID " + userId + " n'existe pas !.");
+        }
+        // Check enrollment status
+        boolean isEnrolled = userInteractionService.isUserAlreadyEnrolled(userId, moduleId);
+        return ResponseEntity.ok(isEnrolled);
     }
 }
 

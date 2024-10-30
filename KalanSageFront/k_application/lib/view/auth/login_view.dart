@@ -17,12 +17,11 @@ class _LoginScreenState extends State<LoginScreen> {
   bool _isLoading = false;
   bool _passwordVisible = false;
 
-
-//login logic 
-Future<void> _login() async {
+//login logic
+  Future<void> _login() async {
     if (_formKey.currentState!.validate()) {
       setState(() {
-        _isLoading = true; 
+        _isLoading = true;
       });
 
       try {
@@ -40,19 +39,19 @@ Future<void> _login() async {
         String errorMessage;
 
         if (error is Exception) {
-          errorMessage =
-              error.toString().split(': ').last; 
+          errorMessage = error.toString().split(': ').last;
         } else {
           errorMessage = 'Une erreur s\'est produite. Veuillez réessayer.';
         }
         _showSnackbar(errorMessage);
       } finally {
         setState(() {
-          _isLoading = false; 
+          _isLoading = false;
         });
       }
     }
   }
+
   // Show Snackbar
   void _showSnackbar(String message) {
     ScaffoldMessenger.of(context).showSnackBar(
@@ -60,10 +59,9 @@ Future<void> _login() async {
         content: Text(
           message,
           textAlign: TextAlign.center,
-          ),
+        ),
         backgroundColor: Colors.red,
         duration: const Duration(seconds: 5),
-        
       ),
     );
   }
@@ -139,7 +137,7 @@ Future<void> _login() async {
                   cursorColor: primaryColor,
                   decoration: InputDecoration(
                     labelText: 'Email',
-                    labelStyle: TextStyle(color: Colors.grey), 
+                    labelStyle: TextStyle(color: Colors.grey),
                     focusedBorder: OutlineInputBorder(
                       borderSide: BorderSide(color: primaryColor),
                     ),
@@ -162,15 +160,13 @@ Future<void> _login() async {
                   cursorColor: primaryColor,
                   decoration: InputDecoration(
                     labelText: 'Mot de passe',
-                    labelStyle:
-                        TextStyle(color: Colors.grey), 
+                    labelStyle: TextStyle(color: Colors.grey),
                     focusedBorder: OutlineInputBorder(
                       borderSide: BorderSide(color: primaryColor),
                     ),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(10),
-                      borderSide: BorderSide(
-                          color: Colors.grey), 
+                      borderSide: BorderSide(color: Colors.grey),
                     ),
                     prefixIcon: const Icon(Icons.lock),
                     suffixIcon: IconButton(
@@ -178,8 +174,7 @@ Future<void> _login() async {
                         _passwordVisible
                             ? Icons.visibility
                             : Icons.visibility_off,
-                        color:
-                            primaryColor,
+                        color: primaryColor,
                       ),
                       onPressed: () {
                         setState(() {
@@ -195,7 +190,11 @@ Future<void> _login() async {
               const SizedBox(height: 30),
               // Login button
               _isLoading
-                  ? const CircularProgressIndicator()
+                  ? const CircularProgressIndicator(
+                      valueColor:
+                          AlwaysStoppedAnimation<Color>(primaryColor),
+                      strokeWidth: 5.0,
+                    )
                   : ElevatedButton(
                       onPressed: _login,
                       style: ElevatedButton.styleFrom(
@@ -245,4 +244,3 @@ Future<void> _login() async {
     );
   }
 }
-

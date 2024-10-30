@@ -3,6 +3,8 @@
         android:label="KalanSage"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
+        android:netWorkedEcurityConfig="@xml/network_security_config">
+        <!-- android:networkSecurityConfig="@xml/network_security_config"> -->
 
         <!-- Activity-->
         <activity
@@ -31,7 +33,7 @@
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-                <data android:scheme="yourapp" android:host="reset-password" />
+                <data android:scheme="kalansage" android:host="reset-password" />
             </intent-filter>
         </activity>
 
@@ -52,4 +54,6 @@
             <data android:mimeType="text/plain"/>
         </intent>
     </queries>
+
+     <uses-permission android:name="android.permission.INTERNET"/>
 </manifest>

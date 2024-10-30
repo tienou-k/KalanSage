@@ -1,3 +1,5 @@
+import 'package:k_application/models/lecon_model.dart';
+
 class ModuleModel {
   final int id;
   final String userId;
@@ -5,6 +7,7 @@ class ModuleModel {
   final double price;
   final String description;
   final int leconCount;
+  final List<LeconModel> lessons;
   final String imageUrl;
   final int quiz;
   final String iconUrl;
@@ -21,6 +24,7 @@ class ModuleModel {
     required this.title,
     required this.price,
     required this.description,
+    required this.lessons,
     required this.leconCount,
     required this.imageUrl,
     required this.quiz,
@@ -54,6 +58,7 @@ class ModuleModel {
       title: title ?? this.title,
       price: price ?? this.price,
       description: description ?? this.description,
+      lessons: lessons?? this.lessons,
       leconCount: leconCount ?? this.leconCount,
       isCompleted: isCompleted ?? this.isCompleted,
       isInProgress: isInProgress ?? this.isInProgress,
@@ -72,6 +77,7 @@ class ModuleModel {
       title: json['titre'] ?? '',
       description: json['description'] ?? '',
       price: (json['prix'] != null ? (json['prix'] as num).toDouble() : 0.0),
+      lessons: (json['lecons'] is List),
       leconCount:
           (json['lecons'] is List) ? (json['lecons'] as List).length : 0,
       imageUrl: json['imageUrl']?.toString() ?? '',
