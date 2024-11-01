@@ -6,8 +6,8 @@ class ModuleModel {
   final String title;
   final double price;
   final String description;
-  final int leconCount;
   final List<LeconModel> lessons;
+  final int leconCount;
   final String imageUrl;
   final int quiz;
   final String iconUrl;
@@ -24,7 +24,7 @@ class ModuleModel {
     required this.title,
     required this.price,
     required this.description,
-    required this.lessons,
+    this.lessons = const [],
     required this.leconCount,
     required this.imageUrl,
     required this.quiz,
@@ -42,6 +42,7 @@ class ModuleModel {
     String? title,
     double? price,
     String? description,
+     List<LeconModel>? lessons,
     int? leconCount,
     String? imageUrl,
     int? quiz,
@@ -58,7 +59,7 @@ class ModuleModel {
       title: title ?? this.title,
       price: price ?? this.price,
       description: description ?? this.description,
-      lessons: lessons?? this.lessons,
+      lessons: lessons ?? this.lessons,
       leconCount: leconCount ?? this.leconCount,
       isCompleted: isCompleted ?? this.isCompleted,
       isInProgress: isInProgress ?? this.isInProgress,
@@ -77,7 +78,10 @@ class ModuleModel {
       title: json['titre'] ?? '',
       description: json['description'] ?? '',
       price: (json['prix'] != null ? (json['prix'] as num).toDouble() : 0.0),
-      lessons: (json['lecons'] is List),
+       lessons: (json['lecons'] as List<dynamic>?)
+              ?.map((lessonJson) => LeconModel.fromJson(lessonJson))
+              .toList() ??
+          [],
       leconCount:
           (json['lecons'] is List) ? (json['lecons'] as List).length : 0,
       imageUrl: json['imageUrl']?.toString() ?? '',

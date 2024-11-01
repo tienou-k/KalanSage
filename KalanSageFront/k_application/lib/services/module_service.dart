@@ -18,6 +18,13 @@ class ModuleService {
     _prefs = await SharedPreferences.getInstance();
   }
 
+  // Ensure prefs is initialized before calling any methods
+  Future<void> _ensurePrefsInitialized() async {
+    if (_prefs == null) {
+      await _initPrefs();
+    }
+  }
+
 // Fetch the user details from SharedPreferences
   Future<Map<String, dynamic>?> _getUser() async {
     await _initPrefs();
@@ -35,6 +42,17 @@ class ModuleService {
     if (currentUserJson != null) {
       final currentUser = jsonDecode(currentUserJson);
       return currentUser['token']; // Extract the token
+    }
+    return null;
+  }
+
+// Extract current user ID from the token
+  Future<int?> _getCurrentUserId() async {
+    await _ensurePrefsInitialized();
+    final currentUser = _prefs?.getString('currentUser');
+    if (currentUser != null) {
+      final userMap = jsonDecode(currentUser);
+      return userMap['id'];
     }
     return null;
   }
@@ -88,7 +106,7 @@ class ModuleService {
   }
 
   // Fetch the top  modules
- Future<List<ModuleModel>> fetchPopularModules() async {
+  Future<List<ModuleModel>> fetchPopularModules() async {
     String? token = await _getToken();
 
     if (token == null) {
@@ -103,7 +121,7 @@ class ModuleService {
     );
 
     if (response.statusCode == 200) {
-       List<dynamic> jsonResponse = json.decode(response.body);
+      List<dynamic> jsonResponse = json.decode(response.body);
       return jsonResponse.map((data) => ModuleModel.fromJson(data)).toList();
     } else {
       throw Exception('Echec recuperation: ${response.body}');
@@ -126,8 +144,7 @@ class ModuleService {
     );
 
     if (response.statusCode == 200) {
-      return ModuleModel.fromJson(
-          jsonDecode(response.body)); 
+      return ModuleModel.fromJson(jsonDecode(response.body));
     } else {
       throw Exception('Failed to fetch module by ID: ${response.body}');
     }
@@ -202,99 +219,107 @@ class ModuleService {
       },
     );
     if (response.statusCode == 200) {
-      return int.parse(
-          response.body); 
+      return int.parse(response.body);
     } else {
       throw Exception('Failed to fetch user count: ${response.body}');
     }
   }
 
   // Add a bookmark
-  Future<void> addToBookmarks(String moduleId, String userId) async {
-    final user = await _getUser();
-    String? token = await _getToken();
-    if (token == null || user == null || user['userId'] == null) {
-      throw Exception('User is not authenticated or userId is null.');
+  Future<UserBookmark> addToBookmarks(int moduleId) async {
+    final userId = await _getCurrentUserId();
+    if (userId == null) {
+      throw Exception('User ID is null. Cannot add bookmark.');
     }
-    final userId = user['userId'];
-    final url = Uri.parse('$apiUrl/bookmarks/add/$moduleId?id=$userId');
+
+    final token = await _getToken();
+    final url = Uri.parse('$apiUrl/bookmarks/add/$userId/$moduleId');
     final response = await http.post(
       url,
       headers: {
         'Authorization': 'Bearer $token',
         'Content-Type': 'application/json',
       },
+      body: jsonEncode({
+        'userId': userId
+      }),
     );
+
     if (response.statusCode == 200) {
-      print("Bookmark added successfully.");
+      return UserBookmark.fromJson(jsonDecode(response.body));
     } else {
       throw Exception(
           'Failed to add bookmark: ${response.statusCode} - ${response.body}');
     }
   }
 
-
-// unbookmarked mothod is here
-  Future<void> removeFromBookmarks(String moduleId, String userId) async {
-    final user = await _getUser();
-    String? token = await _getToken();
-    if (token == null || user == null || user['userId'] == null) {
-      throw Exception('User is not authenticated or userId is null.');
+// Remove a bookmark
+  Future<void> removeFromBookmarks(int moduleId) async {
+    final userId = await _getCurrentUserId(); 
+    if (userId == null) {
+      throw Exception('User ID is null. Cannot remove bookmark.');
     }
-    final userId = user['userId'];
+
+    final token = await _getToken();
+    final url = Uri.parse(
+        '$apiUrl/bookmarks/remove/$userId/$moduleId');
     final response = await http.delete(
-      Uri.parse('$apiUrl/remove/$moduleId?id=$userId'),
+      url,
       headers: {
         'Authorization': 'Bearer $token',
       },
     );
+
     if (response.statusCode != 200) {
       throw Exception('Failed to remove bookmark: ${response.body}');
     }
   }
 
-// check if a module is bookmarked 
-  Future<bool> isBookmarked(String moduleId) async {
-    final user = await _getUser();
-    String? token = await _getToken();
-    if (token == null || user == null || user['userId'] == null) {
-      throw Exception('User is not authenticated or userId is null.');
+// Check if a module is bookmarked
+  Future<bool> isBookmarked(int moduleId) async {
+    final userId = await _getCurrentUserId(); 
+    if (userId == null) {
+      throw Exception('User ID is null. Cannot check bookmark status.');
     }
-    final userId = user['userId'];
+
+    final token = await _getToken();
+    final url = Uri.parse(
+        '$apiUrl/bookmarks/isBookmarked/$userId/$moduleId'); 
     final response = await http.get(
-      Uri.parse('$apiUrl/isBookmarked/$moduleId?id=$userId'),
+      url,
       headers: {
         'Authorization': 'Bearer $token',
       },
     );
+
     if (response.statusCode == 200) {
-      return jsonDecode(response.body);
+      final body = jsonDecode(response.body);
+      return body['isBookmarked'] ??
+          false;
     } else {
       throw Exception('Failed to check bookmark status: ${response.body}');
     }
   }
 
-
 // Retrieve the current user's bookmarked modules
   Future<List<UserBookmark>> getBookmarkedModules() async {
-    await _initPrefs();
-    String? currentUserJson = _prefs?.getString('currentUser');
-    if (currentUserJson == null) {
-      throw Exception('User not authenticated. Token is null.');
+    final userId = await _getCurrentUserId(); 
+    if (userId == null) {
+      throw Exception('User ID is null. Cannot fetch bookmarked modules.');
     }
-    final currentUser = jsonDecode(currentUserJson);
-    String? token = currentUser['token'];
-    if (token == null) {
-      throw Exception('No token found. User not authenticated.');
-    }
+
+    final token = await _getToken();
     final headers = {
       'Content-Type': 'application/json',
       'Authorization': 'Bearer $token',
     };
+
     final response = await http.get(
-      Uri.parse('$apiUrl/bookmarks/bookmarked-modules/${currentUser['id']}'),
+      Uri.parse(
+          '$apiUrl/bookmarks/bookmarked-modules/$userId'), 
       headers: headers,
     );
+
     if (response.statusCode == 200) {
       List<dynamic> jsonResponse = json.decode(response.body);
       return jsonResponse
@@ -312,8 +337,7 @@ class ModuleService {
       throw Exception('User is not authenticated. Token is null.');
     }
     final response = await http.get(
-      Uri.parse(
-          '$apiUrl/modules/module-par/$moduleId'), 
+      Uri.parse('$apiUrl/modules/module-par/$moduleId'),
       headers: {
         'Authorization': 'Bearer $token',
       },
@@ -325,5 +349,4 @@ class ModuleService {
       throw Exception('Failed to fetch module details: ${response.body}');
     }
   }
-
 }

@@ -4,6 +4,7 @@ import 'package:k_application/services/auth_service.dart';
 import 'package:k_application/services/module_service.dart';
 import 'package:k_application/utils/constants.dart';
 import 'package:k_application/view/pages/details_module_page.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class CategoryDetailsPage extends StatefulWidget {
   final String categoryName;
@@ -21,11 +22,26 @@ class CategoryDetailsPage extends StatefulWidget {
 
 class _CategoryDetailsPage extends State<CategoryDetailsPage> {
   late Future<List<ModuleModel>> _modules;
+  // ignore: unused_field
+  SharedPreferences? _prefs;
 
   @override
   void initState() {
     super.initState();
     _modules = ModuleService().fetchModulesByCategory(widget.categoryId);
+  }
+
+  // ignore: unused_element
+  void _loadPrefs() async {
+    _prefs = await SharedPreferences.getInstance();
+  }
+
+// Retrieve the current user's ID from SharedPreferences
+  Future<int?> _getCurrentUserId() async {
+    final prefs = await SharedPreferences.getInstance();
+    final userId = prefs.getInt('userId');
+    debugPrint('Retrieved userId: $userId');
+    return userId;
   }
 
   @override
@@ -308,34 +324,48 @@ class CourseCard extends StatefulWidget {
 
 class _CourseCardState extends State<CourseCard> {
   bool _isLoading = false;
+  bool _isBookmarked = false;
 
- Future<void> _updateBookmarkStatus() async {
-    if (_isLoading) return; // Prevent multiple taps during loading
+  @override
+  void initState() {
+    super.initState();
+    _loadBookmarkStatus();
+  }
+
+  // Load bookmark status from the server
+  Future<void> _loadBookmarkStatus() async {
+    final currentUserId = await AuthService().getCurrentUserId();
+    if (currentUserId != null) {
+      bool isBookmarked = await ModuleService().isBookmarked(widget.module.id);
+      setState(() {
+        _isBookmarked = isBookmarked;
+        widget.module.isBookmarked = isBookmarked; // sync with module model
+      });
+    }
+  }
+
+  //
+  Future<void> _updateBookmarkStatus(int currentUserId, int moduleId) async {
+    if (_isLoading) return;
     setState(() => _isLoading = true);
     try {
-      debugPrint('Fetching current user...');
-      Map<String, dynamic>? currentUser = await AuthService().getCurrentUser();
-
-      if (currentUser == null || currentUser['userId'] == null) {
-        throw Exception('Current user is null or does not have userId');
-      }
-      String currentUserId = currentUser['userId'].toString();
-      if (widget.module.isBookmarked) {
-        await ModuleService()
-            .removeFromBookmarks(widget.module.id.toString(), currentUserId);
+      if (_isBookmarked) {
+        await ModuleService().removeFromBookmarks(moduleId);
       } else {
-        await ModuleService()
-            .addToBookmarks(widget.module.id.toString(), currentUserId);
+        await ModuleService().addToBookmarks(moduleId);
       }
+
+      // Update the state immediately after toggling
       setState(() {
-        widget.module.isBookmarked = !widget.module.isBookmarked;
+        _isBookmarked = !_isBookmarked;
+        widget.module.isBookmarked = _isBookmarked;
       });
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(
-            widget.module.isBookmarked
-                ? 'Added to bookmarks!'
-                : 'Removed from bookmarks!',
+            _isBookmarked
+                ? 'Ajouté aux favoris!'
+                : 'Enlevé des favoris!',
             textAlign: TextAlign.center,
           ),
           duration: const Duration(seconds: 2),
@@ -343,25 +373,16 @@ class _CourseCardState extends State<CourseCard> {
         ),
       );
     } catch (e) {
-      _handleUpdateFailure(e);
       debugPrint('Bookmark update failed: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Erreur lors de la mise à jour des favoris.'),
+          backgroundColor: Colors.red,
+        ),
+      );
     } finally {
       setState(() => _isLoading = false);
     }
-  }
-
-  // Error handling method for bookmark update failure
-  void _handleUpdateFailure(dynamic error) {
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        content: Text(
-          'Failed to update bookmark. Please try again.',
-          textAlign: TextAlign.center,
-        ),
-        duration: const Duration(seconds: 3), 
-        backgroundColor: Colors.red,
-      ),
-    );
   }
 
   @override
@@ -398,8 +419,7 @@ class _CourseCardState extends State<CourseCard> {
                 loadingBuilder: (context, child, loadingProgress) {
                   if (loadingProgress == null) return child;
                   return Center(
-                    child: CircularProgressIndicator(),
-                  );
+                    child: CircularProgressIndicator(color: secondaryColor));
                 },
               ),
             ),
@@ -436,13 +456,29 @@ class _CourseCardState extends State<CourseCard> {
                 ),
                 IconButton(
                   icon: Icon(
-                    widget.module.isBookmarked
+                    _isBookmarked
                         ? Icons.bookmark
                         : Icons.bookmark_border,
                     color: secondaryColor,
                   ),
                   onPressed: () async {
-                    await _updateBookmarkStatus();
+                    final currentUserId =
+                        await AuthService().getCurrentUserId();
+                    if (currentUserId != null) {
+                      await _updateBookmarkStatus(
+                          currentUserId, widget.module.id);
+                    } else {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text(
+                            'Vous devez être connecté pour ajouter ou supprimer des favoris.',
+                            textAlign: TextAlign.center,
+                          ),
+                          duration: const Duration(seconds: 2),
+                          backgroundColor: Colors.red,
+                        ),
+                      );
+                    }
                   },
                 ),
               ],

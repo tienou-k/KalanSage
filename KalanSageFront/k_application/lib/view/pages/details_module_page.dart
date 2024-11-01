@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:k_application/models/lecon_model.dart';
 import 'package:k_application/models/module_model.dart';
 import 'package:k_application/services/auth_service.dart';
@@ -34,6 +35,8 @@ class _DetailModulePageState extends State<DetailModulePage>
     _tabController = TabController(length: 3, vsync: this);
     _lessons = ModuleService().getLeconsByModule(widget.module.id);
     _checkEnrollmentStatus();
+
+    _startFirstLesson();
     // Add listener to detect tab changes
     _tabController.addListener(() {
       setState(() {
@@ -41,11 +44,12 @@ class _DetailModulePageState extends State<DetailModulePage>
       });
     });
   }
+
   // Method to set the first lesson as the selected lesson and update video preview
   void _startFirstLesson() {
     if (widget.module.lessons.isNotEmpty) {
       setState(() {
-        _selectedLesson = widget.module.lessons[0]; 
+        _selectedLesson = widget.module.lessons[0];
       });
     }
   }
@@ -74,12 +78,11 @@ class _DetailModulePageState extends State<DetailModulePage>
   }
 
   // Retrieve the current user's ID from SharedPreferences
+  // ignore: unused_element
   Future<int?> _getCurrentUserId() async {
     final prefs = await SharedPreferences.getInstance();
     return prefs.getInt('userId');
   }
-
-   
 
   @override
   Widget build(BuildContext context) {
@@ -88,27 +91,30 @@ class _DetailModulePageState extends State<DetailModulePage>
       appBar: _buildAppBar(),
       body: Column(
         children: [
-          _buildLessonVideoPreview(),
+          Expanded(
+            child: _buildLessonVideoPreview(),
+          ),
           SizedBox(height: 8),
           _buildTabBar(),
-          Expanded(child: _buildTabBarView()),
+          Expanded(
+            child: _buildTabBarView(),
+          ),
         ],
       ),
       bottomNavigationBar: InscrireButton(
-          module: widget.module,
-          isAlreadyEnrolled: _isAlreadyEnrolled,
-          onEnrollmentStatusChanged: (bool isAlreadyEnrolled) {
-            setState(() {
-              _isAlreadyEnrolled = isAlreadyEnrolled;
-            });
-          },
-          onStartFirstLesson: _startFirstLesson,
-          ),
+        module: widget.module,
+        isAlreadyEnrolled: _isAlreadyEnrolled,
+        onEnrollmentStatusChanged: (bool isAlreadyEnrolled) {
+          setState(() {
+            _isAlreadyEnrolled = isAlreadyEnrolled;
+          });
+        },
+        onStartFirstLesson: _startFirstLesson,
+      ),
     );
   }
+
   // Method to set the first lesson as the selected lesson and update video preview
- 
-  
   PreferredSizeWidget _buildAppBar() {
     return AppBar(
       backgroundColor: Colors.white,
@@ -222,15 +228,19 @@ class _DetailModulePageState extends State<DetailModulePage>
       // Leçons tab
       return Padding(
         padding: const EdgeInsets.all(16.0),
-        child: SizedBox(
-          height: 180,
+        child: Container(
+          height: 300,
           child: Center(
-            child: VideoPlayerWidget(videoPath: _selectedLesson!.videoPath),
+            child: VideoPlayerWidget(
+              videoPath: _selectedLesson!.videoPath,
+              onNextLesson: _nextLesson,
+              onPreviousLesson: _previousLesson,
+            ),
           ),
         ),
       );
     } else {
-      // Fichiers tab s
+      // Fichiers tab
       return Padding(
         padding: const EdgeInsets.all(16.0),
         child: Container(
@@ -311,13 +321,52 @@ class _DetailModulePageState extends State<DetailModulePage>
     return await UserService().isUserEnrolledInModule(moduleId);
   }
 
+  void _nextLesson() {
+    if (_selectedLesson != null) {
+      int currentIndex = widget.module.lessons.indexOf(_selectedLesson!);
+      if (currentIndex < widget.module.lessons.length - 1) {
+        setState(() {
+          _selectedLesson = widget.module.lessons[currentIndex + 1];
+        });
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('No more lessons available.'),
+          ),
+        );
+      }
+    }
+  }
 
+  void _previousLesson() {
+    if (_selectedLesson != null) {
+      int currentIndex = widget.module.lessons.indexOf(_selectedLesson!);
+      if (currentIndex < widget.module.lessons.length - 1) {
+        setState(() {
+          _selectedLesson = widget.module.lessons[currentIndex - 1];
+        });
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('No more lessons available.'),
+          ),
+        );
+      }
+    }
+  }
 }
 
 class VideoPlayerWidget extends StatefulWidget {
   final String videoPath;
+  final VoidCallback? onNextLesson;
+  final VoidCallback? onPreviousLesson;
 
-  const VideoPlayerWidget({Key? key, required this.videoPath}) : super(key: key);
+  const VideoPlayerWidget({
+    Key? key,
+    required this.videoPath,
+    this.onNextLesson,
+    this.onPreviousLesson,
+  }) : super(key: key);
 
   @override
   _VideoPlayerWidgetState createState() => _VideoPlayerWidgetState();
@@ -325,8 +374,11 @@ class VideoPlayerWidget extends StatefulWidget {
 
 class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
   late VideoPlayerController _controller;
-  bool _isLoading = true; // Loading state
-  bool _hasError = false; // Error state
+  bool _isLoading = true;
+  bool _hasError = false;
+  double _volume = 1.0;
+  bool _isFullscreen = false;
+  bool _showVolumeSlider = false;
 
   @override
   void initState() {
@@ -336,17 +388,18 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
 
   Future<void> _initializeVideoPlayer() async {
     try {
-      // Validate video URL
       if (widget.videoPath.isEmpty) {
         throw Exception("Video URL is empty");
       }
-      _controller = VideoPlayerController.networkUrl(Uri.parse(widget.videoPath))
-        ..initialize().then((_) {
-          setState(() {
-            _isLoading = false;
-          });
-          _controller.play();
-        });
+      _controller =
+          VideoPlayerController.networkUrl(Uri.parse(widget.videoPath))
+            ..initialize().then((_) {
+              setState(() {
+                _isLoading = false;
+              });
+              _controller.setVolume(_volume);
+              _controller.play();
+            });
     } catch (error) {
       setState(() {
         _hasError = true;
@@ -362,38 +415,159 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
     super.dispose();
   }
 
+  void toggleFullscreen() {
+    setState(() {
+      _isFullscreen = !_isFullscreen;
+    });
+    if (_isFullscreen) {
+      SystemChrome.setEnabledSystemUIMode(SystemUiMode.immersive);
+    } else {
+      SystemChrome.setEnabledSystemUIMode(SystemUiMode.edgeToEdge);
+    }
+  }
+
+  // previuous logic
+  void _previousLesson() {
+    if (widget.onPreviousLesson != null) {
+      widget.onPreviousLesson!();
+    }
+  }
+
+  // next logic
+  void _nextLesson() {
+    if (widget.onNextLesson != null) {
+      widget.onNextLesson!();
+    }
+  }
+
+  // video duration mesurement
+  String _formatDuration(Duration position) {
+    return "${position.inMinutes.remainder(60).toString().padLeft(2, '0')}:${position.inSeconds.remainder(60).toString().padLeft(2, '0')}";
+  }
+
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
-      return Center(child: CircularProgressIndicator(
-        valueColor: AlwaysStoppedAnimation<Color>(secondaryColor),
-        strokeWidth: 5.0,
-      ));
+      return Center(
+        child: CircularProgressIndicator(
+          valueColor: AlwaysStoppedAnimation<Color>(secondaryColor),
+          strokeWidth: 5.0,
+        ),
+      );
     }
     if (_hasError) {
       return Center(child: Text('Error loading video'));
     }
 
-    return Column(
-      children: [
-        AspectRatio(
-          aspectRatio: _controller.value.aspectRatio,
-          child: VideoPlayer(_controller),
-        ),
-        VideoProgressIndicator(_controller, allowScrubbing: true),
-        IconButton(
-          icon: Icon(
-            _controller.value.isPlaying ? Icons.pause : Icons.play_arrow,
+    return Container(
+      width: double.infinity,
+      height: _isFullscreen ? MediaQuery.of(context).size.height : 250,
+      child: Stack(
+        alignment: Alignment.bottomCenter,
+        children: [
+          AspectRatio(
+            aspectRatio: _controller.value.aspectRatio,
+            child: VideoPlayer(_controller),
           ),
-          onPressed: () {
-            setState(() {
-              _controller.value.isPlaying
-                  ? _controller.pause()
-                  : _controller.play();
-            });
-          },
-        ),
-      ],
+          Column(
+            mainAxisAlignment: MainAxisAlignment.end,
+            children: [
+              // Video progress indicator
+              VideoProgressIndicator(
+                _controller,
+                allowScrubbing: true,
+                colors: VideoProgressColors(
+                  playedColor: Colors.red,
+                  bufferedColor: Colors.grey,
+                  backgroundColor: Colors.black,
+                ),
+              ),
+              Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  // Left container: Video duration display counter
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 8.0),
+                    child: Text(
+                      '${_formatDuration(_controller.value.position)} / ${_formatDuration(_controller.value.duration)}',
+                      style: TextStyle(color: Colors.white, fontSize: 12),
+                    ),
+                  ),
+
+                  // Middle row (playback controls: previous, pause/play, next)
+                  Row(
+                    children: [
+                      IconButton(
+                        icon: Icon(Icons.skip_previous),
+                        onPressed: _previousLesson,
+                      ),
+                      IconButton(
+                        icon: Icon(
+                          _controller.value.isPlaying
+                              ? Icons.pause
+                              : Icons.play_arrow,
+                        ),
+                        onPressed: () {
+                          setState(() {
+                            _controller.value.isPlaying
+                                ? _controller.pause()
+                                : _controller.play();
+                          });
+                        },
+                      ),
+                      IconButton(
+                        icon: Icon(Icons.skip_next),
+                        onPressed: _nextLesson,
+                      ),
+                    ],
+                  ),
+
+                  // Right container (volume and fullscreen toggle)
+                  Row(
+                    children: [
+                      IconButton(
+                        icon: Icon(
+                            _volume > 0 ? Icons.volume_up : Icons.volume_off),
+                        onPressed: () {
+                          setState(() {
+                            _showVolumeSlider = !_showVolumeSlider;
+                          });
+                        },
+                      ),
+                      if (_showVolumeSlider)
+                        SizedBox(
+                          height: 80,
+                          child: RotatedBox(
+                            quarterTurns: 3,
+                            child: Slider(
+                              value: _volume,
+                              onChanged: (value) {
+                                setState(() {
+                                  _volume = value;
+                                  _controller.setVolume(_volume);
+                                });
+                              },
+                              min: 0.0,
+                              max: 1.0,
+                              divisions: 10,
+                              label: '${(_volume * 100).round()}%',
+                            ),
+                          ),
+                        ),
+                      IconButton(
+                        icon: Icon(_isFullscreen
+                            ? Icons.fullscreen_exit
+                            : Icons.fullscreen),
+                        onPressed: toggleFullscreen,
+                      ),
+                    ],
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ],
+      ),
     );
   }
 }
@@ -526,7 +700,6 @@ class ModulesTab extends StatelessWidget {
       },
     );
   }
- 
 }
 
 // Files Tab (optional)

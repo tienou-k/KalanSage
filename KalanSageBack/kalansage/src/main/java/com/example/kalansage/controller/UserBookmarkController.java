@@ -13,7 +13,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/bookmarks")
@@ -23,71 +25,36 @@ public class UserBookmarkController {
     private UserBookmarkService userBookmarkService;
 
     @Autowired
-    private ModuleRepository moduleRepository;
+    private ModuleService moduleService;
 
     @Autowired
     private UserRepository userRepository;
 
-    @Autowired
-    private ModuleService moduleService;
-
     // Add a bookmark
-    @PostMapping("/add/{moduleId}")
-    public UserBookmarkDTO addBookmark(@PathVariable Long moduleId, @RequestParam Long id) {
-        User user = userRepository.findUserById(id);
-        Module module = moduleService.getModuleById(moduleId);
-
-        // Check if the bookmark already exists
-        if (userBookmarkService.bookmarkExists(user.getId(), module.getId())) {
-            throw new RuntimeException("This module is already bookmarked by the user."); // Consider creating a custom exception
-        }
-
-        UserBookmark userBookmark = userBookmarkService.addBookmark(user.getId(), module.getId());
-        return new UserBookmarkDTO(userBookmark.getId(), user.getId(), module.getId(), userBookmark.getBookmarkDate());
+    @PostMapping("/add/{userId}/{moduleId}")
+    public ResponseEntity<UserBookmarkDTO> addBookmark(@PathVariable Long userId, @PathVariable Long moduleId) {
+        UserBookmarkDTO dto = userBookmarkService.addBookmark(userId, moduleId);
+        return ResponseEntity.ok(dto);
     }
-    // New method to retrieve bookmarked modules
+
+    // Retrieve bookmarked modules for a user
     @GetMapping("/bookmarked-modules/{userId}")
     public ResponseEntity<List<UserBookmarkDTO>> getBookmarkedModules(@PathVariable Long userId) {
-        // Fetch the user
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + userId));
-        // Get the bookmarks for this user
-        List<UserBookmark> bookmarks = userBookmarkService.getBookmarksByUserId(user.getId());
-        // Map bookmarks to DTOs and return
-        List<UserBookmarkDTO> dtoList = bookmarks.stream()
-                .map(bookmark -> new UserBookmarkDTO(
-                        bookmark.getId(),
-                        bookmark.getUser().getId(),
-                        bookmark.getModule().getId(),
-                        bookmark.getBookmarkDate()))
-                .toList();
+        List<UserBookmarkDTO> dtoList = userBookmarkService.getBookmarkedModules(userId);
         return ResponseEntity.ok(dtoList);
     }
 
     // Remove a bookmark
-    @DeleteMapping("/remove/{moduleId}")
-    public ResponseEntity<String> removeBookmark(@PathVariable Long moduleId, @RequestParam Long id) {
-        // Fetch the user and verify existence
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + id));
-        // Fetch the module and verify existence
-        Module module = moduleRepository.findById(moduleId)
-                .orElseThrow(() -> new EntityNotFoundException("Module not found with id: " + moduleId));
-        // Remove the bookmark
-        userBookmarkService.removeBookmark(user, module);
-        // Return a success message
-        return ResponseEntity.ok("Bookmark removed successfully.");
+    @DeleteMapping("/remove/{userId}/{moduleId}")
+    public ResponseEntity<String> removeBookmark(@PathVariable Long userId, @PathVariable Long moduleId) {
+        String responseMessage = userBookmarkService.removeBookmark(userId, moduleId);
+        return ResponseEntity.ok(responseMessage);
     }
 
     // Check if a module is bookmarked
-    @GetMapping("/isBookmarked/{moduleId}")
-    public boolean isBookmarked(@PathVariable Long moduleId, @RequestParam Long id) {
-        User user = userRepository.findUserById(id);
-
-        // Fetch the module and verify existence
-        Module module = moduleRepository.findById(moduleId)
-                .orElseThrow(() -> new EntityNotFoundException("Module not found with id: " + moduleId));
-
-        return userBookmarkService.isBookmarked(user, module);
+    @GetMapping("/isBookmarked/{userId}/{moduleId}")
+    public ResponseEntity<Map<String, String>> isBookmarked(@PathVariable Long userId, @PathVariable Long moduleId) {
+        Map<String, String> response = userBookmarkService.isBookmarked(userId, moduleId);
+        return ResponseEntity.ok(response);
     }
 }
