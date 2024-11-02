@@ -1,60 +1,53 @@
-// .course-header {
-//   display: flex;
-//   justify-content: space-between;
-//   padding: 2px;
-//   color: rgb(34, 34, 66);
-//   align-items: flex-end;
-//   margin-bottom: 50px;
+/*
+.course-header-right {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background-color: #f5f5f5; // Light gray background
+  border-radius: 15px; // Rounded corners
+  padding: 20px; // Adequate padding
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); // Subtle shadow for a card effect
 
-//   .course-header-left {
-//     h2 {
-//       font-size: 2rem;
-//       margin-bottom: 10px;
-//     }
-//     .course-info {
-//       display: flex;
-//       gap: 25px;
-//       span {
-//         display: flex;
-//         align-items: center;
-//         gap: 5px;
-//       }
-//     }
-//   }
+  .course-image {
+    max-width: 150px; // Limit the image size
+    border-radius: 10px; // Rounded corners for the image
+  }
 
-//   .course-header-right {
-//     display: flex;
-//     width: 30%;
-//     border-radius: 8px;
-//     flex-direction: column;
-//     align-items: center;
-//     img {
-//       max-width: 200px;
-//       margin-bottom: 20px;
-//     }
-//     .price {
-//       display: flex;
-//       border-radius: 8px;
-//       padding: 20px;
-//       gap: 10px;
-//       flex-direction: row;
-//       align-items: center;
-//       justify-content: flex-start;
-//       margin-bottom: 0;
-//       background: var(--primary-color);
+  .price-info {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; // Align text to the start
+    margin-left: 20px; // Space between image and price info
 
-//       .original-price {
-//         text-decoration: line-through;
-//         font-size: 1.2rem;
-//         color: #ff4c4c;
-//       }
-//       .discounted-price {
-//         font-size: 1.5rem;
-//         color: #ff9800;
-//       }
-//     }
-//   }
-// }
+    .original-price {
+      font-size: 1.2em;
+      text-decoration: line-through; // Strikethrough for original price
+      color: #777; // Gray color
+      margin-bottom: 5px; // Space below original price
+    }
+
+    .discounted-price {
+      font-size: 1.5em;
+      color: #d9534f; // Red color for the discounted price
+      margin-bottom: 10px; // Space below discounted price
+    }
+
+    .start-btn {
+      background-color: #ff7f50; // Button color
+      color: #fff; // Button text color
+      padding: 10px 20px; // Adequate padding
+      border-radius: 5px; // Rounded corners for the button
+      font-size: 1em; // Button text size
+      border: none; // No border
+      cursor: pointer;
+
+      &:hover {
+        background-color: #e56b45; // Darker shade on hover
+      }
+    }
+  }
+}
+*/
 .course-header {
   display: flex;
   justify-content: space-between;
@@ -62,9 +55,15 @@
   padding: 20px;
   border-radius: 15px;
   color: var(--primary-color);
+  background: rgba(25, 72, 96, 0.02);
 
   .course-header-left {
     flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+    justify-content: space-evenly;
+    align-items: self-start;
 
     .arrow-head {
       display: flex;
@@ -72,7 +71,7 @@
 
       .back-button {
         background-color: white;
-        color: #113f67;
+        color: var(--primary-color);
         margin-right: 10px;
       }
 
@@ -80,7 +79,7 @@
         font-size: 14px;
         font-weight: bold;
         color: white;
-        background-color: #113f67;
+        background-color: var(--primary-color);
         padding: 5px 10px;
         border-radius: 10px;
       }
@@ -118,40 +117,55 @@
   .course-header-right {
     display: flex;
     flex-direction: column;
+    justify-content: space-between;
     align-items: center;
+    background-color: #f5f5f5;
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
 
     .course-image {
-      width: 150px;
+      max-width: 150px;
       border-radius: 10px;
-      margin-bottom: 10px;
     }
 
     .price-info {
       display: flex;
-      background: var(--primary-color);
       flex-direction: row;
-      gap: 10px;
-      padding: 10px;
-      border-radius: 8px;
-      justify-content: space-between;
       align-items: center;
-      font-size: 18px;
+      justify-content: center;
+      margin-left: 20px;
+      background: var(--primary-color);
+      border-bottom-left-radius: 8px;
+      border-bottom-right-radius: 8px;
+      // align-items: center;
+      // font-size: 18px;
 
       .original-price {
+        font-size: 1.2em;
         text-decoration: line-through;
-        color: #ff6f61;
+        color: var(--secondary-color);
         margin-bottom: 5px;
       }
 
       .discounted-price {
+        font-size: 2em;
         font-weight: bold;
         color: #ffffff;
       }
 
       .start-btn {
         margin-top: 10px;
-        background-color: #ff6f61;
+        background-color: var(--secondary-color);
         color: white;
+         padding: 10px 20px;
+         border-radius: 5px;
+          font-size: 1em;
+           border: none;
+           cursor: pointer;
+           &:hover {
+             background-color: var(--secondary-color-dark);
+           }
       }
     }
   }
@@ -187,69 +201,58 @@
   font-weight: 600;
 }
 .lessons {
-  padding: 16px;
-  background-color: #f9f9f9;
-  border-radius: 8px;
-
   .no-lessons-message {
     text-align: center;
-    font-size: 18px;
+    font-size: 1.2em;
     color: #666;
-    padding: 20px;
-    font-weight: bold;
   }
 
   .lesson-item {
-    padding: 12px 16px;
-    margin-bottom: 8px;
+    margin-bottom: 1em;
     border-bottom: 1px solid #ddd;
-    display: flex;
-    flex-direction: column;
-    background-color: #fff;
-    border-radius: 4px;
-    transition: all 0.3s ease;
 
-    &:hover {
-      background-color: #f1f1f1;
-      transform: translateY(-2px);
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-    }
-
-    h3 {
+    .lesson-title {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      font-size: 18px;
-      font-weight: 600;
-      margin: 0;
-      padding: 8px 0;
       cursor: pointer;
-      color: #2c3e50;
+      padding: 10px;
+      font-size: 1.4em;
+      color: var(--primary-color);
+      transition: color 0.3s;
+
+      &:hover {
+        color: #000;
+      }
+    }
+
+    .lesson-content {
+      padding: 10px 20px;
+
+      .video-content {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        button {
+          margin-right: 1em;
+        }
+      }
+    }
+
+    .lesson-status {
+      display: flex;
+      align-items: center;
 
       mat-icon {
-        font-size: 24px;
-        color: #2c3e50;
-        transition: transform 0.3s ease;
+        margin-right: 0.5em;
+      }
+
+      .lesson-duration {
+        font-weight: bold;
+        font-size: 0.9em;
+        color: #555;
       }
     }
-
-    p {
-      margin: 12px 0;
-      font-size: 16px;
-      line-height: 1.5;
-      color: #444;
-    }
-
-    mat-icon {
-      color: #388e3c;
-      &.lock {
-        color: #f44336;
-      }
-    }
-  }
-
-  /* Expanded state */
-  .lesson-item.expanded h3 mat-icon {
-    transform: rotate(180deg);
   }
 }

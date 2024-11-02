@@ -4,7 +4,6 @@ import com.example.kalansage.dto.ModulesDTO;
 import com.example.kalansage.model.Categorie;
 import com.example.kalansage.model.Module;
 import com.example.kalansage.model.User;
-import com.example.kalansage.model.userAction.UserBookmark;
 import com.example.kalansage.model.userAction.UserModule;
 import com.example.kalansage.repository.*;
 import jakarta.persistence.EntityNotFoundException;
@@ -32,12 +31,11 @@ public class ModuleServiceImpl implements ModuleService {
     private UserRepository userRepository;
     @Autowired
     private UserBookmarkRepository userBookRepository;
-
-
+    @Autowired
+    private LeconsServiceImpl leconsService;
 
     @Override
     public Module creerModule(Module module) {
-        // Check if a module with the same title already exists
         if (moduleRepository.existsByTitre(module.getTitre())) {
             throw new RuntimeException("Un module avec le même titre existe déjà.");
         }
@@ -54,57 +52,37 @@ public class ModuleServiceImpl implements ModuleService {
         }
         return moduleRepository.save(module);
     }
-    // Get all modules
+
     public List<ModulesDTO> getAllModules() {
         List<Module> modules = moduleRepository.findAll();
         return convertToDTO(modules);
     }
 
-    // Get module by ID
     public ModulesDTO getModuleById(Long id) {
         Optional<Module> moduleOpt = moduleRepository.findById(id);
-        return moduleOpt.map(mod -> new ModulesDTO(
-                mod.getId(),
-                mod.getTitre(),
-                mod.getDescription(),
-                mod.getPrix(),
-                mod.getImageUrl(),
-                mod.getDateCreation(),
-                mod.getCategorie() != null ? mod.getCategorie().getNomCategorie() : null
-        )).orElse(null); // Return null if the module is not found
+        return moduleOpt.map(this::mapToModuleDTO).orElse(null);
     }
 
-    // Get modules by category ID
     public List<ModulesDTO> getModulesByCategorie(Long categorieId) {
         Categorie categorie = categorieRepository.findById(categorieId).orElse(null);
         if (categorie != null) {
             List<Module> modules = moduleRepository.findByCategorie(categorie);
             return convertToDTO(modules);
         }
-        return List.of(); // Return an empty list if the category is not found
+        return List.of();
     }
 
-    // Helper method to convert Module list to ModulesDTO list
     private List<ModulesDTO> convertToDTO(List<Module> modules) {
         return modules.stream()
-                .map(module -> new ModulesDTO(
-                        module.getId(),
-                        module.getTitre(),
-                        module.getDescription(),
-                        module.getPrix(),
-                        module.getImageUrl(),
-                        module.getDateCreation(),
-                        module.getCategorie().getNomCategorie()
-                        ))
+                .map(this::mapToModuleDTO)
                 .collect(Collectors.toList());
     }
 
     @Transactional
     public Module modifierModule(Module module) {
-        // Check if the lesson exists before updating (can be done in the controller as well)
         Optional<Module> existingModule = moduleRepository.findById(module.getId());
         if (existingModule.isPresent()) {
-            return moduleRepository.save(module);  // Save the updated lesson
+            return moduleRepository.save(module);
         } else {
             throw new EntityNotFoundException("Module avec ID " + module.getId() + " n'existe pas.");
         }
@@ -125,13 +103,11 @@ public class ModuleServiceImpl implements ModuleService {
                 .collect(Collectors.toList());
     }
 
-    // Get a course by ID and map it to CoursDTO
     public Optional<ModulesDTO> getModule(Long id) {
         return moduleRepository.findById(id)
                 .map(this::mapToModuleDTO);
     }
 
-    // Helper method to map Cours to CoursDTO
     private ModulesDTO mapToModuleDTO(Module module) {
         ModulesDTO moduleDTO = new ModulesDTO();
         moduleDTO.setId(module.getId());
@@ -140,14 +116,21 @@ public class ModuleServiceImpl implements ModuleService {
         moduleDTO.setPrix(module.getPrix());
         moduleDTO.setDateCreation(module.getDateCreation());
         moduleDTO.setImageUrl(module.getImageUrl());
-        moduleDTO.setNomCategorie(module.getCategorie().getNomCategorie());
+        moduleDTO.setNomCategorie(module.getCategorie() != null ? module.getCategorie().getNomCategorie() : null);
+        // Fetch counts for lecons and module users
+        int leconsCount = Math.toIntExact(leconsService.countByModule_Id(module.getId()));
+        int moduleUsersCount = Math.toIntExact(userModuleRepository.countByModuleId(module.getId()));
+
+        moduleDTO.setLeconsCount(leconsCount);
+        moduleDTO.setModulesUsers(moduleUsersCount);  // Corrected method name
+
         return moduleDTO;
     }
 
 
     public Module getModuleModel(Long moduleId) {
         return moduleRepository.findById(moduleId)
-                .orElseThrow(() -> new RuntimeException("Module not trouvé"));
+                .orElseThrow(() -> new RuntimeException("Module non trouvé"));
     }
 
     public UserModule inscrireAuModule(Long id, Long moduleId) {
@@ -156,7 +139,6 @@ public class ModuleServiceImpl implements ModuleService {
         Module module = moduleRepository.findById(moduleId)
                 .orElseThrow(() -> new IllegalArgumentException("Module introuvable."));
 
-        // Check if the user is already enrolled in the module
         if (userModuleRepository.existsByUserAndModule(user, module)) {
             throw new IllegalArgumentException("L'utilisateur est déjà inscrit à ce module.");
         }
@@ -170,7 +152,6 @@ public class ModuleServiceImpl implements ModuleService {
         return userModuleRepository.save(userModule);
     }
 
-
     @Override
     public List<Module> getTop5Modules() {
         try {
@@ -180,14 +161,16 @@ public class ModuleServiceImpl implements ModuleService {
             throw new RuntimeException("Unable to fetch top modules.");
         }
     }
-    // Get top modules by subscriber count with pagination
+
     public List<ModulesDTO> getTopModules(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         List<Module> topModules = moduleRepository.findTopModules(pageable);
         return convertToDTO(topModules);
     }
-    public long getUserCountByModule(Module  module) {
-        return userModuleRepository.countByModule(module);
+
+    @Override
+    public Long getUserCountByModule(Module module) {
+        return userModuleRepository.countByModuleId(module.getId());
     }
 
     public Module findModuleById(Long moduleId) {
@@ -198,6 +181,7 @@ public class ModuleServiceImpl implements ModuleService {
     public List<Module> getModules() {
         return moduleRepository.findAll();
     }
+
     public List<Module> getModulesByCategory_Id(Long categoryId) {
         return moduleRepository.findByCategorie_IdCategorie(categoryId);
     }
@@ -206,8 +190,39 @@ public class ModuleServiceImpl implements ModuleService {
         return userBookRepository.existsByModuleIdAndUserId(moduleId, id);
     }
 
-    public List<Module> fetchPopularModules() {
+   /* public List<Module> fetchPopularModules() {
         return userModuleRepository.findTop10ByOrderByUserIdDesc();
+    }*/
+
+    public List<ModulesDTO> fetchPopularModules() {
+        List<Module> popularModules = userModuleRepository.findTop10ByOrderByUserIdDesc();
+        return popularModules.stream()
+                .map(this::convertToDTO)
+                .collect(Collectors.toList());
+    }
+
+    private ModulesDTO convertToDTO(Module module) {
+        if (module == null) {
+            return null;
+        }
+
+        // Fetch counts for lessons and module users
+        int leconsCount = Math.toIntExact(leconsService.countByModule_Id(module.getId()));
+        int moduleUsersCount = Math.toIntExact(userModuleRepository.countByModuleId(module.getId()));
+
+        // Create a ModulesDTO object
+        return new ModulesDTO(
+                module.getId(),
+                module.getTitre(),
+                module.getDescription(),
+                module.getPrix(),
+                module.getImageUrl(),
+                module.getDateCreation(),
+                module.getCategorie() != null ? module.getCategorie().getNomCategorie() : null,
+                leconsCount,
+                moduleUsersCount,
+                null // You can replace null with actual users if needed
+        );
     }
 
 }

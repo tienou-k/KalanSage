@@ -5,11 +5,6 @@ import {ModuleService} from 'src/app/services/modules.service'
 import { AbonnementService } from '../../services/abonnement.service';
 import { PartenaireService } from 'src/app/services/partenaire.service';
 
-interface Modules {
-  name: string;
-  inscris: number;
-  review: number;
-}
 
 @Component({
   selector: 'app-dashboard',
@@ -19,10 +14,13 @@ interface Modules {
   styleUrls: ['./dashboard.component.scss'],
 })
 export class DashboardComponent implements OnInit {
+  moduleId: any[];
   topModules: any[] = [];
   displayedColumns: string[] = ['titre', 'inscris', 'review'];
-  courses: Modules[] = [];
+  courses: any[] = [];
+  users: any[] = [];
   userCount: number = 0;
+  usersCount: number = 0;
   abonnementCount: number = 0;
   partnerCount: number = 0;
 
@@ -74,12 +72,26 @@ export class DashboardComponent implements OnInit {
   }
 
   fetchTopModules(): void {
-    this.userService.getTop().subscribe(
+    this.moduleService.getTop().subscribe(
       (modules) => {
         this.topModules = modules;
       },
       (error) => {
         console.error('Failed to fetch top modules:', error);
+      }
+    );
+  }
+
+  fetchModuleUsers(moduleId: number): void {
+    this.moduleService.getUsersByModule(moduleId).subscribe(
+      (userCount) => {
+        const module = this.topModules.find((mod) => mod.id === moduleId);
+        if (module) {
+          module.abonne = userCount.length; 
+        }
+      },
+      (error) => {
+        console.error('Error fetching users for module:', moduleId, error);
       }
     );
   }

@@ -1,1 +1,21 @@
-<p>video-player works!</p>
+<h2 mat-dialog-title>Watch Video</h2>
+<mat-dialog-content>
+  <div class="video-container">
+    <video #videoElement width="100%" controls (loadedmetadata)="setInitialVolume(videoElement)">
+      <source [src]="data.videoPath" type="video/mp4">
+      Your browser does not support the video tag.
+    </video>
+    <div class="custom-controls">
+      <button mat-button (click)="togglePlay(videoElement)">
+        <mat-icon>{{ videoElement.paused ? 'play_arrow' : 'pause' }}</mat-icon>
+      </button>
+      <button mat-button (click)="toggleFullScreen(videoElement)">
+        <mat-icon>{{ isFullScreen ? 'fullscreen_exit' : 'fullscreen' }}</mat-icon>
+      </button>
+      <input type="range" min="0" max="1" step="0.1" (input)="changeVolume(videoElement, $event)" />
+    </div>
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-button (click)="onClose()">Close</button>
+</mat-dialog-actions>

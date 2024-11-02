@@ -1,5 +1,5 @@
 <div class="course-header">
-  <div class="course-header">
+  <div class="title-header">
     <div class="course-header-left">
       <!-- Back Button and Category -->
       <div class="arrow-head">
@@ -15,11 +15,11 @@
       <!-- Course Information -->
       <div class="course-info">
         <span class="info-item">
-          <mat-icon>people</mat-icon> {{ studentCount }}
+          <mat-icon>people</mat-icon> {{ moduleDetails.modulesUsers }}
           <span class="text-info">Apprenants</span>
         </span>
         <span class="info-item">
-          <mat-icon>description</mat-icon> {{ leconCount }}
+          <mat-icon>description</mat-icon> {{ moduleDetails.leconsCount }}
           <span class="text-info">Leçons</span>
         </span>
         <span class="info-item">
@@ -30,36 +30,30 @@
     </div>
   </div>
   <!-- Course Price and Image -->
-  <div class="course-header-right" >
-<img
-  *ngIf="!isLoading && moduleDetails.image"
- [src]="moduleDetails.imageUrl"
-  [alt]="moduleDetails.titre"
-  class="course-image"
-/>
+  <!-- Course Price and Image -->
+<div class="course-header-right">
+  <img
+    *ngIf="!isLoading && moduleDetails.imageUrl"
+    [src]="moduleDetails.imageUrl"
+    [alt]="moduleDetails.titre"
+    class="course-image"
+  />
 
-<img
-  *ngIf="!isLoading && !moduleDetails.image"
-  src="assets/path/to/fallback/image.jpg" 
-  alt="No image available"
-  class="fallback-image"
-/>
-
-    <div class="price-info">
-      <span class="original-price" *ngIf="moduleDetails.originalPrice">
-        ${{ moduleDetails.originalPrice }}
-      </span>
-      <span class="discounted-price">${{ moduleDetails.prix }}</span>
-      <button
-        mat-raised-button
-        color="primary"
-        class="start-btn"
-        (click)="startCourse()"
-      >
-        Start Now
-      </button>
-    </div>
+  <div class="price-info">
+    <span class="original-price" *ngIf="moduleDetails.originalPrice">
+      ${{ moduleDetails.originalPrice }}
+    </span>
+    <span class="discounted-price">${{ moduleDetails.prix }}</span>
+    <button
+      mat-raised-button
+      color="primary"
+      class="start-btn"
+      (click)="startCourse()"
+    >
+      Start Now
+    </button>
   </div>
+</div>
 </div>
 
 <mat-tab-group
@@ -87,48 +81,43 @@
 </mat-tab>
 
   <!--  -->
-  <mat-tab label="Leçons">
-    <div class="lessons">
-      <div *ngIf="lecons?.length === 0" class="no-lessons-message">
-        Pas de leçon pour ce module.
-      </div>
+ <mat-tab label="Leçons">
+  <div class="lessons">
+    
+    <div *ngIf="lecons?.length === 0" class="no-lessons-message">
+      Pas de leçon pour ce module.
+    </div>
 
-      <div *ngFor="let lesson of lecons; let i = index" class="lesson-item">
-        <h3 (click)="toggleLessonContent(i)" style="cursor: pointer">
-          {{ lesson.titre }}
-          <mat-icon>{{
-            selectedLessonIndex === i ? "expand_less" : "expand_more"
-          }}</mat-icon>
-        </h3>
+    <div *ngFor="let lesson of lecons; let i = index" class="lesson-item">
+      <h3 class="lesson-title" (click)="toggleLessonContent(i)">
+        {{ lesson.titre }}
+        <mat-icon>{{ selectedLessonIndex === i ? 'expand_less' : 'expand_more' }}</mat-icon>
+      </h3>
 
-        <!-- Show lesson content if selected -->
-        <div *ngIf="selectedLessonIndex === i">
-          <!-- Check if the lesson has a video content -->
-          <div *ngIf="lesson.videoUrl; else noVideo">
-            <p>Cliquer pour afficher la vidéo</p>
-            <button mat-button color="primary">
-              <mat-icon>play_circle_filled</mat-icon> Play Video
-            </button>
-          </div>
-
-          <ng-template #noVideo>
-            <p>Aucun contenu vidéo disponible pour cette leçon.</p>
-          </ng-template>
-
-          <!-- Lock/unlock icon logic -->
-          <mat-icon>
-            {{
-              isAdmin || moduleDetails.prix <= 0
-                ? "check_circle"
-                : lesson.completed
-                ? "check_circle"
-                : "lock"
-            }}
-          </mat-icon>
+      <div *ngIf="selectedLessonIndex === i" class="lesson-content">
+        
+        <div *ngIf="lesson.videoPath && !lesson.locked; else noVideo" class="video-content">
+          <p>{{ lesson.description }}</p>
+          <button mat-button color="primary" (click)="openVideoPlayer(lesson.videoPath)">
+            <mat-icon>play_circle_filled</mat-icon> voir video
+          </button>
+          <span class="lesson-status">
+            <mat-icon>
+              {{ isAdmin || moduleDetails.prix <= 0 ? 'check_circle' : lesson.completed ? 'check_circle' : 'lock' }}
+            </mat-icon>
+            <span class="lesson-duration">{{ lesson.duration }}</span>
+          </span>
         </div>
+
+        <ng-template #noVideo>
+          <p>Aucun contenu vidéo disponible pour cette leçon.</p>
+        </ng-template>
+
       </div>
     </div>
-  </mat-tab>
+    
+  </div>
+</mat-tab>
   <!--  -->
   <mat-tab label="Reviews">
     <div class="reviews">

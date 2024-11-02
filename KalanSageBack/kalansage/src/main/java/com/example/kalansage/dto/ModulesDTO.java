@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
+import java.util.Set;
 
 @Data
 @NoArgsConstructor
@@ -19,6 +20,9 @@ public class ModulesDTO extends Module {
     private String imageUrl;
     private Date dateCreation;
     private String nomCategorie;
+    private int leconsCount;
+    private int modulesUsers;
+    private Set<?> users;
 
 
 

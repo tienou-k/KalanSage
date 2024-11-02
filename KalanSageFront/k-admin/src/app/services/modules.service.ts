@@ -61,11 +61,11 @@ export class ModuleService {
       }
     );
   }
-  
+
   // Delete a module by ID
   supprimerModule(moduleId: number): Observable<any> {
     return this.http.delete<any>(`${this.apiUrl}/suprimer-module/${moduleId}`, {
-      headers: this.getAuthHeaders(), // Ensure headers include authorization
+      headers: this.getAuthHeaders(),
     });
   }
 
@@ -78,7 +78,7 @@ export class ModuleService {
 
   // Fetch the top 5 modules
   getTop5Modules(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUrl}/top5`, {
+    return this.http.get<any[]>(`${this.apiUrl}/popular`, {
       headers: this.getAuthHeaders(),
     });
   }
@@ -90,17 +90,36 @@ export class ModuleService {
     });
   }
 
+  // Method to get users by module
   getUsersByModule(moduleId: number): Observable<any[]> {
     return this.http.get<any[]>(`${this.apiUrl}/${moduleId}/user-count`, {
       headers: this.getAuthHeaders(),
     });
   }
 
+  // Method to get lessons (Lecons) by module
+  getLeconsByModule(moduleId: number): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/${moduleId}/lecons`, {
+      headers: this.getAuthHeaders(),
+    });
+  }
+  // Method to get the count of lessons (Lecons) by module
+  getLeconsCountByModule(moduleId: number): Observable<number> {
+    return this.http.get<number>(`${this.apiUrl}/${moduleId}/lecons/count`, {
+      headers: this.getAuthHeaders(),
+    });
+  }
   // Fetch all categories with proper authorization headers
   getCategories(): Observable<any[]> {
     const headers = this.getAuthHeaders();
     return this.http.get<any[]>(`${this.categoriesUrl}/list-categories`, {
       headers,
+    });
+  }
+
+  getTop(): Observable<any[]> {
+    return this.http.get<any[]>(`${this.apiUrl}/popular`, {
+      headers: this.getAuthHeaders(),
     });
   }
 

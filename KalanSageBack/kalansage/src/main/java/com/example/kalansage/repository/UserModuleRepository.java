@@ -21,4 +21,6 @@ public interface UserModuleRepository extends JpaRepository<UserModule, Long> {
     boolean existsByUserIdAndModuleId(Long userId, Long moduleId);
     @Query("SELECT um.module FROM UserModule um GROUP BY um.module ORDER BY COUNT(um.user) DESC")
     List<Module> findTop10ByOrderByUserIdDesc();
+
+    Long countByModuleId(Long id);
 }

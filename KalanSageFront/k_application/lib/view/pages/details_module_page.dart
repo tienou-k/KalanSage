@@ -228,7 +228,7 @@ class _DetailModulePageState extends State<DetailModulePage>
       // Leçons tab
       return Padding(
         padding: const EdgeInsets.all(16.0),
-        child: Container(
+        child: SizedBox(
           height: 300,
           child: Center(
             child: VideoPlayerWidget(
@@ -362,11 +362,11 @@ class VideoPlayerWidget extends StatefulWidget {
   final VoidCallback? onPreviousLesson;
 
   const VideoPlayerWidget({
-    Key? key,
+    super.key,
     required this.videoPath,
     this.onNextLesson,
     this.onPreviousLesson,
-  }) : super(key: key);
+  });
 
   @override
   _VideoPlayerWidgetState createState() => _VideoPlayerWidgetState();
@@ -459,7 +459,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
       return Center(child: Text('Error loading video'));
     }
 
-    return Container(
+    return SizedBox(
       width: double.infinity,
       height: _isFullscreen ? MediaQuery.of(context).size.height : 250,
       child: Stack(

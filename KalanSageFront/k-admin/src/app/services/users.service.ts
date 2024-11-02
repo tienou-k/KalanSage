@@ -103,9 +103,4 @@ export class UserService {
   //     headers: this.getAuthHeaders(),
   //   });
   // }
-  getTop(): Observable<any[]> {
-    return this.http.get<any[]>(`${this.apiUserUrl}/user/top5`, {
-      headers: this.getAuthHeaders(),
-    });
-  }
 }

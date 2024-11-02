@@ -17,4 +17,6 @@ public interface ModuleService {
     List<Module> getTop5Modules();
     List<Module> getModulesByCategory_Id(Long id);
     Module getModuleById(Long moduleId);
+    Long getUserCountByModule(Module module);
+
 }

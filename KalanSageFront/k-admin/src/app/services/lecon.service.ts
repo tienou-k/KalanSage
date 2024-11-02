@@ -8,7 +8,6 @@ import { AuthService } from './auth-service.service'; // Assuming you have an Au
 })
 export class LeconService {
   private apiUrl = 'http://localhost:8080/api/lecons';
-  private apiModuleUrl = 'http://localhost:8080/api/modules';
 
   constructor(private http: HttpClient, private authService: AuthService) {}
 
@@ -60,13 +59,7 @@ export class LeconService {
     });
   }
 
-  // Fetch lessons by module ID
-  getLeconsByModule(moduleId: number): Observable<any[]> {
-    return this.http.get<any[]>(
-      `${this.apiModuleUrl}/module/${moduleId}/lecons`,
-      { headers: this.getAuthHeaders() }
-    );
-  }
+
 
   // Count all lessons
   countLecons(): Observable<number> {

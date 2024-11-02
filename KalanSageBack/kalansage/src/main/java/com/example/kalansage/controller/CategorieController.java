@@ -5,7 +5,9 @@ import com.example.kalansage.dto.ModulesDTO;
 import com.example.kalansage.model.Categorie;
 import com.example.kalansage.model.Module;
 import com.example.kalansage.repository.CategorieRepository;
+import com.example.kalansage.repository.UserModuleRepository;
 import com.example.kalansage.service.CategorieService;
+import com.example.kalansage.service.LeconsServiceImpl;
 import com.example.kalansage.service.ModuleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.rest.webmvc.ResourceNotFoundException;
@@ -29,7 +31,11 @@ public class CategorieController {
     @Autowired
     private ModuleService modulesservice;
     @Autowired
+    private LeconsServiceImpl leconsService;
+    @Autowired
     private CategorieRepository categorieRepository;
+    @Autowired
+    private UserModuleRepository userModuleRepository;
 
 
     @PostMapping("/creer-categorie")
@@ -110,6 +116,10 @@ public class CategorieController {
         if (module == null) {
             return null;
         }
+        // Fetch counts for lessons and module users
+        int leconsCount = Math.toIntExact(leconsService.countByModule_Id(module.getId()));
+        int moduleUsersCount = Math.toIntExact(userModuleRepository.countByModuleId(module.getId()));
+        // Create a ModulesDTO object
         return new ModulesDTO(
                 module.getId(),
                 module.getTitre(),
@@ -117,9 +127,13 @@ public class CategorieController {
                 module.getPrix(),
                 module.getImageUrl(),
                 module.getDateCreation(),
-                module.getCategorie().getNomCategorie()
+                module.getCategorie() != null ? module.getCategorie().getNomCategorie() : null,
+                leconsCount,
+                moduleUsersCount,
+                null // You can replace null with actual users if needed
         );
     }
+
 
 
     @GetMapping("/{id}/modules/count")

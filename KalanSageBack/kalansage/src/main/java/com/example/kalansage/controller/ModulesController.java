@@ -19,12 +19,10 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -273,9 +271,10 @@ public ResponseEntity<List<ModulesDTO>> getAllModules() {
     }
 
     @GetMapping("/popular")
-    public ResponseEntity<List<Module>> getPopularModules() {
-        List<Module> popularModules = moduleServiceimpl.fetchPopularModules();
+    public ResponseEntity<List<ModulesDTO>> getPopularModules() {
+        List<ModulesDTO> popularModules = moduleServiceimpl.fetchPopularModules();
         return ResponseEntity.ok(popularModules);
     }
+
 
 }
