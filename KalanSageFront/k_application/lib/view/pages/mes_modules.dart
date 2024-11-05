@@ -5,6 +5,7 @@ import 'package:k_application/utils/constants.dart';
 import 'package:k_application/view/custom_nav_bar.dart';
 import 'package:k_application/services/module_service.dart';
 import 'package:k_application/view/pages/details_module_page.dart';
+import 'package:k_application/view/pages/elements/inscrire_button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class MesModulesPage extends StatefulWidget {
@@ -21,6 +22,7 @@ class _MesModulesPageState extends State<MesModulesPage> {
   List<ModuleModel> _filteredModules = [];
   bool _isLoading = true;
   bool _hasError = false;
+  bool _isAlreadyEnrolled = false;
   String _selectedTab = 'Tous';
   SharedPreferences? _prefs;
 
@@ -28,6 +30,7 @@ class _MesModulesPageState extends State<MesModulesPage> {
   void initState() {
     super.initState();
     _loadPrefs();
+
     _fetchModules();
   }
 
@@ -126,15 +129,14 @@ class _MesModulesPageState extends State<MesModulesPage> {
 
   // s'inscrire à une module logic
   void _enrollUser(int moduleId) async {
-    setState(() {
-    });
+    setState(() {});
     try {
       final result = await UserService().enrollInModule(moduleId);
       if (result['success'] == true) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Inscription réussie !'),
-            backgroundColor: Colors.green, 
+            backgroundColor: Colors.green,
           ),
         );
         _fetchModules();
@@ -142,7 +144,7 @@ class _MesModulesPageState extends State<MesModulesPage> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
             content: Text('Échec de l\'inscription.'),
-            backgroundColor: Colors.red, 
+            backgroundColor: Colors.red,
           ),
         );
       }
@@ -156,19 +158,16 @@ class _MesModulesPageState extends State<MesModulesPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text(errorMessage),
-          backgroundColor: Colors.red, 
+          backgroundColor: Colors.red,
         ),
       );
     } finally {
-      setState(() { 
-      });
+      setState(() {});
     }
   }
 
-
   // Helper method to build the tabs with horizontal scroll
   Widget _buildTab(String title) {
-    
     return GestureDetector(
       onTap: () {
         setState(() {
@@ -177,9 +176,7 @@ class _MesModulesPageState extends State<MesModulesPage> {
         });
       },
       child: Container(
-        
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        
         decoration: BoxDecoration(
           color: _selectedTab == title ? primaryColor : Colors.white,
           borderRadius: BorderRadius.circular(8),
@@ -250,6 +247,8 @@ class _MesModulesPageState extends State<MesModulesPage> {
                   const SizedBox(width: 10),
                   _buildTab('Inscris'),
                   const SizedBox(width: 10),
+                  _buildTab('Favoris'),
+                  const SizedBox(width: 10),
                   _buildTab('En cours'),
                   const SizedBox(width: 10),
                   _buildTab('Finis'),
@@ -291,8 +290,9 @@ class _MesModulesPageState extends State<MesModulesPage> {
                               itemBuilder: (context, index) {
                                 var module = _filteredModules[index];
                                 return _buildCourseCard(
-                                  title: EncodingUtils.decode( module.title),
-                                  description:EncodingUtils.decode( module.description),
+                                  title: EncodingUtils.decode(module.title),
+                                  description:
+                                      EncodingUtils.decode(module.description),
                                   students: module.studentCount.toString(),
                                   isEnrolled: module.isEnrolled,
                                   moduleId: module.id,
@@ -337,7 +337,6 @@ class _MesModulesPageState extends State<MesModulesPage> {
   Widget _buildCourseCard({
     required String title,
     required String description,
-    // required String rating,
     required String students,
     required bool isEnrolled,
     required int moduleId,
@@ -397,39 +396,33 @@ class _MesModulesPageState extends State<MesModulesPage> {
                   const SizedBox(height: 10),
                   Row(
                     children: [
-                      const Icon(Icons.star, color: secondaryColor, size: 16),
-                      const SizedBox(width: 5),
-                      Text(
-                        // 'Rating: $rating ',
-                          'Rating',
-                        style: const TextStyle(
-                          fontWeight: FontWeight.w400,
-                          fontSize: 12,
-                          color: Colors.grey,
-                        ),
-                      ),
-                      const SizedBox(width: 5),
                       const Icon(Icons.people, color: secondaryColor, size: 16),
                       const SizedBox(width: 5),
                       Text(
-                        '$students Apprenants ',
+                        '$students Apprenants',
                         style: const TextStyle(
                           fontWeight: FontWeight.w400,
                           fontSize: 12,
                           color: Colors.grey,
                         ),
                       ),
-                      const SizedBox(width: 20),
                     ],
                   ),
                 ],
               ),
             ),
-            ElevatedButton(
-              onPressed: () {
-                if (!isEnrolled) {
-                  _enrollUser(moduleId);
-                } else {
+            SizedBox(
+              width: 120, 
+              height: 66, 
+              child: InscrireButton(
+                module: _modules[index],
+                isAlreadyEnrolled: isEnrolled,
+                onEnrollmentStatusChanged: (isEnrolled) {
+                  setState(() {
+                    _modules[index].isEnrolled = isEnrolled;
+                  });
+                },
+                onStartFirstLesson: () {
                   Navigator.push(
                     context,
                     MaterialPageRoute(
@@ -438,22 +431,7 @@ class _MesModulesPageState extends State<MesModulesPage> {
                       ),
                     ),
                   );
-                }
-              },
-              style: ElevatedButton.styleFrom(
-                backgroundColor: primaryColor,
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 15, vertical: 10),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(10),
-                ),
-              ),
-              child: Text(
-                isEnrolled ? 'Start' : 'S\'inscrire',
-                style: const TextStyle(
-                  fontSize: 14,
-                  color: Colors.white,
-                ),
+                },
               ),
             ),
           ],

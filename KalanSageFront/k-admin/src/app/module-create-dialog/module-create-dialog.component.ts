@@ -30,7 +30,7 @@ export class ModuleCreateDialogComponent implements OnInit {
   moduleForm!: FormGroup;
   categories: any[] = [];
   selectedFile: File | null = null;
-  imagePreviewUrl: string | ArrayBuffer | null = null;
+  imageUrl: string | ArrayBuffer | null = null;
   newCategoryName: string = '';
   newCategoryDescription: string = '';
   editMode: boolean = false;
@@ -67,6 +67,7 @@ export class ModuleCreateDialogComponent implements OnInit {
         description: this.data.module.description,
         price: this.data.module.prix,
       });
+      this.imageUrl = this.data.module.imageUrl;
     }
 
     this.loadCategories();
@@ -160,7 +161,7 @@ export class ModuleCreateDialogComponent implements OnInit {
               this.showSnackbar(
                 'Erreur lors de la modification du module: ' + error.message
               );
-              console.error('Error modifying module:', error);
+              console.error('Erreur lors de la modification:', error);
             }
           }
         );
@@ -192,7 +193,7 @@ export class ModuleCreateDialogComponent implements OnInit {
       if (this.selectedFile) {
         const reader = new FileReader();
         reader.onload = () => {
-          this.imagePreviewUrl = reader.result;
+          this.imageUrl = reader.result;
         };
         reader.readAsDataURL(this.selectedFile);
       }
@@ -202,7 +203,7 @@ export class ModuleCreateDialogComponent implements OnInit {
   onReset(): void {
     this.moduleForm.reset();
     this.selectedFile = null;
-    this.imagePreviewUrl = null;
+    this.imageUrl = null;
   }
 
   onClose(): void {

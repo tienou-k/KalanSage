@@ -4,16 +4,7 @@ import '../models/user_model.dart';
 class UserController {
   final UserService _userService = UserService();
 
-  // Login function
-  Future<UserModel?> login(String email, String password) async {
-    try {
-      final userData = await _userService.login(email, password);
-      return UserModel.fromJson(
-          userData as Map<String, dynamic>); 
-    } catch (e) {
-      throw Exception('Login failed: $e');
-    }
-  }
+ 
 
   // Sign-up function
   Future<UserModel?> createUser(String nom, String prenom, String email,

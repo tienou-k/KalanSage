@@ -1,94 +1,67 @@
 .video-container {
   position: relative;
   width: 100%;
-  max-width: 800px; 
-  margin: 0 auto; 
+  max-width: 800px;
+  margin: 0 auto;
 }
 
 video {
   width: 100%;
   height: auto;
   border-radius: 8px;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2); 
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
 }
 
 .custom-controls {
   display: flex;
   align-items: center;
-  justify-content: space-between; 
-  margin-top: 10px; 
-  padding: 0 10px; 
-
-  button {
-    background: transparent; 
-    border: none;
-    cursor: pointer; 
-    color: #007bff;
-    font-size: 24px; 
-    transition: color 0.3s;
-
-    &:hover {
-      color: #0056b3; 
-    }
-
-    mat-icon {
-      vertical-align: middle; 
-    }
-  }
+  justify-content: space-between;
+  margin-top: 10px;
+  padding: 0 10px;
 
   input[type='range'] {
-    flex: 1; 
+    flex: 1;
     margin-left: 10px;
     margin-right: 10px;
     cursor: pointer;
     -webkit-appearance: none;
     height: 4px;
-    background: #ddd; 
-    border-radius: 5px; 
-    
+    background: #ddd;
+    border-radius: 5px;
+
     &:focus {
       outline: none;
     }
 
     &::-webkit-slider-thumb {
-      -webkit-appearance: none; 
-      height: 20px; 
-      border-radius: 50%; 
-      background: #007bff;
-      cursor: pointer;
+      display: none;
     }
 
     &::-moz-range-thumb {
-      width: 20px; 
-      height: 20px; 
-      border-radius: 50%; 
-      background: #007bff;
-      cursor: pointer; 
+      display:none
     }
 
     &::-ms-thumb {
-      width: 20px; 
-      height: 20px; 
-      border-radius: 50%;
-      background: #007bff; 
-      cursor: pointer; 
+      display: none;
     }
   }
 }
 
 mat-dialog-actions {
   display: flex;
-  justify-content: flex-end; 
-  padding: 10px; 
-  
+  justify-content: flex-end;
+  padding: 10px;
+
   button {
-    background-color: #007bff; 
+    background-color: var(--secondary-color);
     color: white;
-    border-radius: 5px; 
+    border-radius: 5px;
     padding: 6px 12px;
-    transition: background-color 0.3s; 
+    transition: background-color 0.3s;
     &:hover {
-      background-color: #0056b3; 
+      background-color: white;
+      border: var(--secondary-color) 1px solid;
+      color: var(--secondary-color);
     }
   }
 }

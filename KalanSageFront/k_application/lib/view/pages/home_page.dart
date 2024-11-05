@@ -89,7 +89,9 @@ class _HomePageState extends State<HomePage> {
         child: HeaderPage(height: 120, width: screenWidth),
       ),
       body: _isLoading
-          ? const Center(child: CircularProgressIndicator())
+          ? const Center(child: CircularProgressIndicator(
+            color: secondaryColor,
+          ))
           : SingleChildScrollView(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -235,15 +237,12 @@ class _TabSectionState extends State<TabSection> {
       ),
     );
   }
-
   Widget _buildTabContent(int crossAxisCount) {
     List<ModuleModel> filteredModules;
     if (_selectedTabIndex == 1) {
-      // Free modules
       filteredModules =
           widget.filteredModules.where((module) => module.price <= 0).toList();
     } else if (_selectedTabIndex == 2) {
-      // Popular modules: Use FutureBuilder to fetch top subscribed modules
       return FutureBuilder<List<ModuleModel>>(
         future: _popularModulesFuture,
         builder: (context, snapshot) {
@@ -252,7 +251,10 @@ class _TabSectionState extends State<TabSection> {
           } else if (snapshot.hasError) {
             return const Text("Error loading popular modules.");
           } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-            return const Text("No popular modules available.");
+            return const EmptyState(
+              message:"Oops ! Aucun module populaire .",
+              
+              );
           }
 
           List<ModuleModel> popularModules = snapshot.data!;
@@ -299,3 +301,33 @@ class _TabSectionState extends State<TabSection> {
 
 }
 
+class EmptyState extends StatelessWidget {
+  final String message;
+
+  const EmptyState({super.key, required this.message});
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(
+            Icons.hourglass_empty,
+            size: 30.0,
+            color: secondaryColor,
+          ),
+          const SizedBox(height: 05),
+          Text(
+            message,
+            style: TextStyle(
+              fontSize: 12,
+              color: Colors.grey,
+            ),
+            textAlign: TextAlign.center,
+          ),
+        ],
+      ),
+    );
+  }
+}

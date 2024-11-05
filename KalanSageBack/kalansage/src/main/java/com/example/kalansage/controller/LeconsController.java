@@ -119,11 +119,13 @@ public class LeconsController {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                         .body(Collections.singletonMap("message", "Oups ! le fichier doit être au format mp4, mov ou avi."));
             }
-            // Rename the file according to a specific format (e.g., titre_lecon1.mp4)
-            String renamedFile = (titre != null ? titre : existingLecon.getTitre()).replace(" ", "_") + "1." + fileExtension;
+            // Rename the file using a clear format (e.g., leconId_titre.ext)
+            String clearFileName = "lecon_" + id + "_" + (titre != null ? titre.replace(" ", "_") : "lecon") + "." + fileExtension;
+
             // Save the file to a specific folder
             String specificFolderPath = "";  // Adjust path as needed
-            fileInfo = filesStorageService.saveFileInSpecificFolderWithCustomNameVideo(file, specificFolderPath, renamedFile);
+            fileInfo = filesStorageService.saveFileInSpecificFolderWithCustomNameVideo(file, specificFolderPath, clearFileName);
+
             // Update the video path if a new file is provided
             existingLecon.setVideoPath(fileInfo != null ? fileInfo.getUrl() : existingLecon.getVideoPath());
         }

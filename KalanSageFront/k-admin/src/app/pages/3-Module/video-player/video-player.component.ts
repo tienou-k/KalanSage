@@ -11,6 +11,8 @@ import { MaterialModule } from 'src/app/material.module';
 })
 export class VideoPlayerComponent {
   isFullScreen: boolean = false;
+  currentVideoIndex = 0;
+  private videoList: any;
 
   constructor(
     @Inject(MAT_DIALOG_DATA)
@@ -59,4 +61,27 @@ export class VideoPlayerComponent {
   setInitialVolume(video: HTMLVideoElement): void {
     video.volume = 0.5; // Set initial volume to 50%
   }
+
+  play(videoElement: HTMLVideoElement) {
+    videoElement.play();
+  }
+
+  pause(videoElement: HTMLVideoElement) {
+    videoElement.pause();
+  }
+
+  nextLesson() {
+    if (this.currentVideoIndex < this.videoList.length - 1) {
+      this.currentVideoIndex++;
+      this.data.videoPath = this.videoList[this.currentVideoIndex];
+    }
+  }
+
+  previousLesson() {
+    if (this.currentVideoIndex > 0) {
+      this.currentVideoIndex--;
+      this.data.videoPath = this.videoList[this.currentVideoIndex];
+    }
+  }
 }
+

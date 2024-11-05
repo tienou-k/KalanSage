@@ -83,29 +83,6 @@ public class AuthenticationController {
             );
         }
     }
-  /*  @PostMapping("/login")
-    public ResponseEntity<?> createAuthenticationToken(@RequestBody LoginRequest authRequest) {
-        try {
-            authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(authRequest.getEmail(), authRequest.getMotDePasse())
-            );
-            final UserDetails userDetails = customUserDetailsService.loadUserByUsername(authRequest.getEmail());
-            // Extract the role from the user details
-            String role = userDetails.getAuthorities().iterator().next().getAuthority();
-            // Fetch the user to get userId
-            Utilisateur user = utilisateurService.findByEmail(authRequest.getEmail());
-            // Generate the JWT access token and refresh token
-            final String accessToken = jwtUtil.generateToken(userDetails, role);
-            final String refreshToken = jwtUtil.generateRefreshToken(userDetails);
-            // Create JWT response including userId
-            JwtResponse jwtResponse = new JwtResponse(accessToken, role, refreshToken, user.getId()); // Assuming getId() returns userId
-            return ResponseEntity.ok().body(jwtResponse);
-        } catch (AuthenticationException e) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Mot de passe ou email incorrect");
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Erreur lors de l'authentification!");
-        }
-    }*/
 
     // Refresh token endpoint: generates a new access token using a valid refresh token
     @PostMapping("/refresh-token")
@@ -135,8 +112,23 @@ public class AuthenticationController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Could not refresh access token");
         }
     }
-
     @GetMapping("/profil")
+    public ResponseEntity<?> getProfile() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String currentUserEmail = authentication.getName();
+        System.out.println("Current user email: " + currentUserEmail);
+
+        Utilisateur user = utilisateurService.findByEmail(currentUserEmail);
+        if (user != null) {
+            return ResponseEntity.ok(user);
+        } else {
+            System.out.println("User not found for email: " + currentUserEmail);
+            return ResponseEntity.badRequest().body("User not found");
+        }
+    }
+
+
+    /*@GetMapping("/profil")
     public ResponseEntity<?> getProfile() {
         // Get the currently authenticated user
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -148,7 +140,7 @@ public class AuthenticationController {
         } else {
             return ResponseEntity.badRequest().body("User not found");
         }
-    }
+    }*/
 
     @PostMapping("/se-deconnecter")
     public ResponseEntity<Map<String, String>> seDeconnecter(@RequestHeader("Authorization") String token) {

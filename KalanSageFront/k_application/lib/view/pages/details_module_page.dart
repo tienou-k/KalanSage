@@ -140,126 +140,151 @@ class _DetailModulePageState extends State<DetailModulePage>
     );
   }
 
-  Widget _buildLessonVideoPreview() {
-    if (_tabController.index == 0) {
-      // General tab selected
-      return Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Container(
-          height: 180,
-          decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(10),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black26,
-                blurRadius: 10,
-                offset: Offset(0, 4),
-              ),
-            ],
-          ),
-          child: Stack(
-            children: [
-              // Background image with gradient overlay
-              Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  image: DecorationImage(
-                    image: NetworkImage(widget.module.imageUrl),
-                    fit: BoxFit.cover,
-                  ),
-                ),
-              ),
-              // Foreground content with opaque background
-              Container(
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(10),
-                  color: const Color.fromARGB(137, 1, 74, 87),
-                ),
-                child: Stack(
-                  children: [
-                    // Gradient overlay
-                    Container(
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        gradient: LinearGradient(
-                          colors: [
-                            primaryColor.withOpacity(0.8),
-                            const Color.fromARGB(0, 5, 126, 134),
-                          ],
-                          begin: Alignment.topCenter,
-                          end: Alignment.bottomCenter,
-                        ),
-                      ),
-                    ),
-                    Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            EncodingUtils.decode(widget.module.description),
-                            style: TextStyle(
-                              fontSize: 16,
-                              color: Colors.white,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                          const SizedBox(height: 8),
-                          Text(
-                            'Prix: ${widget.module.price}',
-                            style: TextStyle(
-                              fontSize: 22,
-                              color: Colors.amberAccent,
-                              fontWeight: FontWeight.w600,
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-      );
-    } else if (_tabController.index == 1 && _selectedLesson != null) {
-      // Leçons tab
-      return Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: SizedBox(
-          height: 300,
-          child: Center(
-            child: VideoPlayerWidget(
-              videoPath: _selectedLesson!.videoPath,
-              onNextLesson: _nextLesson,
-              onPreviousLesson: _previousLesson,
-            ),
-          ),
-        ),
-      );
-    } else {
-      // Fichiers tab
-      return Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Container(
-          height: 180,
-          decoration: BoxDecoration(
-            color: Colors.grey[200],
-            borderRadius: BorderRadius.circular(10),
-          ),
-          child: Center(
-            child: Text(
-              'No Files Available',
-              style: TextStyle(fontSize: 10, color: secondaryColor),
-            ),
-          ),
-        ),
-      );
+  // Widget _buildLessonVideoPreview() {
+  //   if (_tabController.index == 0) {
+  //     // General tab selected
+  //     return Padding(
+  //       padding: const EdgeInsets.all(16.0),
+  //       child: Container(
+  //         height: 180,
+  //         decoration: BoxDecoration(
+  //           borderRadius: BorderRadius.circular(10),
+  //           boxShadow: [
+  //             BoxShadow(
+  //               color: Colors.black26,
+  //               blurRadius: 10,
+  //               offset: Offset(0, 4),
+  //             ),
+  //           ],
+  //         ),
+  //         child: Stack(
+  //           children: [
+  //             // Background image with gradient overlay
+  //             Container(
+  //               decoration: BoxDecoration(
+  //                 borderRadius: BorderRadius.circular(10),
+  //                 image: DecorationImage(
+  //                   image: NetworkImage(widget.module.imageUrl),
+  //                   fit: BoxFit.cover,
+  //                 ),
+  //               ),
+  //             ),
+  //             // Foreground content with opaque background
+  //             Container(
+  //               decoration: BoxDecoration(
+  //                 borderRadius: BorderRadius.circular(10),
+  //                 color: const Color.fromARGB(137, 1, 74, 87),
+  //               ),
+  //               child: Stack(
+  //                 children: [
+  //                   // Gradient overlay
+  //                   Container(
+  //                     decoration: BoxDecoration(
+  //                       borderRadius: BorderRadius.circular(10),
+  //                       gradient: LinearGradient(
+  //                         colors: [
+  //                           primaryColor.withOpacity(0.8),
+  //                           const Color.fromARGB(0, 5, 126, 134),
+  //                         ],
+  //                         begin: Alignment.topCenter,
+  //                         end: Alignment.bottomCenter,
+  //                       ),
+  //                     ),
+  //                   ),
+  //                   Padding(
+  //                     padding: const EdgeInsets.symmetric(horizontal: 16.0),
+  //                     child: Column(
+  //                       mainAxisAlignment: MainAxisAlignment.center,
+  //                       crossAxisAlignment: CrossAxisAlignment.start,
+  //                       children: [
+  //                         Text(
+  //                           EncodingUtils.decode(widget.module.description),
+  //                           style: TextStyle(
+  //                             fontSize: 16,
+  //                             color: Colors.white,
+  //                             fontWeight: FontWeight.bold,
+  //                           ),
+  //                         ),
+  //                         const SizedBox(height: 8),
+  //                         Text(
+  //                           'Prix: ${widget.module.price}',
+  //                           style: TextStyle(
+  //                             fontSize: 22,
+  //                             color: Colors.amberAccent,
+  //                             fontWeight: FontWeight.w600,
+  //                           ),
+  //                         ),
+  //                       ],
+  //                     ),
+  //                   ),
+  //                 ],
+  //               ),
+  //             ),
+  //           ],
+  //         ),
+  //       ),
+  //     );
+  //   } else if (_tabController.index == 1 && _selectedLesson != null) {
+  //     // Leçons tab
+  //    return Padding(
+  //       padding: const EdgeInsets.all(16.0),
+  //       child: SizedBox(
+  //         width: double.infinity,
+  //         height: MediaQuery.of(context).size.height * 0.6,
+  //         child: Center(
+  //           child: VideoPlayerWidget(
+  //             videoPath: _selectedLesson!.videoPath,
+  //             onNextLesson: _nextLesson,
+  //             onPreviousLesson: _previousLesson,
+  //           ),
+  //         ),
+  //       ),
+  //     );
+  //   } else {
+  //     // Fichiers tab
+  //     return Padding(
+  //       padding: const EdgeInsets.all(16.0),
+  //       child: Container(
+  //         height: 180,
+  //         decoration: BoxDecoration(
+  //           color: Colors.grey[200],
+  //           borderRadius: BorderRadius.circular(10),
+  //         ),
+  //         child: Center(
+  //           child: Text(
+  //             'No Files Available',
+  //             style: TextStyle(fontSize: 10, color: secondaryColor),
+  //           ),
+  //         ),
+  //       ),
+  //     );
+  //   }
+  // }
+Widget _buildLessonVideoPreview() {
+    switch (_tabController.index) {
+      case 0:
+        return GeneralPreviewWidget(module: widget.module);
+
+      case 1:
+        if (_selectedLesson != null) {
+          return LessonVideoPreview(
+            videoPath: _selectedLesson!.videoPath,
+            onNextLesson: _nextLesson,
+            onPreviousLesson: _previousLesson,
+          );
+        }
+        return const Center(child: Text("Select a lesson to preview video"));
+
+      case 2:
+        return const FilePlaceholderWidget();
+
+      default:
+        return const SizedBox.shrink();
     }
   }
 
+  
+//----------------------------------------------------------------------------------
   Widget _buildTabBar() {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 16.0),
@@ -277,6 +302,7 @@ class _DetailModulePageState extends State<DetailModulePage>
       ),
     );
   }
+
 
   Widget _buildTabBarView() {
     return Padding(
@@ -426,25 +452,6 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
     }
   }
 
-  // previuous logic
-  void _previousLesson() {
-    if (widget.onPreviousLesson != null) {
-      widget.onPreviousLesson!();
-    }
-  }
-
-  // next logic
-  void _nextLesson() {
-    if (widget.onNextLesson != null) {
-      widget.onNextLesson!();
-    }
-  }
-
-  // video duration mesurement
-  String _formatDuration(Duration position) {
-    return "${position.inMinutes.remainder(60).toString().padLeft(2, '0')}:${position.inSeconds.remainder(60).toString().padLeft(2, '0')}";
-  }
-
   @override
   Widget build(BuildContext context) {
     if (_isLoading) {
@@ -459,116 +466,110 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
       return Center(child: Text('Error loading video'));
     }
 
-    return SizedBox(
-      width: double.infinity,
-      height: _isFullscreen ? MediaQuery.of(context).size.height : 250,
-      child: Stack(
-        alignment: Alignment.bottomCenter,
-        children: [
-          AspectRatio(
-            aspectRatio: _controller.value.aspectRatio,
-            child: VideoPlayer(_controller),
-          ),
-          Column(
-            mainAxisAlignment: MainAxisAlignment.end,
-            children: [
-              // Video progress indicator
-              VideoProgressIndicator(
-                _controller,
-                allowScrubbing: true,
-                colors: VideoProgressColors(
-                  playedColor: Colors.red,
-                  bufferedColor: Colors.grey,
-                  backgroundColor: Colors.black,
-                ),
+    return Stack(
+      alignment: Alignment.bottomCenter,
+      children: [
+        AspectRatio(
+          aspectRatio: _controller.value.aspectRatio,
+          child: VideoPlayer(_controller),
+        ),
+        Column(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            VideoProgressIndicator(
+              _controller,
+              allowScrubbing: true,
+              colors: VideoProgressColors(
+                playedColor: Colors.red,
+                bufferedColor: Colors.grey,
+                backgroundColor: Colors.black,
               ),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  // Left container: Video duration display counter
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 8.0),
-                    child: Text(
-                      '${_formatDuration(_controller.value.position)} / ${_formatDuration(_controller.value.duration)}',
-                      style: TextStyle(color: Colors.white, fontSize: 12),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 8.0),
+                  child: Text(
+                    '${_formatDuration(_controller.value.position)} / ${_formatDuration(_controller.value.duration)}',
+                    style: TextStyle(color: Colors.white, fontSize: 12),
+                  ),
+                ),
+                Row(
+                  children: [
+                    IconButton(
+                      icon: Icon(Icons.skip_previous),
+                      onPressed: widget.onPreviousLesson,
                     ),
-                  ),
-
-                  // Middle row (playback controls: previous, pause/play, next)
-                  Row(
-                    children: [
-                      IconButton(
-                        icon: Icon(Icons.skip_previous),
-                        onPressed: _previousLesson,
+                    IconButton(
+                      icon: Icon(
+                        _controller.value.isPlaying
+                            ? Icons.pause
+                            : Icons.play_arrow,
                       ),
-                      IconButton(
-                        icon: Icon(
+                      onPressed: () {
+                        setState(() {
                           _controller.value.isPlaying
-                              ? Icons.pause
-                              : Icons.play_arrow,
-                        ),
-                        onPressed: () {
-                          setState(() {
-                            _controller.value.isPlaying
-                                ? _controller.pause()
-                                : _controller.play();
-                          });
-                        },
-                      ),
-                      IconButton(
-                        icon: Icon(Icons.skip_next),
-                        onPressed: _nextLesson,
-                      ),
-                    ],
-                  ),
-
-                  // Right container (volume and fullscreen toggle)
-                  Row(
-                    children: [
-                      IconButton(
-                        icon: Icon(
-                            _volume > 0 ? Icons.volume_up : Icons.volume_off),
-                        onPressed: () {
-                          setState(() {
-                            _showVolumeSlider = !_showVolumeSlider;
-                          });
-                        },
-                      ),
-                      if (_showVolumeSlider)
-                        SizedBox(
-                          height: 80,
-                          child: RotatedBox(
-                            quarterTurns: 3,
-                            child: Slider(
-                              value: _volume,
-                              onChanged: (value) {
-                                setState(() {
-                                  _volume = value;
-                                  _controller.setVolume(_volume);
-                                });
-                              },
-                              min: 0.0,
-                              max: 1.0,
-                              divisions: 10,
-                              label: '${(_volume * 100).round()}%',
-                            ),
+                              ? _controller.pause()
+                              : _controller.play();
+                        });
+                      },
+                    ),
+                    IconButton(
+                      icon: Icon(Icons.skip_next),
+                      onPressed: widget.onNextLesson,
+                    ),
+                  ],
+                ),
+                Row(
+                  children: [
+                    IconButton(
+                      icon: Icon(
+                          _volume > 0 ? Icons.volume_up : Icons.volume_off),
+                      onPressed: () {
+                        setState(() {
+                          _showVolumeSlider = !_showVolumeSlider;
+                        });
+                      },
+                    ),
+                    if (_showVolumeSlider)
+                      SizedBox(
+                        height: 80,
+                        child: RotatedBox(
+                          quarterTurns: 3,
+                          child: Slider(
+                            value: _volume,
+                            onChanged: (value) {
+                              setState(() {
+                                _volume = value;
+                                _controller.setVolume(_volume);
+                              });
+                            },
+                            min: 0.0,
+                            max: 1.0,
+                            divisions: 10,
+                            label: '${(_volume * 100).round()}%',
                           ),
                         ),
-                      IconButton(
-                        icon: Icon(_isFullscreen
-                            ? Icons.fullscreen_exit
-                            : Icons.fullscreen),
-                        onPressed: toggleFullscreen,
                       ),
-                    ],
-                  ),
-                ],
-              ),
-            ],
-          ),
-        ],
-      ),
+                    IconButton(
+                      icon: Icon(_isFullscreen
+                          ? Icons.fullscreen_exit
+                          : Icons.fullscreen),
+                      onPressed: toggleFullscreen,
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ],
+        ),
+      ],
     );
+  }
+
+  String _formatDuration(Duration position) {
+    return "${position.inMinutes.remainder(60).toString().padLeft(2, '0')}:${position.inSeconds.remainder(60).toString().padLeft(2, '0')}";
   }
 }
 
@@ -734,6 +735,153 @@ class FilesTab extends StatelessWidget {
                 ),
               ],
             ),
+    );
+  }
+}
+
+class GeneralPreviewWidget extends StatelessWidget {
+  final ModuleModel module;
+
+  const GeneralPreviewWidget({super.key, required this.module});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Container(
+        height: 180,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black26,
+              blurRadius: 10,
+              offset: Offset(0, 4),
+            ),
+          ],
+        ),
+        child: Stack(
+          children: [
+            // Background image with gradient overlay
+            Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                image: DecorationImage(
+                  image: NetworkImage(module.imageUrl),
+                  fit: BoxFit.cover,
+                ),
+              ),
+            ),
+            // Foreground content with opaque background
+            Container(
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(10),
+                color: const Color.fromARGB(137, 1, 74, 87),
+              ),
+              child: Stack(
+                children: [
+                  // Gradient overlay
+                  Container(
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(10),
+                      gradient: LinearGradient(
+                        colors: [
+                          primaryColor.withOpacity(0.8),
+                          const Color.fromARGB(0, 5, 126, 134),
+                        ],
+                        begin: Alignment.topCenter,
+                        end: Alignment.bottomCenter,
+                      ),
+                    ),
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          EncodingUtils.decode(module.description),
+                          style: TextStyle(
+                            fontSize: 16,
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        const SizedBox(height: 8),
+                        Text(
+                          'Prix: ${module.price}',
+                          style: TextStyle(
+                            fontSize: 22,
+                            color: Colors.amberAccent,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+
+
+class LessonVideoPreview extends StatelessWidget {
+  final String videoPath;
+  final VoidCallback? onNextLesson;
+  final VoidCallback? onPreviousLesson;
+
+  const LessonVideoPreview({
+    super.key,
+    required this.videoPath,
+    this.onNextLesson,
+    this.onPreviousLesson,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: SizedBox(
+        width: double.infinity,
+        height: MediaQuery.of(context).size.height * 0.6,
+        child: Center(
+          child: VideoPlayerWidget(
+            videoPath: videoPath,
+            onNextLesson: onNextLesson,
+            onPreviousLesson: onPreviousLesson,
+          ),
+        ),
+      ),
+    );
+  }
+}
+class FilePlaceholderWidget extends StatelessWidget {
+  const FilePlaceholderWidget({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.all(16.0),
+      child: Container(
+        height: 180,
+        decoration: BoxDecoration(
+          color: Colors.grey[200],
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Center(
+          child: Text(
+            'No Files Available',
+            style: TextStyle(fontSize: 10, color: secondaryColor),
+          ),
+        ),
+      ),
     );
   }
 }

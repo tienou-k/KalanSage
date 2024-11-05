@@ -108,7 +108,8 @@ class _InscrireButtonState extends State<InscrireButton> {
               },
         style: ElevatedButton.styleFrom(
           backgroundColor: primaryColor,
-          padding: const EdgeInsets.symmetric(horizontal: 80, vertical: 15),
+          padding: const EdgeInsets.symmetric(
+              horizontal: 10, vertical: 8), // Reduced padding
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10),
           ),
@@ -118,7 +119,7 @@ class _InscrireButtonState extends State<InscrireButton> {
             : Text(
                 widget.isAlreadyEnrolled ? 'Commencer' : 'S\'inscrire',
                 style: TextStyle(
-                  fontSize: 16,
+                  fontSize: 12,
                   color: Colors.white,
                 ),
               ),

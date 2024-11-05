@@ -267,7 +267,7 @@ Widget _buildTextField({
       hintText: hint,
       suffixIcon: suffixIcon,
       labelStyle: TextStyle(
-        color: secondaryColor,
+        color: primaryColor,
       ),
       // focusedLabelStyle: TextStyle(
       //   color: focusedLabelColor, // Color when focused

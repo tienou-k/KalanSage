@@ -3,10 +3,14 @@ import 'package:k_application/services/auth_service.dart';
 import 'package:k_application/utils/constants.dart';
 
 class HeaderPage extends StatefulWidget {
-  final double? height; 
-  final double? width; 
+  final double? height;
+  final double? width;
 
-  const HeaderPage({super.key, this.height, this.width,});
+  const HeaderPage({
+    super.key,
+    this.height,
+    this.width,
+  });
 
   @override
   _HeaderPage createState() => _HeaderPage();
@@ -31,17 +35,15 @@ class _HeaderPage extends State<HeaderPage> {
         // _userEmail = userProfile['email'];
         // _userImageUrl = userProfile['imageUrl'];
       });
-    // ignore: empty_catches
-    } catch (error) {
-    }
+      // ignore: empty_catches
+    } catch (error) {}
   }
 
   @override
   Widget build(BuildContext context) {
     return Material(
       elevation: 4.0, // Controls the level of elevation
-      shadowColor:
-          Colors.black.withOpacity(0.3), 
+      shadowColor: Colors.black.withOpacity(0.3),
       child: Container(
         padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 16),
         height: widget.height ?? 80,
@@ -90,7 +92,7 @@ class _HeaderPage extends State<HeaderPage> {
             const Spacer(),
             IconButton(
               icon: const Icon(Icons.notifications_outlined),
-              color: Colors.white, 
+              color: Colors.white,
               onPressed: () {
                 // Handle notification click
               },

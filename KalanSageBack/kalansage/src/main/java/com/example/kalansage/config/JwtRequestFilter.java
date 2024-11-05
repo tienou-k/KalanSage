@@ -38,6 +38,13 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain chain)
             throws ServletException, IOException {
 
+        // List of public endpoints that should bypass JWT processing
+        String requestURI = request.getRequestURI();
+        if (isPublicEndpoint(requestURI)) {
+            chain.doFilter(request, response);
+            return;
+        }
+
         final String authorizationHeader = request.getHeader("Authorization");
         String username = null;
         String jwt = null;
@@ -73,5 +80,14 @@ public class JwtRequestFilter extends OncePerRequestFilter {
             }
         }
         chain.doFilter(request, response);
+    }
+    // Method to check if the request URI matches a public endpoint
+    private boolean isPublicEndpoint(String requestURI) {
+        return requestURI.startsWith("/api/users/creer-user") ||
+                requestURI.startsWith("/api/files/") ||
+                requestURI.startsWith("/api/users/reset-password-request") ||
+                requestURI.startsWith("/api/users/reset-password") ||
+                requestURI.startsWith("/images_du_projet/modules") ||
+                requestURI.startsWith("/images_du_projet/");
     }
 }

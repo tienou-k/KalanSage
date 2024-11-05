@@ -5,7 +5,6 @@ import 'package:k_application/utils/routes.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
-
   runApp(const MyApp());
 }
 
@@ -21,7 +20,7 @@ class MyApp extends StatelessWidget {
         primaryColor: primaryColor,
         visualDensity: VisualDensity.adaptivePlatformDensity,
       ),
-      initialRoute: AppRoutes.splash,
+      initialRoute: AppRoutes.welcome,
       onGenerateRoute: AppRoutes.generateRoute,
     );
   }

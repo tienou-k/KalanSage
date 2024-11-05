@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient, HttpHeaders } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import {catchError, Observable, throwError} from 'rxjs';
 import { AuthService } from './auth-service.service';
 
 @Injectable({
@@ -21,23 +21,33 @@ export class ModuleService {
       'Content-Type': 'application/json',
     });
   }
-  // Create a new module
-  creerModule(moduleData: any, file?: File): Observable<any> {
+
+
+  // Method to create a new module
+  creerModule(moduleData: any): Observable<any> {
     const formData = new FormData();
     formData.append('titre', moduleData.titre);
     formData.append('description', moduleData.description);
-    formData.append('prix', moduleData.prix);
+    formData.append('prix', moduleData.prix.toString());
     formData.append('nomCategorie', moduleData.nomCategorie);
-    if (file) {
-      formData.append('file', file, file.name);
+    formData.append('dateCreation', moduleData.dateCreation.toISOString());
+
+    // Append image file if it exists
+    if (moduleData.imageUrl) {
+      formData.append('file', moduleData.imageUrl, moduleData.imageUrl.name);
     }
-    return this.http.post<any>(`${this.apiUrl}/creer-module`, formData, {
+
+    return this.http.post<any>(`${this.apiUrl}/creer-module`, formData,{
       headers: new HttpHeaders({
         Authorization: `Bearer ${this.authService.getAccessToken()}`,
       }),
-    });
+    })
+      .pipe(
+        catchError(this.handleError)
+      );
   }
 
+  /*
   // Update an existing module
   modifierModule(
     moduleId: number,
@@ -60,7 +70,40 @@ export class ModuleService {
         }),
       }
     );
+  }*/
+
+
+
+  // Method to modify an existing module
+  modifierModule(moduleId: number, moduleData: any): Observable<any> {
+    const formData = new FormData();
+    formData.append('titre', moduleData.titre);
+    formData.append('description', moduleData.description);
+    formData.append('prix', moduleData.prix.toString());
+    formData.append('nomCategorie', moduleData.nomCategorie);
+    formData.append('dateCreation', moduleData.dateCreation.toISOString());
+
+    // Append image file if it exists
+    if (moduleData.imageUrl) {
+      formData.append('image', moduleData.imageUrl, moduleData.imageUrl.name);
+    }
+
+    return this.http.put<any>(`${this.apiUrl}/update/${moduleId}`, formData)
+      .pipe(
+        catchError(this.handleError)
+      );
   }
+
+  // Error handling
+  private handleError(error: any) {
+    console.error('An error occurred:', error);
+    return throwError(error);
+  }
+
+
+
+
+
 
   // Delete a module by ID
   supprimerModule(moduleId: number): Observable<any> {

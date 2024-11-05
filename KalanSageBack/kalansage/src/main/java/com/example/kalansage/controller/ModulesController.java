@@ -76,7 +76,11 @@ public class ModulesController {
                     return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                             .body(Collections.singletonMap("message", "The file must be in PNG or JPEG format."));
                 }
-                String renamedFile = titre.replace("", "") + "1." + fileExtension;
+                // Sanitize the title to create a valid file name
+                String sanitizedTitle = titre.trim().replaceAll("[^a-zA-Z0-9 ]", "");
+                sanitizedTitle = sanitizedTitle.replace(" ", "_");
+
+                String renamedFile = sanitizedTitle + "1." + fileExtension;
                 fileInfo = filesStorageService.saveFileInSpecificFolderWithCustomName(file, "", renamedFile);
             }
 
@@ -244,9 +248,9 @@ public ResponseEntity<List<ModulesDTO>> getAllModules() {
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getModuleById(@PathVariable Long id) {
-        ModulesDTO module = moduleServiceimpl.getModuleById(id); // Assuming this method returns null if not found
+        ModulesDTO module = moduleServiceimpl.getModuleById(id);
         if (module != null) {
-            return ResponseEntity.ok(module); // Return the found module
+            return ResponseEntity.ok(module);
         } else {
             // Return a response with a custom message
             return ResponseEntity.status(HttpStatus.NOT_FOUND)

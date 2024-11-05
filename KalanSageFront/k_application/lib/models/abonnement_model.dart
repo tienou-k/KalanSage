@@ -16,7 +16,7 @@ class Abonnement {
   });
 
   factory Abonnement.fromJson(Map<String, dynamic> json) {
-    print('Parsing Abonnement from JSON: $json'); // Debug line
+    print('Parsing Abonnement from JSON: $json');
 
     return Abonnement(
       idAbonnement: json['idAbonnement'] ?? 0,

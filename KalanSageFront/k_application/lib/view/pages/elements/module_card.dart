@@ -7,11 +7,13 @@ class ModuleDetailPage extends StatefulWidget {
   final String quizzes;
   final String imagePath;
   final bool isBookmarked;
+  final int leconsCount;
 
   const ModuleDetailPage({
     super.key,
     required this.title,
     required this.lessons,
+    required this.leconsCount,
     required this.quizzes,
     required this.imagePath,
     this.isBookmarked = false,
@@ -68,14 +70,14 @@ class _ModuleDetailPageState extends State<ModuleDetailPage> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  widget.lessons,
+                  '${widget.lessons} Leçons',
                   style: const TextStyle(
                     fontSize: 16,
                     color: Colors.grey,
                   ),
                 ),
                 Text(
-                  widget.quizzes,
+                  '${widget.quizzes} quizzes',
                   style: const TextStyle(
                     fontSize: 16,
                     color: Colors.blue,
@@ -83,6 +85,12 @@ class _ModuleDetailPageState extends State<ModuleDetailPage> {
                   ),
                 ),
               ],
+            ),
+            const SizedBox(height: 20),
+            // Display leconsCount with a message
+            Text(
+              '${widget.leconsCount} lesson${widget.leconsCount != 1 ? 's' : ''} available',
+              style: const TextStyle(fontSize: 16, color: Colors.black54),
             ),
             const SizedBox(height: 20),
             const Text(

@@ -84,7 +84,7 @@ class _AbonnementPage extends State<AbonnementPage> {
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: const Text(
-                      'PREMIUM BADGE',
+                      'ACTUEL ABONNEMENT',
                       style: TextStyle(
                         color: Colors.white,
                         fontWeight: FontWeight.bold,

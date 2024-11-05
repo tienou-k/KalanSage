@@ -1,4 +1,5 @@
 import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:k_application/utils/constants.dart';
 
@@ -14,15 +15,14 @@ class _SplashScreenState extends State<SplashScreen> {
   void initState() {
     super.initState();
     Timer(const Duration(seconds: 5), () {
-      Navigator.pushReplacementNamed(
-          context, '/welcome'); 
+      Navigator.pushReplacementNamed(context, '/welcome');
     });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: primaryColor, 
+      backgroundColor: primaryColor,
       body: Stack(
         children: [
           Center(
@@ -30,19 +30,10 @@ class _SplashScreenState extends State<SplashScreen> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Image.asset(
-                  'assets/logo/logo-03.png', 
-                  height: 200, 
+                  'assets/logo/logo.png',
+                  height: 200,
                 ),
                 const SizedBox(height: 20),
-                // App title
-                const Text(
-                  'KalanSage',
-                  style: TextStyle(
-                    fontSize: 32,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.white,
-                  ),
-                ),
                 // Subtitle
                 const Text(
                   'L\'éducation est la clé de l\'avenir',
@@ -55,7 +46,7 @@ class _SplashScreenState extends State<SplashScreen> {
             ),
           ),
           const Positioned(
-            bottom: 20, 
+            bottom: 20,
             left: 0,
             right: 0,
             child: Text(

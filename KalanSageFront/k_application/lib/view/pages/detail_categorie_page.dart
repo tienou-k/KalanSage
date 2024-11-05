@@ -272,7 +272,7 @@ class CourseHighlightCard extends StatelessWidget {
                       ),
                       SizedBox(width: 8),
                       Text(
-                        '${module.leconCount} leçons • ${module.quiz} quizzes',
+                        '${module.leconsCount} lesson${module.leconsCount != 1 ? 's' : ''} leçons • ${module.quiz} quizzes',
                         style: TextStyle(
                           fontSize: 12,
                           color: Colors.grey[300],
@@ -339,7 +339,7 @@ class _CourseCardState extends State<CourseCard> {
       bool isBookmarked = await ModuleService().isBookmarked(widget.module.id);
       setState(() {
         _isBookmarked = isBookmarked;
-        widget.module.isBookmarked = isBookmarked; // sync with module model
+        widget.module.isBookmarked = isBookmarked; 
       });
     }
   }
@@ -433,7 +433,7 @@ class _CourseCardState extends State<CourseCard> {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Text(
-                  '${widget.module.leconCount} Lessons',
+                  '${widget.module.leconsCount} Leçons',
                   style: TextStyle(fontSize: 12),
                 ),
                 Text(

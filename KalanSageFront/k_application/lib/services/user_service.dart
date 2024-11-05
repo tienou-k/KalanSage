@@ -2,12 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:k_application/models/abonnement_model.dart';
 import 'package:k_application/models/module_model.dart';
+import 'package:k_application/services/auth_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'dart:convert';
-import '../models/user_model.dart';
 import '../utils/constants.dart';
 
 class UserService {
+  final AuthService _authService = AuthService();
   SharedPreferences? _prefs;
 
   UserService() {
@@ -26,23 +27,32 @@ class UserService {
     }
   }
 
-// Fetch the user details from SharedPreferences
-  Future<Map<String, dynamic>?> _getUser() async {
-    await _initPrefs();
+  // Fetch the user details from SharedPreferences
+  Future<Map<String, dynamic>?> getUser() async {
+    await _ensurePrefsInitialized();
     String? currentUserJson = _prefs?.getString('currentUser');
-    if (currentUserJson != null) {
-      return jsonDecode(currentUserJson); // Return the entire user object
+    return jsonDecode(currentUserJson!);
+      return null;
+  }
+
+  // Extract current user ID from SharedPreferences
+  Future<int?> getCurrentUserId() async {
+    await _ensurePrefsInitialized();
+    final currentUser = _prefs?.getString('currentUser');
+    if (currentUser != null) {
+      final userMap = jsonDecode(currentUser);
+      return userMap['id'];
     }
     return null;
   }
 
-// Fetch the token from SharedPreferences
-  Future<String?> _getToken() async {
-    await _initPrefs();
-    String? currentUserJson = _prefs?.getString('currentUser');
+  // Fetch the token from SharedPreferences
+  Future<String?> getToken() async {
+    await _ensurePrefsInitialized();
+    final currentUserJson = _prefs?.getString('currentUser');
     if (currentUserJson != null) {
       final currentUser = jsonDecode(currentUserJson);
-      return currentUser['token']; // Extract the token
+      return currentUser['token'];
     }
     return null;
   }
@@ -78,7 +88,7 @@ class UserService {
       );
     }
 
-    final token = await _getToken();
+    final token = await getToken();
     if (token != null) {
       request.headers['Authorization'] = 'Bearer $token';
     }
@@ -89,28 +99,14 @@ class UserService {
       return jsonDecode(responseData);
     } else {
       throw Exception(
-          'Failed to create user: ${await response.stream.bytesToString()}');
-    }
-  }
-
-  // Login service
-  Future<UserModel?> login(String email, String password) async {
-    final response = await http.post(
-      Uri.parse('$apiUrl/auth/login'),
-      headers: {"Content-Type": "application/json"},
-      body: jsonEncode({'email': email, 'password': password}),
-    );
-    if (response.statusCode == 200) {
-      return UserModel.fromJson(jsonDecode(response.body));
-    } else {
-      throw Exception('Failed to login');
+          'Erreur la creation à échouée: ${await response.stream.bytesToString()}');
     }
   }
 
   // Update user details
   Future<Map<String, dynamic>> updateUser(
       int userId, Map<String, dynamic> userData) async {
-    final token = await _getToken();
+    final token = await getToken();
     final request = http.MultipartRequest(
       'PUT',
       Uri.parse('$apiUrl/users/modifier-user/$userId'),
@@ -150,7 +146,7 @@ class UserService {
 
   // Fetch user by ID
   Future<Map<String, dynamic>> getUserById(int userId) async {
-    final token = await _getToken();
+    final token = await getToken();
     final response = await http.get(
       Uri.parse('$apiUrl/users/par-id/$userId'),
       headers: {
@@ -167,7 +163,7 @@ class UserService {
 
   // Fetch all users
   Future<List<Map<String, dynamic>>> getAllUsers() async {
-    final token = await _getToken();
+    final token = await getToken();
     final response = await http.get(
       Uri.parse('$apiUrl/users/list-users'),
       headers: {
@@ -184,7 +180,7 @@ class UserService {
 
   // Award points to a user
   Future<void> awardPoints(int userId, int points) async {
-    final token = await _getToken();
+    final token = await getToken();
     final response = await http.post(
       Uri.parse('$apiUrl/points/gagner/points'),
       headers: {
@@ -202,7 +198,7 @@ class UserService {
   // Complete a lesson
   Future<Map<String, dynamic>> completeLesson(
       int userId, int lessonId, int pointsEarned) async {
-    final token = await _getToken();
+    final token = await getToken();
     final response = await http.post(
       Uri.parse('$apiUrl/user/complete-lesson/$userId/$lessonId'),
       headers: {
@@ -222,7 +218,7 @@ class UserService {
   // Complete a module
   Future<Map<String, dynamic>> completeModule(
       int userId, int moduleId, int pointsEarned) async {
-    final token = await _getToken();
+    final token = await getToken();
     final response = await http.post(
       Uri.parse('$apiUrl/user/complete-module/$userId/$moduleId'),
       headers: {
@@ -241,7 +237,7 @@ class UserService {
 
   // Earn a badge
   Future<Map<String, dynamic>> earnBadge(int userId, int badgeId) async {
-    final token = await _getToken();
+    final token = await getToken();
     final response = await http.post(
       Uri.parse('$apiUrl/user/earn-badge/$userId/$badgeId'),
       headers: {
@@ -257,25 +253,14 @@ class UserService {
     }
   }
 
-// Extract current user ID from the token
-  Future<int?> _getCurrentUserId() async {
-    await _ensurePrefsInitialized();
-    final currentUser = _prefs?.getString('currentUser');
-    if (currentUser != null) {
-      final userMap = jsonDecode(currentUser);
-      return userMap['id'];
-    }
-    return null;
-  }
-
 // Enroll in a module using current user's ID
   Future<Map<String, dynamic>> enrollInModule(int moduleId) async {
-    final userId = await _getCurrentUserId();
+    final userId = await getCurrentUserId();
     if (userId == null) {
       throw Exception('User is not authenticated.');
     }
 
-    final token = await _getToken();
+    final token = await getToken();
     final response = await http.post(
       Uri.parse('$apiUrl/user/inscrisModule/$userId/$moduleId'),
       headers: {
@@ -294,11 +279,11 @@ class UserService {
 
   //Abonnement list
   Future<List<Abonnement>> fetchAbonnements() async {
-    final userId = await _getCurrentUserId();
+    final userId = await getCurrentUserId();
     if (userId == null) {
       throw Exception('User is not authenticated.');
     }
-    final token = await _getToken();
+    final token = await getToken();
     final response = await http.get(
       Uri.parse('$apiUrl/user/list-abonnements'),
       headers: {
@@ -318,7 +303,7 @@ class UserService {
 
   // Subscribe to an abonnement
   Future<void> subscribeToAbonnement(int userId, int abonnementId) async {
-    final token = await _getToken();
+    final token = await getToken();
     final response = await http.post(
       Uri.parse('$apiUrl/user/abonnement/$userId/$abonnementId'),
       headers: {
@@ -335,7 +320,7 @@ class UserService {
   // Submit course evaluation
   Future<Map<String, dynamic>> submitEvaluation(
       int userId, int courseId, String commentaire, int etoiles) async {
-    final token = await _getToken();
+    final token = await getToken();
     final response = await http.post(
       Uri.parse('$apiUrl/user/submit-evaluation/$userId/$courseId'),
       headers: {
@@ -354,7 +339,7 @@ class UserService {
 
   // Fetch all enrollments of a user
   Future<List<Map<String, dynamic>>> getAllEnrollments(int userId) async {
-    final token = await _getToken();
+    final token = await getToken();
     final response = await http.get(
       Uri.parse('$apiUrl/user/enrollments/$userId'),
       headers: {
@@ -371,11 +356,11 @@ class UserService {
 
   // Assuming you have a method to get current user ID or user-related info
   Future<bool> isUserEnrolledInModule(int moduleId) async {
-    final userId = await _getCurrentUserId();
+    final userId = await getCurrentUserId();
     if (userId == null) {
       throw Exception('User is not authenticated.');
     }
-    String?  token = await _getToken();
+    String? token = await getToken();
     if (token == null) {
       throw Exception('User is not authenticated. Token is null.');
     }
@@ -394,12 +379,21 @@ class UserService {
         throw Exception('Failed to load enrollment status: ${response.body}');
       }
     } catch (e) {
-      print('Error occurred: $e');
+      print('Error s\'est produite: $e');
       return false;
     }
   }
 
-  Future<List<ModuleModel>> getModulesForUser(int userId) async {
+// fetch user modules
+  Future<List<ModuleModel>> getModulesForUser(int moduleId) async {
+    final userId = await getCurrentUserId();
+    if (userId == null) {
+      throw Exception('Erreur de recuperation de User actuel');
+    }
+    String? token = await getToken();
+    if (token == null) {
+      throw Exception('Erreur de recuperation du token');
+    }
     try {
       // Assuming this is a network call
       final response = await http.get(Uri.parse('$apiUrl/modules/$userId'));
@@ -470,12 +464,21 @@ class UserService {
     }
   }
 
-//
-  Future<List<Abonnement>> fetchUserSubscription(int userId) async {
+Future<List<Abonnement>> fetchUserSubscription() async {
+    final currentUserId =
+        await getCurrentUserId();
+    if (currentUserId == null) {
+      throw Exception('User is not authenticated. User ID is null.');
+    }
+    final token = await getToken(); 
+    if (token == null) {
+      throw Exception('User is not authenticated. Token is null.');
+    }
+
     try {
-      final token = await _getToken();
       final response = await http.get(
-        Uri.parse('$apiUrl/user/abonnements/$userId'),
+        Uri.parse(
+            '$apiUrl/user/abonnements/$currentUserId'),
         headers: {
           'Authorization': 'Bearer $token',
           'Content-Type': 'application/json',
@@ -483,33 +486,28 @@ class UserService {
       );
 
       if (response.statusCode == 200) {
-        // Log the response body for debugging
         print('Subscription response received: ${response.body}');
         final List<dynamic> abonnementsJson = json.decode(response.body);
-
         if (abonnementsJson.isEmpty) {
-          print('No subscriptions found.');
+          print('No subscriptions found for user ID: $currentUserId');
           return [];
         }
-
-        // Map JSON data to List<Abonnement>
         return abonnementsJson
             .map((json) => Abonnement.fromJson(json))
             .toList();
       } else if (response.statusCode == 404) {
-        print('404 Not Found: No abonnement found for user ID $userId');
-        return []; // Return an empty list if no subscriptions are found
+        print('404 Not Found: No abonnement found for user ID $currentUserId');
+        return [];
       } else {
-        // Log the error response for further investigation
         print(
             'Failed to load subscription, status code: ${response.statusCode}');
         print('Response body: ${response.body}');
         throw Exception('Failed to load subscription');
       }
     } catch (error) {
-      // Log any error that occurs within the try block
       print("Error fetching user subscription: $error");
-      return []; // Return an empty list to indicate an error
+      throw Exception('Error fetching user subscription: $error');
     }
   }
+
 }

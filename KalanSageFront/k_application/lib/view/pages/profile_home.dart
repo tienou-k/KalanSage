@@ -27,17 +27,33 @@ class _DashboardScreen extends State<DashboardScreen>
   bool isLoading = false;
   bool hasError = true;
 
+
+  // Define subscription title and price
+  String? _userSubscriptionTitle;
+  double? _userSubscriptionPrice;
+
   @override
   void initState() {
     super.initState();
     _loadPrefs();
     _tabController = TabController(length: 3, vsync: this);
     _fetchUserProfile();
-    // abonnements = _userService.fetchUserSubscription(userId);
   }
 
-// getting user profile info
-  Future<void> _fetchUserProfile() async {
+// // getting user profile info
+//   Future<void> _fetchUserProfile() async {
+//     try {
+//       final userProfile = await _authService.fetchUserProfile();
+
+//       setState(() {
+//         _userPrenom = userProfile['prenom'];
+//         _userEmail = userProfile['email'];
+//       });
+//        await fetchUserSubscription();
+//       // ignore: empty_catches
+//     } catch (error) {}
+//   }
+Future<void> _fetchUserProfile() async {
     try {
       final userProfile = await _authService.fetchUserProfile();
 
@@ -45,69 +61,81 @@ class _DashboardScreen extends State<DashboardScreen>
         _userPrenom = userProfile['prenom'];
         _userEmail = userProfile['email'];
       });
-      // ignore: empty_catches
-    } catch (error) {}
-  }
 
-  void _loadPrefs() async {
+      // Store user ID if it's available
+      final userId = userProfile['userId']; 
+      if (userId != null) {
+        final prefs = await SharedPreferences.getInstance();
+        await prefs.setInt('userId', userId);
+        print("User ID saved: $userId");
+      }
+
+      await fetchUserSubscription();
+    } catch (error) {
+      print("Error fetching user profile: $error");
+    }
+  }
+// print sharing
+   void _loadPrefs() async {
     _prefs = await SharedPreferences.getInstance();
   }
 
-  Future<int?> _getCurrentUserId() async {
-    _prefs = await SharedPreferences.getInstance();
-    return _prefs?.getInt('userId');
+  
+// Retrieve the current user's ID from SharedPreferences
+ Future<int?> _getCurrentUserId() async {
+    final prefs = await SharedPreferences.getInstance();
+    final userId = prefs.getInt('userId');
+    debugPrint('Retrieved userId: $userId');
+    return userId;
   }
 
-  // Future<void> fetchUserSubscription() async {
-  //   try {
-  //     final userId = await _getCurrentUserId();
-  //     print("Current user ID: $userId");
+ Future<void> fetchUserSubscription() async {
+    try {
+      final userId = await _getCurrentUserId();
+      if (userId == null) {
+        setState(() {
+          isLoading = false;
+          hasError = true;
+          _showErrorMessage('Utilisateur non connecté');
+        });
+        return;
+      }
 
-  //     if (userId == null) {
-  //       setState(() {
-  //         _isLoading = false;
-  //         _hasError = true;
-  //       });
-  //       _showErrorMessage('Utilisateur non connecté');
-  //       return;
-  //     }
+      // Fetch the user's subscriptions
+      List<Abonnement> userSubscriptions =
+          await _userService.fetchUserSubscription();
+      print("User subscription data: $userSubscriptions");
 
-  //     // Fetch the user's subscriptions
-  //     List<Abonnement> userSubscriptions =
-  //         await _userService.fetchUserSubscription(userId);
-  //     print("User subscription data: $userSubscriptions");
+      if (userSubscriptions.isEmpty) {
+        print('No subscription data available for user ID: $userId');
+        setState(() {
+          isLoading = false;
+          hasError = true;
+        });
+        _showErrorMessage('Aucune information d\'abonnement trouvée.');
+        return;
+      }
 
-  //     if (userSubscriptions.isEmpty) {
-  //       print('No subscription data available for user ID: $userId');
-  //       setState(() {
-  //         _isLoading = false;
-  //         _hasError = true;
-  //       });
-  //       _showErrorMessage('Aucune information d\'abonnement trouvée.');
-  //       return;
-  //     }
-
-  //     // Assume we are interested in the first subscription in the list
-  //     Abonnement firstSubscription = userSubscriptions.first;
-
-  //     setState(() {
-  //       _userSubscriptionTitle = firstSubscription.typeAbonnement;
-  //       _userSubscriptionPrice = firstSubscription.prix;
-  //       _isLoading = false;
-  //       _hasError = false;
-  //     });
-  //   } catch (error) {
-  //     print("Error fetching user subscription: $error");
-  //     setState(() {
-  //       _userSubscriptionTitle = null;
-  //       _userSubscriptionPrice = null;
-  //       _isLoading = false;
-  //       _hasError = true;
-  //     });
-  //     _showErrorMessage(
-  //         'Erreur lors de la récupération des abonnements: $error');
-  //   }
-  // }
+      // Assume we are interested in the first subscription in the list
+      Abonnement firstSubscription = userSubscriptions.first;
+      setState(() {
+        _userSubscriptionTitle = firstSubscription.typeAbonnement;
+        _userSubscriptionPrice = firstSubscription.prix;
+        isLoading = false;
+        hasError = false;
+      });
+    } catch (error) {
+      print("Error fetching user subscription: $error");
+      setState(() {
+        _userSubscriptionTitle = null;
+        _userSubscriptionPrice = null;
+        isLoading = false;
+        hasError = true;
+      });
+      _showErrorMessage(
+          'Erreur lors de la récupération des abonnements: $error');
+    }
+  }
 
   // errormessage shower
   void _showErrorMessage(String message) {
@@ -165,7 +193,8 @@ class _DashboardScreen extends State<DashboardScreen>
         ],
         automaticallyImplyLeading: false,
       ),
-      body: Column(
+      body: SingleChildScrollView(
+      child: Column(
         children: [
           _buildProfileSection(),
           TabBar(
@@ -180,7 +209,8 @@ class _DashboardScreen extends State<DashboardScreen>
             ],
           ),
           // Tab Content
-          Expanded(
+          SizedBox(
+              height: MediaQuery.of(context).size.height * 0.6, 
             child: TabBarView(
               controller: _tabController,
               children: [
@@ -191,6 +221,7 @@ class _DashboardScreen extends State<DashboardScreen>
             ),
           ),
         ],
+      ),
       ),
       bottomNavigationBar: CustomBottomNavBar(
         currentIndex: _currentIndex,
@@ -240,11 +271,13 @@ class _DashboardScreen extends State<DashboardScreen>
             child: Column(
               children: [
                 Text(
-                   'Free Plan',
+                   _userSubscriptionTitle ?? 'Free Plan',
                   style: TextStyle(color: Colors.white70),
                 ),
                 Text(
-                  "0.0",
+                 _userSubscriptionPrice != null
+                      ? "\$${_userSubscriptionPrice?.toStringAsFixed(2)}"
+                      : "0.0",
                   style: TextStyle(
                     color: Colors.white,
                     fontSize: 18,
@@ -260,23 +293,30 @@ class _DashboardScreen extends State<DashboardScreen>
 
   // Build Stats Tab
   Widget _buildStatsTab() {
-    return Padding(
+    return SingleChildScrollView(
+      // Wrap with SingleChildScrollView
       padding: const EdgeInsets.all(15.0),
       child: Column(
         children: [
           Row(
             children: [
-              InfoCard(icon: Icons.bar_chart, label: '#2 Classement'),
+              InfoCard(icon: Icons.bar_chart, label: '#- Classement'),
               const SizedBox(width: 16),
-              InfoCard(icon: Icons.quiz, label: '55 Quiz'),
+              InfoCard(icon: Icons.emoji_events, label: '- Badges'),
             ],
           ),
           const SizedBox(height: 16),
           Row(
             children: [
-              InfoCard(icon: Icons.emoji_events, label: '55 Badges'),
+              InfoCard(icon: Icons.school, label: '- Certificats'),
               const SizedBox(width: 16),
-              InfoCard(icon: Icons.balance, label: '12 Challenges'),
+              InfoCard(icon: Icons.balance, label: '- Challenges'),
+            ],
+          ),
+          const SizedBox(height: 16),
+          Row(
+            children: [
+              InfoCard(icon: Icons.quiz, label: '- Quiz'),
             ],
           ),
           const SizedBox(height: 16),
@@ -293,13 +333,14 @@ class _DashboardScreen extends State<DashboardScreen>
             ),
           ),
           const SizedBox(height: 8),
-          TopicProgress(title: 'Module 1', progress: 0.98, correct: 98),
-          TopicProgress(title: 'Module 2', progress: 0.75, correct: 75),
-          TopicProgress(title: 'Module 3', progress: 0.30, correct: 30),
+          TopicProgress(title: '- -', progress: 0, correct: 0),
+          TopicProgress(title: '- -', progress: 0, correct: 0),
+          TopicProgress(title: '- -', progress: 0, correct: 0),
         ],
       ),
     );
   }
+
 
   // Build Badges Tab
   Widget _buildBadgesTab() {

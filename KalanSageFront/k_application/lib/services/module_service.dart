@@ -29,21 +29,17 @@ class ModuleService {
   Future<Map<String, dynamic>?> _getUser() async {
     await _initPrefs();
     String? currentUserJson = _prefs?.getString('currentUser');
-    if (currentUserJson != null) {
-      return jsonDecode(currentUserJson); // Return the entire user object
-    }
-    return null;
+    return jsonDecode(currentUserJson!); 
+      return null;
   }
 
   // Fetch the token from SharedPreferences
   Future<String?> _getToken() async {
     await _initPrefs();
     String? currentUserJson = _prefs?.getString('currentUser');
-    if (currentUserJson != null) {
-      final currentUser = jsonDecode(currentUserJson);
-      return currentUser['token']; // Extract the token
-    }
-    return null;
+    final currentUser = jsonDecode(currentUserJson!);
+    return currentUser['token']; // Extract the token
+      return null;
   }
 
 // Extract current user ID from the token

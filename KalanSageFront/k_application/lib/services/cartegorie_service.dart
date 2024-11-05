@@ -20,11 +20,7 @@ class CategorieService {
   Future<List<CategorieModel>> fetchCategories() async {
     await _initPrefs();
     String? currentUserJson = _prefs?.getString('currentUser');
-
-    if (currentUserJson == null) {
-      throw Exception('User not authenticated. Token is null.');
-    }
-    final currentUser = jsonDecode(currentUserJson);
+    final currentUser = jsonDecode(currentUserJson!);
     String? token = currentUser['token'];
 
     if (token == null) {
@@ -61,10 +57,7 @@ class CategorieService {
   Future<int> fetchModulesCountInCategorie(String categoryId) async {
     await _initPrefs();
     String? currentUserJson = _prefs?.getString('currentUser');
-    if (currentUserJson == null) {
-      throw Exception('User not authenticated. Token is null.');
-    }
-    final currentUser = jsonDecode(currentUserJson);
+    final currentUser = jsonDecode(currentUserJson!);
     String? token = currentUser['token'];
     if (token == null) {
       throw Exception('No token found. User not authenticated.');
