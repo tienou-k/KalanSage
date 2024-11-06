@@ -9,6 +9,11 @@
 
 <form [formGroup]="leconForm" (ngSubmit)="submit()" class="module-form">
   <div class="form-container">
+    <!-- Module ID Display -->
+    <div class="module-id-display">
+      <label for="moduleId">Module ID:</label>
+      <input id="moduleId" [value]="data.moduleId" readonly />
+    </div>
 
     <!-- Video Upload Section -->
     <div class="image-upload">
@@ -26,12 +31,6 @@
 
     <!-- Right Side Input Fields -->
     <div class="right-side">
-      <!-- Module ID Display -->
-      <mat-form-field appearance="outline" class="input-field module-id-display">
-        <mat-label >Module ID:</mat-label>
-        <input id="moduleId" [value]="data.moduleId" readonly />
-      </mat-form-field>
-
       <mat-form-field appearance="outline" class="input-field">
         <mat-label>Titre</mat-label>
         <input matInput formControlName="titre" required />
