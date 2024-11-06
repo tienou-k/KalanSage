@@ -39,6 +39,14 @@
         </mat-error>
       </mat-form-field>
 
+      <mat-form-field appearance="outline" class="input-field">
+        <mat-label>Titre</mat-label>
+        <input matInput formControlName="titre" required />
+        <mat-error *ngIf="leconForm.get('titre')?.hasError('required') && leconForm.get('titre')?.touched">
+          Le titre est requis.
+        </mat-error>
+      </mat-form-field>
+
       <mat-form-field appearance="outline" class="description-field">
         <mat-label>Description</mat-label>
         <textarea matInput formControlName="description" rows="5" required></textarea>

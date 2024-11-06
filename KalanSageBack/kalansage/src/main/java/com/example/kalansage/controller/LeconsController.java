@@ -31,7 +31,6 @@ public class LeconsController {
     private LeconsService leconsService;
     @Autowired
     private FilesStorageServiceImpl filesStorageService;
-
     @Autowired
     private LeconsRepository leconsRepository;
     @Autowired

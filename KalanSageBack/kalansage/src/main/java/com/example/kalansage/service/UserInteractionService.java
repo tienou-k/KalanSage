@@ -1,5 +1,8 @@
 package com.example.kalansage.service;
 
+import com.example.kalansage.dto.AbonnementDTO;
+import com.example.kalansage.dto.UserAbonnementDTO;
+import com.example.kalansage.dto.UserDTO;
 import com.example.kalansage.model.Module;
 import com.example.kalansage.model.*;
 import com.example.kalansage.model.userAction.*;
@@ -247,5 +250,42 @@ public class UserInteractionService {
 
     public boolean userExists(Long userId) {
         return userRepository.existsById(userId);
+    }
+
+    public List<UserAbonnementDTO> convertToDTO(List<UserAbonnement> userAbonnements) {
+        return userAbonnements.stream().map(this::mapToDto).collect(Collectors.toList());
+    }
+
+    private UserAbonnementDTO mapToDto(UserAbonnement userAbonnement) {
+        UserAbonnementDTO dto = new UserAbonnementDTO();
+        dto.setId(userAbonnement.getId());
+        dto.setStartDate(userAbonnement.getStartDate());
+        dto.setEndDate(userAbonnement.getEndDate());
+        dto.setActive(userAbonnement.isActive());
+
+        // Set UserDTO
+        UserDTO userDto = new UserDTO();
+        userDto.setId(userAbonnement.getUser().getId());
+        userDto.setNom(userAbonnement.getUser().getNom());
+        userDto.setPrenom(userAbonnement.getUser().getPrenom());
+        userDto.setUsername(userAbonnement.getUser().getUsername());
+        userDto.setEmail(userAbonnement.getUser().getEmail());
+        userDto.setTelephone(userAbonnement.getUser().getTelephone());
+        userDto.setDateInscription(userAbonnement.getUser().getDateInscription());
+
+
+        dto.setUser(userDto);
+
+        // Set AbonnementDTO
+        AbonnementDTO abonnementDto = new AbonnementDTO();
+        abonnementDto.setIdAbonnement(userAbonnement.getAbonnement().getIdAbonnement());
+        abonnementDto.setTypeAbonnement(userAbonnement.getAbonnement().getTypeAbonnement());
+        abonnementDto.setPrix(userAbonnement.getAbonnement().getPrix());
+        abonnementDto.setDateExpiration(userAbonnement.getAbonnement().getDateExpiration());
+        abonnementDto.setStatut(userAbonnement.getAbonnement().getStatut());
+        abonnementDto.setDescription(userAbonnement.getAbonnement().getDescription());
+        dto.setAbonnement(abonnementDto);
+
+        return dto;
     }
 }

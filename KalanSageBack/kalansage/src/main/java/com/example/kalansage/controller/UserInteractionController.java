@@ -2,6 +2,7 @@ package com.example.kalansage.controller;
 
 
 
+import com.example.kalansage.dto.UserAbonnementDTO;
 import com.example.kalansage.exception.ErrorResponse;
 import com.example.kalansage.model.*;
 import com.example.kalansage.model.Module;
@@ -225,8 +226,12 @@ public class UserInteractionController {
             );
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(errorResponse.getMessage());
         }
-        return ResponseEntity.ok(userAbonnements);
+
+        List<UserAbonnementDTO> userAbonnementDTOs = userInteractionService.convertToDTO(userAbonnements);
+        return ResponseEntity.ok(userAbonnementDTOs);
     }
+
+
 
     @GetMapping("/is-enrolled/{userId}/{moduleId}")
     public ResponseEntity<?> checkEnrollment(@PathVariable Long userId, @PathVariable Long moduleId) {
@@ -240,5 +245,8 @@ public class UserInteractionController {
         boolean isEnrolled = userInteractionService.isUserAlreadyEnrolled(userId, moduleId);
         return ResponseEntity.ok(isEnrolled);
     }
+
+
+    
 }
 

@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:k_application/utils/constants.dart';
 import 'package:k_application/models/abonnement_model.dart';
 import 'package:k_application/services/user_service.dart';
+import 'package:k_application/utils/constants.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../models/user_abonnement.dart';
+import '../../services/auth_service.dart';
 
 class AbonnementPage extends StatefulWidget {
   const AbonnementPage({super.key});
@@ -12,12 +16,92 @@ class AbonnementPage extends StatefulWidget {
 
 class _AbonnementPage extends State<AbonnementPage> {
   late Future<List<Abonnement>> abonnements;
+  UserAbonnement? _userAbonnement;
   final UserService userService = UserService();
+  final AuthService _authService = AuthService();
+  SharedPreferences? _prefs;
 
   @override
   void initState() {
     super.initState();
+    _loadPrefs();
     abonnements = userService.fetchAbonnements();
+    _fetchUserAbonnement();
+    _fetchUserProfile();
+  }
+
+  Future<void> _fetchUserProfile() async {
+    try {
+      final userProfile = await _authService.fetchUserProfile();
+
+      // Get the userId from AuthService instead of SharedPreferences
+      final userId = await _authService.getCurrentUserId();
+
+      if (userId != null) {
+        // Once we have the userId, fetch the abonnements
+        await _fetchUserAbonnement();
+      } else {
+        print("No userId found.");
+      }
+    } catch (error) {
+      print("Error fetching user profile: $error");
+    }
+  }
+
+  Future<void> _fetchUserAbonnement() async {
+    try {
+      // Get the current user ID from AuthService
+      final userId = await _authService.getCurrentUserId();
+
+      if (userId == null) {
+        print("User ID is null");
+        return;
+      }
+
+      // Fetch the abonnements using the current userId
+      final abonnements = await userService.getUserAbonnementsByUserId(userId);
+
+      if (abonnements.isNotEmpty) {
+        setState(() {
+          _userAbonnement = abonnements.first;
+        });
+      } else {
+        print("No abonnements found for userId $userId");
+      }
+    } catch (error) {
+      print("Error fetching abonnements: $error");
+    }
+  }
+
+  // print sharing
+  void _loadPrefs() async {
+    _prefs = await SharedPreferences.getInstance();
+  }
+
+  Future<void> _subscribeToAbonnement(Abonnement abonnement) async {
+    // Add logic to subscribe the user to the selected abonnement
+    try {
+      final userId = await _authService.getCurrentUserId();
+      if (userId != null) {
+        await userService.subscribeToAbonnement(
+            userId, abonnement.idAbonnement);
+        // Optionally refetch the user's abonnements to reflect the change
+        _fetchUserAbonnement();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            content: Text('Abonnement ajouté avec succès!'),
+            duration: Duration(seconds: 2),
+          ),
+        );
+      }
+    } catch (error) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text('Erreur lors de l\'abonnement : $error'),
+          duration: Duration(seconds: 2),
+        ),
+      );
+    }
   }
 
   @override
@@ -72,28 +156,30 @@ class _AbonnementPage extends State<AbonnementPage> {
               return Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Container(
-                    padding:
-                        const EdgeInsets.symmetric(vertical: 0, horizontal: 20),
-                    decoration: BoxDecoration(
-                      gradient: const LinearGradient(
-                        colors: [Color(0xFFb38f00), Color(0xFFd6a632)],
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
+                  // Display the current user's abonnement
+                  if (_userAbonnement != null)
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 0, horizontal: 20),
+                      decoration: BoxDecoration(
+                        gradient: const LinearGradient(
+                          colors: [Color(0xFFb38f00), Color(0xFFd6a632)],
+                          begin: Alignment.topCenter,
+                          end: Alignment.bottomCenter,
+                        ),
+                        borderRadius: BorderRadius.circular(12),
                       ),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: const Text(
-                      'ACTUEL ABONNEMENT',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.bold,
+                      child: const Text(
+                        'ACTUEL ABONNEMENT',
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
-                  ),
                   const SizedBox(height: 30),
-                  const Text(
-                    '71% OFF',
+                  Text(
+                    _userAbonnement!.abonnement.typeAbonnement,
                     style: TextStyle(
                       fontSize: 40,
                       fontWeight: FontWeight.bold,
@@ -101,8 +187,10 @@ class _AbonnementPage extends State<AbonnementPage> {
                     ),
                   ),
                   const SizedBox(height: 20),
-                  const Text(
-                    'Profitez de cette offre exclusive et limitée !',
+                  Text(
+                    //'Profitez de votre abonnement offre exclusive et limitée !',
+                    EncodingUtils.decode(
+                        _userAbonnement!.abonnement.description),
                     textAlign: TextAlign.center,
                     style: TextStyle(fontSize: 16, color: primaryColor),
                   ),
@@ -124,77 +212,75 @@ class _AbonnementPage extends State<AbonnementPage> {
                         ...snapshot.data!.asMap().entries.map((entry) {
                           int index = entry.key;
                           Abonnement subscription = entry.value;
-                          Color borderColor =
-                              (index % 2 == 0) ? Colors.white : Colors.amber;
-                          Color textColor = (index % 2 == 0)
-                              ? Colors.white
-                              : Colors.amber[400]!;
-                          return Column(
-                            children: [
-                              Container(
-                                padding: const EdgeInsets.all(15),
-                                decoration: BoxDecoration(
-                                  border:
-                                      Border.all(color: borderColor, width: 1),
-                                  borderRadius: BorderRadius.circular(8),
-                                  color: Colors.transparent,
-                                ),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
-                                      children: [
-                                        Text(
-                                          EncodingUtils.decode(subscription
-                                              .typeAbonnement
-                                              .toUpperCase()),
-                                          style: TextStyle(
-                                            color: textColor,
-                                            fontSize: 18,
-                                            fontWeight: FontWeight.bold,
-                                          ),
-                                        ),
-                                        const Spacer(),
-                                        Container(
-                                          padding: const EdgeInsets.symmetric(
-                                              horizontal: 10.0, vertical: 4.0),
-                                          decoration: BoxDecoration(
-                                            color: const Color(0xFFF4B13D),
-                                            borderRadius:
-                                                BorderRadius.circular(4),
-                                          ),
-                                          child: const Text(
-                                            'Promo 0%',
+                          Color borderColor = (index % 2 == 0) ? Colors.white : Colors.amber;
+                          Color textColor = (index % 2 == 0) ? Colors.white : Colors.amber[400]!;
+
+                          return GestureDetector(
+                            onTap: () {
+                              // Call the subscribe function when container is tapped
+                              _subscribeToAbonnement(subscription);
+                            },
+                            child: Column(
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.all(15),
+                                  decoration: BoxDecoration(
+                                    border: Border.all(color: borderColor, width: 1),
+                                    borderRadius: BorderRadius.circular(8),
+                                    color: Colors.transparent,
+                                  ),
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Row(
+                                        children: [
+                                          Text(
+                                            EncodingUtils.decode(subscription.typeAbonnement.toUpperCase()),
                                             style: TextStyle(
-                                              color: Colors.black,
+                                              color: textColor,
+                                              fontSize: 18,
                                               fontWeight: FontWeight.bold,
                                             ),
                                           ),
+                                          const Spacer(),
+                                          Container(
+                                            padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 4.0),
+                                            decoration: BoxDecoration(
+                                              color: const Color(0xFFF4B13D),
+                                              borderRadius: BorderRadius.circular(4),
+                                            ),
+                                            child: const Text(
+                                              'Promo 0%',
+                                              style: TextStyle(
+                                                color: Colors.black,
+                                                fontWeight: FontWeight.bold,
+                                              ),
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                      const SizedBox(height: 10),
+                                      Text(
+                                        "${subscription.prix.toStringAsFixed(2)} CFA",
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 16,
                                         ),
-                                      ],
-                                    ),
-                                    const SizedBox(height: 10),
-                                    Text(
-                                      "${subscription.prix.toStringAsFixed(2)} CFA",
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 16,
                                       ),
-                                    ),
-                                    const SizedBox(height: 6),
-                                    Text(
-                                      EncodingUtils.decode(
-                                          subscription.description),
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 14,
+                                      const SizedBox(height: 6),
+                                      Text(
+                                        EncodingUtils.decode(subscription.description),
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 14,
+                                        ),
                                       ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
-                              ),
-                              const SizedBox(height: 16),
-                            ],
+                                const SizedBox(height: 16),
+                              ],
+                            ),
                           );
                         }),
                         const SizedBox(height: 30),
@@ -202,7 +288,6 @@ class _AbonnementPage extends State<AbonnementPage> {
                         // Trial Button
                         ElevatedButton(
                           onPressed: () {
-                            // Add your subscription action here
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
                                 content: Text(
@@ -215,8 +300,7 @@ class _AbonnementPage extends State<AbonnementPage> {
                             );
                           },
                           style: ElevatedButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(
-                                vertical: 15, horizontal: 30),
+                            padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 30),
                             backgroundColor: const Color(0xFFF4B13D),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8),

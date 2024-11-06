@@ -1,10 +1,13 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:k_application/models/abonnement_model.dart';
 import 'package:k_application/models/module_model.dart';
 import 'package:k_application/services/auth_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'dart:convert';
+
+import '../models/user_abonnement.dart';
 import '../utils/constants.dart';
 
 class UserService {
@@ -32,7 +35,7 @@ class UserService {
     await _ensurePrefsInitialized();
     String? currentUserJson = _prefs?.getString('currentUser');
     return jsonDecode(currentUserJson!);
-      return null;
+    return null;
   }
 
   // Extract current user ID from SharedPreferences
@@ -301,6 +304,42 @@ class UserService {
     }
   }
 
+  Future<List<UserAbonnement>> getUserAbonnementsByUserId(int userId) async {
+    await _initPrefs();
+    String? currentUserJson = _prefs?.getString('currentUser');
+    final currentUser = jsonDecode(currentUserJson!);
+    String? token = currentUser['token'];
+
+    if (token == null) {
+      throw Exception('No token found. User not authenticated.');
+    }
+
+    final headers = {
+      'Content-Type': 'application/json',
+      'Authorization': 'Bearer $token',
+    };
+
+    final url = Uri.parse('$apiUrl/user/abonnements/$userId');
+    try {
+      final response = await http.get(
+        url,
+        headers: headers,
+      );
+
+      if (response.statusCode == 200) {
+        List<dynamic> data = json.decode(response.body);
+        return data.map((json) => UserAbonnement.fromJson(json)).toList();
+      } else if (response.statusCode == 404) {
+        print("No abonnement found for user ID: $userId");
+        return [];
+      } else {
+        throw Exception("Failed to load abonnements: ${response.reasonPhrase}");
+      }
+    } catch (e) {
+      throw Exception("Failed to load abonnements: $e");
+    }
+  }
+
   // Subscribe to an abonnement
   Future<void> subscribeToAbonnement(int userId, int abonnementId) async {
     final token = await getToken();
@@ -463,51 +502,4 @@ class UserService {
       throw Exception('Error resetting password: $e');
     }
   }
-
-Future<List<Abonnement>> fetchUserSubscription() async {
-    final currentUserId =
-        await getCurrentUserId();
-    if (currentUserId == null) {
-      throw Exception('User is not authenticated. User ID is null.');
-    }
-    final token = await getToken(); 
-    if (token == null) {
-      throw Exception('User is not authenticated. Token is null.');
-    }
-
-    try {
-      final response = await http.get(
-        Uri.parse(
-            '$apiUrl/user/abonnements/$currentUserId'),
-        headers: {
-          'Authorization': 'Bearer $token',
-          'Content-Type': 'application/json',
-        },
-      );
-
-      if (response.statusCode == 200) {
-        print('Subscription response received: ${response.body}');
-        final List<dynamic> abonnementsJson = json.decode(response.body);
-        if (abonnementsJson.isEmpty) {
-          print('No subscriptions found for user ID: $currentUserId');
-          return [];
-        }
-        return abonnementsJson
-            .map((json) => Abonnement.fromJson(json))
-            .toList();
-      } else if (response.statusCode == 404) {
-        print('404 Not Found: No abonnement found for user ID $currentUserId');
-        return [];
-      } else {
-        print(
-            'Failed to load subscription, status code: ${response.statusCode}');
-        print('Response body: ${response.body}');
-        throw Exception('Failed to load subscription');
-      }
-    } catch (error) {
-      print("Error fetching user subscription: $error");
-      throw Exception('Error fetching user subscription: $error');
-    }
-  }
-
 }

@@ -1,11 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:k_application/models/abonnement_model.dart';
 import 'package:k_application/services/auth_service.dart';
 import 'package:k_application/services/user_service.dart';
 import 'package:k_application/utils/constants.dart';
 import 'package:k_application/view/custom_nav_bar.dart';
 import 'package:k_application/view/pages/profile_parametre.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
+import '../../models/user_abonnement.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({super.key});
@@ -18,8 +19,8 @@ class _DashboardScreen extends State<DashboardScreen>
     with SingleTickerProviderStateMixin {
   int _currentIndex = 4;
   final AuthService _authService = AuthService();
-  late Future<List<Abonnement>> abonnements;
   final UserService _userService = UserService();
+  UserAbonnement? _userAbonnement;
   String? _userPrenom;
   String? _userEmail;
   late TabController _tabController;
@@ -27,15 +28,11 @@ class _DashboardScreen extends State<DashboardScreen>
   bool isLoading = false;
   bool hasError = true;
 
-  // Define subscription title and price
-  String? _userSubscriptionTitle;
-  double? _userSubscriptionPrice;
-
   @override
   void initState() {
     super.initState();
     _loadPrefs();
-    _tabController = TabController(length: 3, vsync: this);
+    _tabController = TabController(length: 2, vsync: this);
     _fetchUserProfile();
   }
 
@@ -48,85 +45,48 @@ class _DashboardScreen extends State<DashboardScreen>
         _userEmail = userProfile['email'];
       });
 
-      // Store user ID if it's available
-      final userId = userProfile['userId'];
-      if (userId != null) {
-        final prefs = await SharedPreferences.getInstance();
-        await prefs.setInt('userId', userId);
-        print("User ID saved: $userId");
-      }
+      // Get the userId from AuthService instead of SharedPreferences
+      final userId = await _authService.getCurrentUserId();
 
-      await fetchUserSubscription();
+      if (userId != null) {
+        // Once we have the userId, fetch the abonnements
+        await _fetchUserAbonnement();
+      } else {
+        print("No userId found.");
+      }
     } catch (error) {
       print("Error fetching user profile: $error");
+    }
+  }
+
+  Future<void> _fetchUserAbonnement() async {
+    try {
+      // Get the current user ID from AuthService
+      final userId = await _authService.getCurrentUserId();
+
+      if (userId == null) {
+        print("User ID is null");
+        return;
+      }
+
+      // Fetch the abonnements using the current userId
+      final abonnements = await _userService.getUserAbonnementsByUserId(userId);
+
+      if (abonnements.isNotEmpty) {
+        setState(() {
+          _userAbonnement = abonnements.first;
+        });
+      } else {
+        print("No abonnements found for userId $userId");
+      }
+    } catch (error) {
+      print("Error fetching abonnements: $error");
     }
   }
 
 // print sharing
   void _loadPrefs() async {
     _prefs = await SharedPreferences.getInstance();
-  }
-
-// Retrieve the current user's ID from SharedPreferences
-  Future<int?> _getCurrentUserId() async {
-    final prefs = await SharedPreferences.getInstance();
-    final userId = prefs.getInt('userId');
-    debugPrint('Retrieved userId: $userId');
-    return userId;
-  }
-
-  Future<void> fetchUserSubscription() async {
-    try {
-      final userId = await _getCurrentUserId();
-      if (userId == null) {
-        setState(() {
-          isLoading = false;
-          hasError = true;
-          _showErrorMessage('Utilisateur non connecté');
-        });
-        return;
-      }
-
-      // Fetch the user's subscriptions
-      List<Abonnement> userSubscriptions =
-          await _userService.fetchUserSubscription();
-      print("User subscription data: $userSubscriptions");
-
-      if (userSubscriptions.isEmpty) {
-        print('No subscription data available for user ID: $userId');
-        setState(() {
-          isLoading = false;
-          hasError = true;
-        });
-        _showErrorMessage('Aucune information d\'abonnement trouvée.');
-        return;
-      }
-
-      // Assume we are interested in the first subscription in the list
-      Abonnement firstSubscription = userSubscriptions.first;
-      setState(() {
-        _userSubscriptionTitle = firstSubscription.typeAbonnement;
-        _userSubscriptionPrice = firstSubscription.prix;
-        isLoading = false;
-        hasError = false;
-      });
-    } catch (error) {
-      print("Error fetching user subscription: $error");
-      setState(() {
-        _userSubscriptionTitle = null;
-        _userSubscriptionPrice = null;
-        isLoading = false;
-        hasError = true;
-      });
-      _showErrorMessage(
-          'Erreur lors de la récupération des abonnements: $error');
-    }
-  }
-
-  // errormessage shower
-  void _showErrorMessage(String message) {
-    ScaffoldMessenger.of(context)
-        .showSnackBar(SnackBar(content: Text(message)));
   }
 
   void _onTabSelected(int index) {
@@ -190,8 +150,7 @@ class _DashboardScreen extends State<DashboardScreen>
               unselectedLabelColor: Colors.grey,
               tabs: const [
                 Tab(text: 'STATS'),
-                Tab(text: 'RANG'),
-                Tab(text: 'NOTIFICATIONS'),
+                Tab(text: 'ACTIVITES'),
               ],
             ),
             // Tab Content
@@ -202,7 +161,6 @@ class _DashboardScreen extends State<DashboardScreen>
                 children: [
                   _buildStatsTab(),
                   _buildBadgesTab(),
-                  _buildNotificationsTab(),
                 ],
               ),
             ),
@@ -248,30 +206,30 @@ class _DashboardScreen extends State<DashboardScreen>
             ],
           ),
           Spacer(),
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.white10,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            padding: const EdgeInsets.all(12),
-            child: Column(
-              children: [
-                Text(
-                  _userSubscriptionTitle ?? 'Free Plan',
-                  style: TextStyle(color: Colors.white70),
-                ),
-                Text(
-                  _userSubscriptionPrice != null
-                      ? "\$${_userSubscriptionPrice?.toStringAsFixed(2)}"
-                      : "0.0",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
+          _userAbonnement != null
+              ? Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white10,
+                    borderRadius: BorderRadius.circular(12),
                   ),
-                ),
-              ],
-            ),
-          ),
+                  padding: const EdgeInsets.all(12),
+                  child: Column(
+                    children: [
+                      Text(
+                        _userAbonnement!.abonnement.typeAbonnement,
+                        style: TextStyle(color: Colors.white70),
+                      ),
+                      Text(
+                        "${_userAbonnement!.abonnement.prix} f CFA",
+                        style: TextStyle(
+                          color: Colors.white,
+                          fontSize: 18,
+                        ),
+                      ),
+                    ],
+                  ),
+                )
+              : Container(),
         ],
       ),
     );
@@ -329,59 +287,7 @@ class _DashboardScreen extends State<DashboardScreen>
 
   // Build Badges Tab
   Widget _buildBadgesTab() {
-    return ListView(
-      padding: const EdgeInsets.symmetric(horizontal: 20.0),
-      children: const [
-        AchievementTile(
-          iconColor: Colors.yellow,
-          title: 'Earned Gold',
-          date: 'May 1, 2022',
-          score: '5/5 Correct',
-        ),
-        AchievementTile(
-          iconColor: Colors.grey,
-          title: 'Completed Drive-Thru',
-          date: 'May 1, 2022',
-          score: '5/10 Correct',
-        ),
-        AchievementTile(
-          iconColor: Colors.brown,
-          title: 'Earned Bronze in Drive-Thru',
-          date: 'May 1, 2022',
-          score: '8/10 Correct',
-        ),
-        AchievementTile(
-          iconColor: Colors.grey,
-          title: 'Earned Silver in Drive-Thru',
-          date: 'May 1, 2022',
-          score: '9/10 Correct',
-        ),
-      ],
-    );
-  }
-
-  // Build Notifications Tab
-  Widget _buildNotificationsTab() {
-    return ListView(
-      padding: const EdgeInsets.symmetric(horizontal: 20.0),
-      children: [
-        ListTile(
-          leading: Icon(Icons.notifications, color: primaryColor, size: 40),
-          title: Text('New Module Available'),
-          subtitle: Text('Oct 1, 2023 • 2:00 PM'),
-        ),
-        ListTile(
-          leading: Icon(Icons.notifications, color: primaryColor, size: 40),
-          title: Text('Live Session in Progress'),
-          subtitle: Text('Oct 10, 2023 • 10:00 AM'),
-        ),
-        ListTile(
-          leading: Icon(Icons.notifications, color: primaryColor, size: 40),
-          title: Text('New Badge Earned!'),
-          subtitle: Text('Sept 25, 2023 • 5:30 PM'),
-        ),
-      ],
-    );
+    return ListView();
   }
 }
 
@@ -454,30 +360,6 @@ class TopicProgress extends StatelessWidget {
           ),
         ],
       ),
-    );
-  }
-}
-
-class AchievementTile extends StatelessWidget {
-  final Color iconColor;
-  final String title;
-  final String date;
-  final String score;
-
-  const AchievementTile({
-    super.key,
-    required this.iconColor,
-    required this.title,
-    required this.date,
-    required this.score,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return ListTile(
-      leading: Icon(Icons.stars, color: iconColor, size: 40),
-      title: Text(title),
-      subtitle: Text('$date • $score'),
     );
   }
 }
