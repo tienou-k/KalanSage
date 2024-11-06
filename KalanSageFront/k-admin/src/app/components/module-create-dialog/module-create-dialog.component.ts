@@ -12,11 +12,11 @@ import {
   MatDialogRef,
   MAT_DIALOG_DATA,
 } from '@angular/material/dialog';
-import { ModuleService } from '../../app/services/modules.service';
+import { ModuleService } from '../../services/modules.service';
 import { CommonModule } from '@angular/common';
-import { MaterialModule } from '../material.module';
+import { MaterialModule } from '../../material.module';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { CategoryService } from '../services/categorie.service';
+import { CategoryService } from '../../services/categorie.service';
 
 @Component({
   selector: 'app-module-create-dialog',

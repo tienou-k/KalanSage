@@ -1,6 +1,5 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
-
-import { ModuleCreateDialogComponent } from './partenaire-create-dialog.component';
+import {ModuleCreateDialogComponent} from "../components/module-create-dialog/module-create-dialog.component";
 
 describe('ModuleCreateDialogComponent', () => {
   let component: ModuleCreateDialogComponent;

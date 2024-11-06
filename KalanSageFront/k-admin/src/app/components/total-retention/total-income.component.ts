@@ -11,7 +11,7 @@ import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 })
 export class RetentionCardComponent {
   // Value for the circular progress
-  retentionValue: number = 45;
+  retentionValue: number = 0;
 
   constructor() {}
 }

@@ -10,6 +10,9 @@ import 'package:k_application/view/pages/elements/inscrire_button.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:video_player/video_player.dart';
 
+import 'elements/propos_page.dart';
+import 'elements/review_page.dart';
+
 class DetailModulePage extends StatefulWidget {
   final ModuleModel module;
 
@@ -140,127 +143,7 @@ class _DetailModulePageState extends State<DetailModulePage>
     );
   }
 
-  // Widget _buildLessonVideoPreview() {
-  //   if (_tabController.index == 0) {
-  //     // General tab selected
-  //     return Padding(
-  //       padding: const EdgeInsets.all(16.0),
-  //       child: Container(
-  //         height: 180,
-  //         decoration: BoxDecoration(
-  //           borderRadius: BorderRadius.circular(10),
-  //           boxShadow: [
-  //             BoxShadow(
-  //               color: Colors.black26,
-  //               blurRadius: 10,
-  //               offset: Offset(0, 4),
-  //             ),
-  //           ],
-  //         ),
-  //         child: Stack(
-  //           children: [
-  //             // Background image with gradient overlay
-  //             Container(
-  //               decoration: BoxDecoration(
-  //                 borderRadius: BorderRadius.circular(10),
-  //                 image: DecorationImage(
-  //                   image: NetworkImage(widget.module.imageUrl),
-  //                   fit: BoxFit.cover,
-  //                 ),
-  //               ),
-  //             ),
-  //             // Foreground content with opaque background
-  //             Container(
-  //               decoration: BoxDecoration(
-  //                 borderRadius: BorderRadius.circular(10),
-  //                 color: const Color.fromARGB(137, 1, 74, 87),
-  //               ),
-  //               child: Stack(
-  //                 children: [
-  //                   // Gradient overlay
-  //                   Container(
-  //                     decoration: BoxDecoration(
-  //                       borderRadius: BorderRadius.circular(10),
-  //                       gradient: LinearGradient(
-  //                         colors: [
-  //                           primaryColor.withOpacity(0.8),
-  //                           const Color.fromARGB(0, 5, 126, 134),
-  //                         ],
-  //                         begin: Alignment.topCenter,
-  //                         end: Alignment.bottomCenter,
-  //                       ),
-  //                     ),
-  //                   ),
-  //                   Padding(
-  //                     padding: const EdgeInsets.symmetric(horizontal: 16.0),
-  //                     child: Column(
-  //                       mainAxisAlignment: MainAxisAlignment.center,
-  //                       crossAxisAlignment: CrossAxisAlignment.start,
-  //                       children: [
-  //                         Text(
-  //                           EncodingUtils.decode(widget.module.description),
-  //                           style: TextStyle(
-  //                             fontSize: 16,
-  //                             color: Colors.white,
-  //                             fontWeight: FontWeight.bold,
-  //                           ),
-  //                         ),
-  //                         const SizedBox(height: 8),
-  //                         Text(
-  //                           'Prix: ${widget.module.price}',
-  //                           style: TextStyle(
-  //                             fontSize: 22,
-  //                             color: Colors.amberAccent,
-  //                             fontWeight: FontWeight.w600,
-  //                           ),
-  //                         ),
-  //                       ],
-  //                     ),
-  //                   ),
-  //                 ],
-  //               ),
-  //             ),
-  //           ],
-  //         ),
-  //       ),
-  //     );
-  //   } else if (_tabController.index == 1 && _selectedLesson != null) {
-  //     // Leçons tab
-  //    return Padding(
-  //       padding: const EdgeInsets.all(16.0),
-  //       child: SizedBox(
-  //         width: double.infinity,
-  //         height: MediaQuery.of(context).size.height * 0.6,
-  //         child: Center(
-  //           child: VideoPlayerWidget(
-  //             videoPath: _selectedLesson!.videoPath,
-  //             onNextLesson: _nextLesson,
-  //             onPreviousLesson: _previousLesson,
-  //           ),
-  //         ),
-  //       ),
-  //     );
-  //   } else {
-  //     // Fichiers tab
-  //     return Padding(
-  //       padding: const EdgeInsets.all(16.0),
-  //       child: Container(
-  //         height: 180,
-  //         decoration: BoxDecoration(
-  //           color: Colors.grey[200],
-  //           borderRadius: BorderRadius.circular(10),
-  //         ),
-  //         child: Center(
-  //           child: Text(
-  //             'No Files Available',
-  //             style: TextStyle(fontSize: 10, color: secondaryColor),
-  //           ),
-  //         ),
-  //       ),
-  //     );
-  //   }
-  // }
-Widget _buildLessonVideoPreview() {
+  Widget _buildLessonVideoPreview() {
     switch (_tabController.index) {
       case 0:
         return GeneralPreviewWidget(module: widget.module);
@@ -273,7 +156,63 @@ Widget _buildLessonVideoPreview() {
             onPreviousLesson: _previousLesson,
           );
         }
-        return const Center(child: Text("Select a lesson to preview video"));
+
+        return Container(
+          width: double.infinity,
+          height:
+              200, // Specify height to ensure the container displays appropriately
+          child: Stack(
+            fit: StackFit.expand,
+            children: [
+              // Background Image
+              Container(
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(0),
+                  image: DecorationImage(
+                    image: NetworkImage(widget.module.imageUrl),
+                    fit: BoxFit.cover, // Cover the entire container
+                  ),
+                ),
+              ),
+              // Semi-transparent Overlay
+              Container(
+                decoration: BoxDecoration(
+                  color:
+                      primaryColor.withOpacity(0.6), // Adjust opacity as needed
+                  borderRadius: BorderRadius.circular(0),
+                ),
+              ),
+              // Play icon and text
+              Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Container(
+                      padding: EdgeInsets.all(12), // Padding around the icon
+                      decoration: BoxDecoration(
+                        color: Colors.white, // Background color for the icon
+                        shape: BoxShape.circle, // Make it circular
+                      ),
+                      child: Icon(
+                        Icons.play_arrow,
+                        color: primaryColor, // Icon color
+                        size: 40,
+                      ),
+                    ),
+                    SizedBox(height: 8),
+                    Text(
+                      "Sélectionner une leçon",
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontSize: 18,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ],
+          ),
+        );
 
       case 2:
         return const FilePlaceholderWidget();
@@ -283,7 +222,6 @@ Widget _buildLessonVideoPreview() {
     }
   }
 
-  
 //----------------------------------------------------------------------------------
   Widget _buildTabBar() {
     return Padding(
@@ -302,7 +240,6 @@ Widget _buildLessonVideoPreview() {
       ),
     );
   }
-
 
   Widget _buildTabBarView() {
     return Padding(
@@ -357,7 +294,7 @@ Widget _buildLessonVideoPreview() {
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('No more lessons available.'),
+            content: Text('Pas d\'autre leçons.'),
           ),
         );
       }
@@ -374,7 +311,7 @@ Widget _buildLessonVideoPreview() {
       } else {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text('No more lessons available.'),
+            content: Text('Pas d\'autre leçons.'),
           ),
         );
       }
@@ -463,7 +400,7 @@ class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
       );
     }
     if (_hasError) {
-      return Center(child: Text('Error loading video'));
+      return Center(child: Text('Erreur la video ne charge pas !'));
     }
 
     return Stack(
@@ -588,18 +525,22 @@ class GeneralTab extends StatelessWidget {
           ListTile(
             leading: Icon(Icons.info_outline),
             title: Text("À propos"),
+            onTap: () => _showProposBottomSheet(context),
           ),
           ListTile(
             leading: Icon(Icons.workspace_premium_outlined),
             title: Text("Certificat"),
+            onTap: () => _showBottomSheet(context, "Certificat", "Contenu"),
           ),
           ListTile(
             leading: Icon(Icons.question_answer_outlined),
             title: Text("Q&A"),
+            onTap: () => _showBottomSheet(context, "Q&A", "Contenu"),
           ),
           ListTile(
             leading: Icon(Icons.note_alt_outlined),
             title: Text("Notes"),
+            onTap: () => _showReviewBottomSheet(context),
           ),
           ListTile(
             leading: Icon(Icons.favorite_outline),
@@ -608,6 +549,98 @@ class GeneralTab extends StatelessWidget {
           SizedBox(height: 16),
         ],
       ),
+    );
+  }
+
+  void _showBottomSheet(BuildContext context, String title, String content) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      backgroundColor: Colors.white,
+      builder: (context) => Padding(
+        padding: const EdgeInsets.all(26.0),
+        child: Container(
+          height: MediaQuery.of(context).size.height * 0.5,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+              ),
+              SizedBox(height: 8),
+              Expanded(
+                child: SingleChildScrollView(
+                  child: Text(content),
+                ),
+              ),
+              SizedBox(height: 16),
+              Align(
+                alignment: Alignment.bottomRight,
+                child: ElevatedButton(
+                  onPressed: () => Navigator.pop(context),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: primaryColor,
+                    padding: const EdgeInsets.symmetric(
+                        horizontal: 80, vertical: 15),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                  child: Text(
+                    'Fermer',
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _showReviewBottomSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      backgroundColor: Colors.white,
+      builder: (context) {
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: Container(
+              height: MediaQuery.of(context).size.height * 0.7,
+              child: ReviewPage(module: module)),
+        );
+      },
+    );
+  }
+
+  void _showProposBottomSheet(BuildContext context) {
+    showModalBottomSheet(
+      context: context,
+      isScrollControlled: true,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
+      ),
+      backgroundColor: Colors.white,
+      builder: (context) {
+        return Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16.0),
+          child: Container(
+              height: MediaQuery.of(context).size.height * 0.7,
+              child: ProposPage(module: module)),
+        );
+      },
     );
   }
 }
@@ -747,11 +780,10 @@ class GeneralPreviewWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(16.0),
+      padding: const EdgeInsets.all(0),
       child: Container(
-        height: 180,
         decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(0),
           boxShadow: [
             BoxShadow(
               color: Colors.black26,
@@ -765,14 +797,14 @@ class GeneralPreviewWidget extends StatelessWidget {
             // Background image with gradient overlay
             Container(
               decoration: BoxDecoration(
-                borderRadius: BorderRadius.circular(10),
+                borderRadius: BorderRadius.circular(0),
                 image: DecorationImage(
                   image: NetworkImage(module.imageUrl),
                   fit: BoxFit.cover,
                 ),
               ),
             ),
-            // Foreground content with opaque background
+            // Foreground
             Container(
               decoration: BoxDecoration(
                 borderRadius: BorderRadius.circular(10),
@@ -830,8 +862,6 @@ class GeneralPreviewWidget extends StatelessWidget {
   }
 }
 
-
-
 class LessonVideoPreview extends StatelessWidget {
   final String videoPath;
   final VoidCallback? onNextLesson;
@@ -862,23 +892,23 @@ class LessonVideoPreview extends StatelessWidget {
     );
   }
 }
+
 class FilePlaceholderWidget extends StatelessWidget {
   const FilePlaceholderWidget({super.key});
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(16.0),
+      padding: const EdgeInsets.all(0),
       child: Container(
-        height: 180,
         decoration: BoxDecoration(
           color: Colors.grey[200],
-          borderRadius: BorderRadius.circular(10),
+          borderRadius: BorderRadius.circular(0),
         ),
         child: Center(
           child: Text(
-            'No Files Available',
-            style: TextStyle(fontSize: 10, color: secondaryColor),
+            'Pas de ressource à ce module! ',
+            style: TextStyle(fontSize: 14, color: primaryColor),
           ),
         ),
       ),

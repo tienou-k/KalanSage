@@ -1,0 +1,60 @@
+<div class="header">
+  <h2 class="dialog-title">
+    {{ editMode ? "Modification de la leçon" : "Création d'une Leçon" }}
+  </h2>
+  <button mat-icon-button class="close-icon" (click)="onClose()">
+    <mat-icon>close</mat-icon>
+  </button>
+</div>
+
+<form [formGroup]="leconForm" (ngSubmit)="submit()" class="module-form">
+  <div class="form-container">
+    <!-- Module ID Display -->
+    <div class="module-id-display">
+      <label for="moduleId">Module ID:</label>
+      <input id="moduleId" [value]="data.moduleId" readonly />
+    </div>
+
+    <!-- Video Upload Section -->
+    <div class="image-upload">
+      <div class="image-dropzone" aria-label="Upload leçon video">
+        <div class="upload-text">
+          <input type="file" (change)="onFileSelected($event)" />
+          <p>
+            Glisser déposer ici, ou
+            <span class="select-text">Sélectionner</span>
+          </p>
+          <small>Support mp4, avi et mov</small>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Side Input Fields -->
+    <div class="right-side">
+      <mat-form-field appearance="outline" class="input-field">
+        <mat-label>Titre</mat-label>
+        <input matInput formControlName="titre" required />
+        <mat-error *ngIf="leconForm.get('titre')?.hasError('required') && leconForm.get('titre')?.touched">
+          Le titre est requis.
+        </mat-error>
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="description-field">
+        <mat-label>Description</mat-label>
+        <textarea matInput formControlName="description" rows="5" required></textarea>
+        <mat-error *ngIf="leconForm.get('description')?.hasError('required') && leconForm.get('description')?.touched">
+          Une description est requise.
+        </mat-error>
+      </mat-form-field>
+
+      <div class="dialog-actions">
+        <button type="submit" class="button submit">
+          {{ editMode ? "Modifier" : "Créer" }}
+        </button>
+        <button type="button" class="button reset" (click)="onReset()">
+          Réinitialiser
+        </button>
+      </div>
+    </div>
+  </div>
+</form>

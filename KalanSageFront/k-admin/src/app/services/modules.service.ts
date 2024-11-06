@@ -47,32 +47,6 @@ export class ModuleService {
       );
   }
 
-  /*
-  // Update an existing module
-  modifierModule(
-    moduleId: number,
-    moduleData: any,
-    file?: File
-  ): Observable<any> {
-    const formData = new FormData();
-    formData.append('titre', moduleData.titre);
-    formData.append('description', moduleData.description);
-    formData.append('prix', moduleData.prix);
-    if (file) {
-      formData.append('file', file, file.name);
-    }
-    return this.http.put<any>(
-      `${this.apiUrl}/modifier-module/${moduleId}`,
-      formData,
-      {
-        headers: new HttpHeaders({
-          Authorization: `Bearer ${this.authService.getAccessToken()}`,
-        }),
-      }
-    );
-  }*/
-
-
 
   // Method to modify an existing module
   modifierModule(moduleId: number, moduleData: any): Observable<any> {
@@ -85,10 +59,14 @@ export class ModuleService {
 
     // Append image file if it exists
     if (moduleData.imageUrl) {
-      formData.append('image', moduleData.imageUrl, moduleData.imageUrl.name);
+      formData.append('file', moduleData.imageUrl, moduleData.imageUrl.name);
     }
 
-    return this.http.put<any>(`${this.apiUrl}/update/${moduleId}`, formData)
+    return this.http.put<any>(`${this.apiUrl}/modifier-module/${moduleId}`, formData,{
+      headers: new HttpHeaders({
+        Authorization: `Bearer ${this.authService.getAccessToken()}`,
+      }),
+    })
       .pipe(
         catchError(this.handleError)
       );

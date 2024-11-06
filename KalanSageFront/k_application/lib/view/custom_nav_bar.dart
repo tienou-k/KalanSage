@@ -32,7 +32,7 @@ class _CustomBottomNavBarState extends State<CustomBottomNavBar> {
         _buildBottomNavItem('assets/icons/home.svg', 0),
         _buildBottomNavItem('assets/icons/grid_view.svg', 1),
         _buildBottomNavItem('assets/icons/book.svg', 2),
-        _buildBottomNavItem('assets/icons/bookmarked.svg', 3),
+        _buildBottomNavItem('assets/icons/chat_bubble_outline.svg', 3),
         _buildBottomNavItem('assets/icons/User.svg', 4),
       ],
       selectedItemColor: primaryColor,

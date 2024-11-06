@@ -22,7 +22,7 @@ class _MesModulesPageState extends State<MesModulesPage> {
   List<ModuleModel> _filteredModules = [];
   bool _isLoading = true;
   bool _hasError = false;
-  bool _isAlreadyEnrolled = false;
+  final bool _isAlreadyEnrolled = false;
   String _selectedTab = 'Tous';
   SharedPreferences? _prefs;
 

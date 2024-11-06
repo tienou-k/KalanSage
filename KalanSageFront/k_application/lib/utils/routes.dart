@@ -4,7 +4,7 @@ import 'package:k_application/view/auth/otp_view.dart';
 import 'package:k_application/view/auth/password_reset.dart';
 import 'package:k_application/view/auth/sign_up.dart';
 import 'package:k_application/view/pages/categorie_page.dart';
-import 'package:k_application/view/pages/bookmark_page.dart';
+import 'package:k_application/view/pages/chat_page.dart';
 import 'package:k_application/view/pages/home_page.dart';
 import 'package:k_application/view/pages/mes_modules.dart';
 import 'package:k_application/view/pages/profile_home.dart';
@@ -30,7 +30,7 @@ class AppRoutes {
   //----------------------------------------------------------------
   static const String profile = '/dashboard';
   static const String profileModifier = '/profile_modifier';
-  static const String  profileSettings = '/profile_settings';
+  static const String profileSettings = '/profile_settings';
   static const String profileScreen = '/profile_screen';
   //----------------------------------------------------------------
   static const String moduleDetails = '/module-details';
@@ -39,13 +39,12 @@ class AppRoutes {
   static Route<dynamic> generateRoute(RouteSettings settings) {
     switch (settings.name) {
       case splash:
-        return MaterialPageRoute(
-            builder: (_) => const SplashScreen());
+        return MaterialPageRoute(builder: (_) => const SplashScreen());
       case welcome:
         return MaterialPageRoute(builder: (_) => const WelcomeScreen());
       case login:
         return MaterialPageRoute(builder: (_) => const LoginScreen());
-        case forgotPassword:
+      case forgotPassword:
         return MaterialPageRoute(builder: (_) => const PasswordReset());
       case signup:
         return MaterialPageRoute(builder: (_) => const SignupScreen());
@@ -61,12 +60,12 @@ class AppRoutes {
       case mesModules:
         return MaterialPageRoute(builder: (_) => MesModulesPage());
       case chats:
-        return MaterialPageRoute(builder: (_) => FavorisPage());
+        return MaterialPageRoute(builder: (_) => ChatPage());
       case profile:
         return MaterialPageRoute(builder: (_) => DashboardScreen());
-        case profileSettings:
+      case profileSettings:
         return MaterialPageRoute(builder: (_) => ProfileSettings());
-        case profileModifier:
+      case profileModifier:
         return MaterialPageRoute(builder: (_) => ProfileModifier());
       default:
         return MaterialPageRoute(builder: (_) => const WelcomeScreen());

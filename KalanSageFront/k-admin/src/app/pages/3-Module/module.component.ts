@@ -4,7 +4,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { ModuleService } from '../../services/modules.service';
 import { Router } from '@angular/router';
 import { MaterialModule } from 'src/app/material.module';
-import { ModuleCreateDialogComponent } from '../../module-create-dialog/module-create-dialog.component';
+import { ModuleCreateDialogComponent } from '../../components/module-create-dialog/module-create-dialog.component';
 
 interface CardItemData {
   id: number;
@@ -71,7 +71,7 @@ export class ModuleComponent implements OnInit {
 
   openModuleDetails(id: number, imageUrl: string): void {
     this.router.navigate(['/modules', id], {
-      state: { image: imageUrl }, 
+      state: { image: imageUrl },
     });
   }
 
@@ -91,20 +91,6 @@ export class ModuleComponent implements OnInit {
       } else {
         this.modules.push(module);
       }
-    });
-  }
-
-  createModule(moduleData: any): void {
-    this.moduleService.creerModule(moduleData).subscribe({
-      next: () => this.refreshModuleList(),
-      error: (error) => console.error('Error creating module:', error),
-    });
-  }
-
-  updateModule(id: number, moduleData: any): void {
-    this.moduleService.modifierModule(id, moduleData).subscribe({
-      next: () => this.refreshModuleList(),
-      error: (error) => console.error('Error updating module:', error),
     });
   }
 

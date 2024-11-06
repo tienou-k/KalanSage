@@ -1,13 +1,14 @@
 import { TestBed } from '@angular/core/testing';
 
-import { JwtInterceptorService } from './jwt.interceptor.service';
+import { jwtInterceptor } from './jwt.interceptor.service';
 
 describe('JwtInterceptorService', () => {
-  let service: JwtInterceptorService;
+  // @ts-ignore
+  let service: jwtInterceptor;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(JwtInterceptorService);
+    service = TestBed.inject(jwtInterceptor);
   });
 
   it('should be created', () => {

@@ -29,8 +29,7 @@
       </div>
     </div>
   </div>
-  <!-- Course Price and Image -->
-  <!-- Course Price and Image -->
+  <!-- Course Price and Image
 <div class="course-header-right">
   <img
     *ngIf="!isLoading && moduleDetails.imageUrl"
@@ -53,7 +52,27 @@
       Start Now
     </button>
   </div>
-</div>
+</div>-->
+  <div class="course-header-right">
+    <!-- Image in a box container -->
+    <div class="image-box">
+      <img
+        *ngIf="!isLoading && moduleDetails.imageUrl"
+        [src]="moduleDetails.imageUrl"
+        [alt]="moduleDetails.titre"
+        class="course-image"
+      />
+    </div>
+
+    <!-- Price information below the image -->
+    <div class="price-info">
+    <span class="original-price" *ngIf="moduleDetails.originalPrice">
+      ${{ moduleDetails.originalPrice }}
+    </span>
+      <span class="discounted-price">${{ moduleDetails.prix }}</span>
+    </div>
+  </div>
+
 </div>
 
 <mat-tab-group
@@ -83,7 +102,16 @@
   <!--  -->
  <mat-tab label="Leçons">
   <div class="lessons">
-    
+    <!-- Button for adding a new lesson -->
+    <div class="addButton">
+      <div>
+      </div>
+      <button mat-raised-button color="primary" (click)="openAddLeconDialog()" class="add-lesson-btn">
+        <mat-icon>add</mat-icon> Ajouter une nouvelle leçon
+      </button>
+    </div>
+
+
     <div *ngIf="lecons?.length === 0" class="no-lessons-message">
       Pas de leçon pour ce module.
     </div>
@@ -95,7 +123,7 @@
       </h3>
 
       <div *ngIf="selectedLessonIndex === i" class="lesson-content">
-        
+
         <div *ngIf="lesson.videoPath && !lesson.locked; else noVideo" class="video-content">
           <p>{{ lesson.description }}</p>
           <button mat-button color="primary" (click)="openVideoPlayer(lesson.videoPath)">
@@ -115,7 +143,7 @@
 
       </div>
     </div>
-    
+
   </div>
 </mat-tab>
   <!--  -->

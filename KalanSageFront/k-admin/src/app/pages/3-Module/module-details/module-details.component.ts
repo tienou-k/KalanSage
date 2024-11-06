@@ -10,6 +10,7 @@ import { Location } from '@angular/common';
 import { VideoPlayerComponent } from '../video-player/video-player.component';
 import { MatDialog } from '@angular/material/dialog';
 import { LessonModel } from 'src/app/model/LessonModel.module';
+import {LeconAddComponent} from "../../../components/lecon-add/lecon-add.component";
 
 @Component({
   selector: 'app-module-detail',
@@ -22,11 +23,8 @@ export class ModuleDetailComponent implements OnInit {
   moduleId: number;
   imageUrl: string;
   lecons: LessonModel[] = [];
-  // lecons: any[] = [];
   quizzes: any[] = [];
-  student: any;
   isLoading: boolean = false;
-  studentCount: number = 0;
   leconCount: number = 0;
   quizCount: number = 0;
   moduleDetails: any = {
@@ -45,6 +43,7 @@ export class ModuleDetailComponent implements OnInit {
   selectedLessonIndex: number | null = null;
   isAdmin: boolean;
   certificat: number = 0;
+  searchQuery: any;
 
   constructor(
     private route: ActivatedRoute,
@@ -74,11 +73,12 @@ export class ModuleDetailComponent implements OnInit {
     this.fetchModuleDetails(this.moduleId);
     const navigation = this.router.getCurrentNavigation();
     this.moduleDetails.image = navigation?.extras?.state?.['imageUrl'] || '';
-    this.getLeconsByModule();
+    //this.getLeconsByModule();
+    this.loadLecons();
     this.getQuizzesByModule();
   }
 
-  getLeconsByModule(): void {
+  loadLecons(): void {
     this.moduleService.getLeconsByModule(this.moduleId).subscribe(
       (data) => {
         console.log('Fetched lessons:', data);
@@ -107,9 +107,6 @@ export class ModuleDetailComponent implements OnInit {
     this.selectedTabIndex = index;
   }
 
-  startCourse(): void {
-    //
-  }
 
   goBack(): void {
     this.location.back();
@@ -120,16 +117,34 @@ export class ModuleDetailComponent implements OnInit {
       this.selectedLessonIndex === index ? null : index;
   }
 
-  checkUserRole(): void {
-    this.isAdmin = this.authService.isUserAdmin();
-  }
 
   openVideoPlayer(videoPath: string): void {
-    console.log('Opening video player with path:', videoPath); // Debug log
+    console.log('Opening video player with path:', videoPath);
     this.dialog.open(VideoPlayerComponent, {
       data: { videoPath },
       width: '80%',
       height: '80%',
     });
+  }
+
+  openAddLeconDialog(): void {
+    const dialogRef = this.dialog.open(LeconAddComponent, {
+      width: '400px',
+      data: { moduleId: this.moduleId },
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result && result.success) {
+        // Refresh or update the list of lessons
+        this.loadLecons();
+      } else {
+        console.error('Failed to create lesson:', result);
+      }
+    });
+  }
+
+
+  searchLessons() {
+
   }
 }

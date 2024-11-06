@@ -5,7 +5,6 @@
   .toolbar {
     display: flex;
     justify-content: space-between;
-    // background-color: #1e1e1e;
     color: var(--primary-color);
     padding: 10px 20px;
     border-radius: 8px;
@@ -78,11 +77,14 @@
       }
 
       .card-description {
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
         font-size: 14px;
-        color: #b0b0b0; 
+        color: #b0b0b0;
         overflow: hidden;
         text-overflow: ellipsis;
-        white-space: nowrap;
+        white-space: normal;
       }
     }
   }
@@ -108,5 +110,5 @@
 }
 .module-image {
   object-fit: cover;
-  height: 80px; 
+  height: 80px;
 }

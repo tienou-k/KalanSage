@@ -38,48 +38,70 @@ public class LeconsController {
     private ModuleRepository moduleRepository;
 
 
-    // Method for creating a lecon, including video upload
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping(path = "/creer-lecon", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<?> creerLecon(
             @RequestParam("titre") String titre,
             @RequestParam("description") String description,
-            @RequestParam("moduleId") Long moduleId,
+            @RequestParam("moduleId") String moduleIdStr,
             @RequestParam(value = "file") MultipartFile file) throws IOException {
 
-        // Verify if the category exists
-        Optional<Module> module = moduleRepository.findById(moduleId);
-        if (module.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(Collections.singletonMap("message", "Module avec ID " + moduleId + " n'exist pas!"));
-        }
+        try {
+            // Convert moduleId string to Long
+            Long moduleId = Long.parseLong(moduleIdStr);
 
-        FileInfo fileInfo = null;
-        if (file != null && !file.isEmpty()) {
-            // Validate the video type (only allow mp4 or mov for example)
-            String fileExtension = getExtension(Objects.requireNonNull(file.getOriginalFilename()));
-            if (!fileExtension.equalsIgnoreCase("mp4") && !fileExtension.equalsIgnoreCase("mov")
-                    && !fileExtension.equalsIgnoreCase("avi")) {
+            // Verify if the category exists
+            Optional<Module> module = moduleRepository.findById(moduleId);
+            if (module.isEmpty()) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body(Collections.singletonMap("message", "Ousp ! le fichier doit être mp4 mov ou format  avi. "));
+                        .body(Collections.singletonMap("message", "Module avec ID " + moduleId + " n'exist pas!"));
             }
 
-            // Rename the file according to a specific format (e.g., titre_module1.png)
-            String renamedFile = titre.replace(" ", "") + "1." + fileExtension;
-            fileInfo = filesStorageService.saveFileInSpecificFolderWithCustomNameVideo(file, "",renamedFile);
+            FileInfo fileInfo = null;
+            if (file != null && !file.isEmpty()) {
+                // Validate the video type (only allow mp4 or mov for example)
+                String fileExtension = getFileExtension(file);
+                if (!fileExtension.equalsIgnoreCase("mp4") && !fileExtension.equalsIgnoreCase("mov")
+                        && !fileExtension.equalsIgnoreCase("avi")) {
+                    return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                            .body(Collections.singletonMap("message", "Ousp ! le fichier doit être mp4 mov ou format avi."));
+                }
+
+                // Rename the file according to a specific format (e.g., titre_module1.png)
+                String renamedFile = titre.replace(" ", "") + "1." + fileExtension;
+                fileInfo = filesStorageService.saveFileInSpecificFolderWithCustomNameVideo(file, "", renamedFile);
+            }
+
+            // Create and save the module
+            Lecons lecon = new Lecons();
+            lecon.setTitre(titre);
+            lecon.setDescription(description);
+            lecon.setDateAjout(new Date());
+            lecon.setModule(module.get());
+            lecon.setVideoPath(fileInfo != null ? fileInfo.getUrl() : null);
+
+            Lecons createdLecon = leconsService.creerLecon(lecon);
+            return ResponseEntity.ok(createdLecon);
+        } catch (NumberFormatException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Collections.singletonMap("message", "Invalid module ID"));
+        } catch (Exception e) {
+            // Log the exception
+            log.error("Error creating lesson", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Collections.singletonMap("message", "An error occurred while creating the lesson"));
         }
-
-        // Create and save the module
-        Lecons lecon = new Lecons();
-        lecon.setTitre(titre);
-        lecon.setDescription(description);
-        lecon.setDateAjout(new Date());
-        lecon.setModule(module.get());
-        lecon.setVideoPath(fileInfo != null ? fileInfo.getUrl() : null);
-
-        Lecons createdLecon = leconsService.creerLecon(lecon);
-        return ResponseEntity.ok(createdLecon);
     }
+
+    private String getFileExtension(MultipartFile file) throws IOException {
+        String fileName = file.getOriginalFilename();
+        int extensionIndex = fileName.lastIndexOf(".");
+        if (extensionIndex > 0 && extensionIndex < fileName.length() - 1) {
+            return fileName.substring(extensionIndex + 1).toLowerCase();
+        }
+        return "";
+    }
+
 
     // Helper method to extract file extension
     private String getExtension(String filename) {

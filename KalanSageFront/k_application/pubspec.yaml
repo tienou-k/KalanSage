@@ -37,7 +37,7 @@ flutter:
     - assets/icons/home.svg
     - assets/icons/grid_view.svg
     - assets/icons/book.svg
-    - assets/icons/bookmarked.svg
+    - assets/icons/chat_bubble_outline.svg
     - assets/icons/User.svg
     - assets/icons/dev.svg
     - assets/icons/default.svg

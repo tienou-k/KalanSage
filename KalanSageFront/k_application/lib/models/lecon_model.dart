@@ -7,7 +7,7 @@ class LeconModel {
   final int moduleId;
   final bool isLocked;
   final bool isCompleted;
-  final QuizModel? quiz; 
+  final QuizModel? quiz;
 
   LeconModel({
     required this.id,
@@ -18,7 +18,7 @@ class LeconModel {
     required this.moduleId,
     required this.isLocked,
     required this.isCompleted,
-    this.quiz, 
+    this.quiz,
   });
 
   // Factory method to create a LeconModel from JSON (for API response)
@@ -35,16 +35,15 @@ class LeconModel {
       isLocked: json['isLocked'] ?? false,
       isCompleted: json['isCompleted'] ?? false,
     );
-  } 
-  
+  }
+
   @override
   String toString() {
     return 'LeconModel(id: $id, titre: $titre, description: $description, '
-           'contenu: $contenu, videoPath: $videoPath, moduleId: $moduleId, '
-           'isLocked: $isLocked, isCompleted: $isCompleted, quiz: ${quiz?.toString()})';
+        'contenu: $contenu, videoPath: $videoPath, moduleId: $moduleId, '
+        'isLocked: $isLocked, isCompleted: $isCompleted, quiz: ${quiz?.toString()})';
   }
 }
-
 
 class QuizModel {
   final int id;

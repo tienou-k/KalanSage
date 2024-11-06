@@ -27,7 +27,6 @@ class _DashboardScreen extends State<DashboardScreen>
   bool isLoading = false;
   bool hasError = true;
 
-
   // Define subscription title and price
   String? _userSubscriptionTitle;
   double? _userSubscriptionPrice;
@@ -40,20 +39,7 @@ class _DashboardScreen extends State<DashboardScreen>
     _fetchUserProfile();
   }
 
-// // getting user profile info
-//   Future<void> _fetchUserProfile() async {
-//     try {
-//       final userProfile = await _authService.fetchUserProfile();
-
-//       setState(() {
-//         _userPrenom = userProfile['prenom'];
-//         _userEmail = userProfile['email'];
-//       });
-//        await fetchUserSubscription();
-//       // ignore: empty_catches
-//     } catch (error) {}
-//   }
-Future<void> _fetchUserProfile() async {
+  Future<void> _fetchUserProfile() async {
     try {
       final userProfile = await _authService.fetchUserProfile();
 
@@ -63,7 +49,7 @@ Future<void> _fetchUserProfile() async {
       });
 
       // Store user ID if it's available
-      final userId = userProfile['userId']; 
+      final userId = userProfile['userId'];
       if (userId != null) {
         final prefs = await SharedPreferences.getInstance();
         await prefs.setInt('userId', userId);
@@ -75,21 +61,21 @@ Future<void> _fetchUserProfile() async {
       print("Error fetching user profile: $error");
     }
   }
+
 // print sharing
-   void _loadPrefs() async {
+  void _loadPrefs() async {
     _prefs = await SharedPreferences.getInstance();
   }
 
-  
 // Retrieve the current user's ID from SharedPreferences
- Future<int?> _getCurrentUserId() async {
+  Future<int?> _getCurrentUserId() async {
     final prefs = await SharedPreferences.getInstance();
     final userId = prefs.getInt('userId');
     debugPrint('Retrieved userId: $userId');
     return userId;
   }
 
- Future<void> fetchUserSubscription() async {
+  Future<void> fetchUserSubscription() async {
     try {
       final userId = await _getCurrentUserId();
       if (userId == null) {
@@ -194,34 +180,34 @@ Future<void> _fetchUserProfile() async {
         automaticallyImplyLeading: false,
       ),
       body: SingleChildScrollView(
-      child: Column(
-        children: [
-          _buildProfileSection(),
-          TabBar(
-            controller: _tabController,
-            indicatorColor: secondaryColor,
-            labelColor: primaryColor,
-            unselectedLabelColor: Colors.grey,
-            tabs: const [
-              Tab(text: 'STATS'),
-              Tab(text: 'RANG'),
-              Tab(text: 'NOTIFICATIONS'),
-            ],
-          ),
-          // Tab Content
-          SizedBox(
-              height: MediaQuery.of(context).size.height * 0.6, 
-            child: TabBarView(
+        child: Column(
+          children: [
+            _buildProfileSection(),
+            TabBar(
               controller: _tabController,
-              children: [
-                _buildStatsTab(),
-                _buildBadgesTab(),
-                _buildNotificationsTab(),
+              indicatorColor: secondaryColor,
+              labelColor: primaryColor,
+              unselectedLabelColor: Colors.grey,
+              tabs: const [
+                Tab(text: 'STATS'),
+                Tab(text: 'RANG'),
+                Tab(text: 'NOTIFICATIONS'),
               ],
             ),
-          ),
-        ],
-      ),
+            // Tab Content
+            SizedBox(
+              height: MediaQuery.of(context).size.height * 0.6,
+              child: TabBarView(
+                controller: _tabController,
+                children: [
+                  _buildStatsTab(),
+                  _buildBadgesTab(),
+                  _buildNotificationsTab(),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
       bottomNavigationBar: CustomBottomNavBar(
         currentIndex: _currentIndex,
@@ -271,11 +257,11 @@ Future<void> _fetchUserProfile() async {
             child: Column(
               children: [
                 Text(
-                   _userSubscriptionTitle ?? 'Free Plan',
+                  _userSubscriptionTitle ?? 'Free Plan',
                   style: TextStyle(color: Colors.white70),
                 ),
                 Text(
-                 _userSubscriptionPrice != null
+                  _userSubscriptionPrice != null
                       ? "\$${_userSubscriptionPrice?.toStringAsFixed(2)}"
                       : "0.0",
                   style: TextStyle(
@@ -340,7 +326,6 @@ Future<void> _fetchUserProfile() async {
       ),
     );
   }
-
 
   // Build Badges Tab
   Widget _buildBadgesTab() {

@@ -6,14 +6,14 @@ import 'package:k_application/view/custom_nav_bar.dart';
 import 'package:k_application/view/pages/details_module_page.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class FavorisPage extends StatefulWidget {
-  const FavorisPage({super.key});
+class ChatPage extends StatefulWidget {
+  const ChatPage({super.key});
 
   @override
-  _FavorisPage createState() => _FavorisPage();
+  _ChatPage createState() => _ChatPage();
 }
 
-class _FavorisPage extends State<FavorisPage> {
+class _ChatPage extends State<ChatPage> {
   int _currentIndex = 3;
   final ModuleService _moduleService = ModuleService();
   late Future<List<ModuleModel>> _bookmarkedModules;
@@ -46,7 +46,7 @@ class _FavorisPage extends State<FavorisPage> {
     }
   }
 
-Future<List<ModuleModel>> _fetchBookmarkedModulesWithDetails() async {
+  Future<List<ModuleModel>> _fetchBookmarkedModulesWithDetails() async {
     setState(() {
       _isLoading = true;
       _hasError = false;
@@ -74,6 +74,7 @@ Future<List<ModuleModel>> _fetchBookmarkedModulesWithDetails() async {
       throw Exception('Failed to fetch bookmarked modules: $error');
     }
   }
+
   // Fetch details for a specific module by its ID
   Future<ModuleModel> _fetchModuleDetails(String moduleId) async {
     try {

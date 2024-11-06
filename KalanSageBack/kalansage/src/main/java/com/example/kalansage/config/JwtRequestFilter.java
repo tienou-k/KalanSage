@@ -88,6 +88,6 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                 requestURI.startsWith("/api/users/reset-password-request") ||
                 requestURI.startsWith("/api/users/reset-password") ||
                 requestURI.startsWith("/images_du_projet/modules") ||
-                requestURI.startsWith("/images_du_projet/");
+                requestURI.startsWith("/images_du_projet/**");
     }
 }
