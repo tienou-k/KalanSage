@@ -15,26 +15,14 @@ interface Chat {
   selector: 'app-inbox',
   standalone: true,
   imports: [
-    FormsModule, 
+    FormsModule,
     MaterialModule,
   ],
   templateUrl: './inbox-page.component.html',
   styleUrls: ['./inbox-page.component.scss'],
 })
 export class InboxComponent {
-  chatList: Chat[] = [
-    {
-      avatar: 'assets/images/avatar1.png',
-      name: 'Awa Sow',
-      message: '😀',
-      time: '12:35',
-      unreadCount: 1,
-      messages: [
-        { text: 'Hello! How can I help you?', time: '12:30', sent: false },
-      ],
-    },
-    // Add more chat objects here
-  ];
+  chatList: Chat[] = [];
 
   selectedChatIndex: number | null = null;
   selectedChat: Chat | null = null;

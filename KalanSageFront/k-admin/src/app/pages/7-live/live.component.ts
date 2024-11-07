@@ -18,11 +18,6 @@ interface Session {
 export class LiveComponent {
   displayedColumns: string[] = ['title', 'host', 'participants', 'actions'];
   dataSource = new MatTableDataSource<Session>([
-    { title: 'Java POO', host: 'Admin-002', participants: 2000 },
-    { title: 'Spring Security', host: 'Admin-002', participants: 150 },
-    { title: 'Design', host: 'Admin-002', participants: 100 },
-    { title: 'Figma', host: 'Admin-002', participants: 50 },
-    { title: 'Ionic', host: 'Admin-002', participants: 20 },
   ]);
 
   // Methods for actions

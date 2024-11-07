@@ -24,10 +24,10 @@
   <mat-card class="question-card" *ngFor="let question of questions">
     <div class="question-header">
       <div class="user-info">
-        <img [src]="question.userAvatar" class="avatar" alt="User Avatar" />
+        <img [src]="question" class="avatar" alt="User Avatar" />
         <div>
-          <span class="user-name">{{ question.userName }}</span>
-          <span class="post-time">{{ question.postTime }}</span>
+          <span class="user-name">{{ question }}</span>
+          <span class="post-time">{{ question }}</span>
         </div>
       </div>
       <button mat-icon-button class="more-options">
@@ -36,22 +36,22 @@
     </div>
 
     <div class="question-content">
-      <h3>{{ question.title }}</h3>
-      <p>{{ question.description }}</p>
+      <h3>{{ question }}</h3>
+      <p>{{ question }}</p>
     </div>
 
     <!-- Tags -->
     <div class="tags-container">
       <mat-chip-list>
-        <mat-chip *ngFor="let tag of question.tags">{{ tag }}</mat-chip>
+        <mat-chip *ngFor="let tag of question">{{ tag }}</mat-chip>
       </mat-chip-list>
     </div>
 
     <!-- Footer with Icons -->
     <div class="question-footer">
-      <span><mat-icon>visibility</mat-icon> {{ question.views }}</span>
-      <span><mat-icon>comment</mat-icon> {{ question.comments }}</span>
-      <span><mat-icon>thumb_up</mat-icon> {{ question.upvotes }}</span>
+      <span><mat-icon>visibility</mat-icon> {{ question }}</span>
+      <span><mat-icon>comment</mat-icon> {{ question }}</span>
+      <span><mat-icon>thumb_up</mat-icon> {{ question }}</span>
     </div>
   </mat-card>
 </div>

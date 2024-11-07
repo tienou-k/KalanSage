@@ -3,7 +3,7 @@ import { MatTableDataSource } from '@angular/material/table';
 import { MatPaginator } from '@angular/material/paginator';
 import { MatDialog } from '@angular/material/dialog';
 import { PartenaireService } from '../../services/partenaire.service';
-import { PartenaireCreateDialogComponent } from 'src/app/partenaire-dialog/partenaire-create-dialog.component';
+import { PartenaireCreateDialogComponent } from 'src/app/components/partenaire-dialog/partenaire-create-dialog.component';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MaterialModule } from 'src/app/material.module';
 import { CommonModule } from '@angular/common';

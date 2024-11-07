@@ -23,21 +23,9 @@ import { MaterialModule } from 'src/app/material.module';
   ],
   templateUrl: './forum.component.html',
   styleUrls: ['./forum.component.scss'],
-  schemas: [CUSTOM_ELEMENTS_SCHEMA], // Add this line
+  schemas: [CUSTOM_ELEMENTS_SCHEMA],
 })
 export class ForumComponent {
   questions = [
-    {
-      userAvatar: 'assets/avatar1.png',
-      userName: 'Mariam',
-      postTime: '5 min ago',
-      title: 'Comment patcher KDE sur FreeBSD ?',
-      description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-      tags: ['golang', 'linux', 'overflow'],
-      views: 125,
-      comments: 15,
-      upvotes: 155,
-    },
-    // More questions here...
   ];
 }

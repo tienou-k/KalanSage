@@ -182,6 +182,7 @@ class _ProfileSettings extends State<ProfileSettings> {
                           const Spacer(),
                           Switch(
                             value: isDarkMode,
+                            activeColor: secondaryColor,
                             onChanged: (value) {
                               setState(() {
                                 isDarkMode = value;

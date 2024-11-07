@@ -20,8 +20,8 @@ public class JwtUtil {
     private final Key key = Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
 
     // Expiration times
-    private final Long ACCESS_TOKEN_EXPIRATION = 1000 * 60 * 60 * 10L;  // 10 hours
-    private final Long REFRESH_TOKEN_EXPIRATION = 1000 * 60 * 60 * 24 * 30L;  // 30 days
+    private final Long ACCESS_TOKEN_EXPIRATION = 1000 * 60 * 60 * 2L;  // 2 hours
+    private final Long REFRESH_TOKEN_EXPIRATION = 1000 * 60 * 60 * 24 * 7L;  // 7 days
 
     // Extract username from the token
     public String extractUsername(String token) {
@@ -79,7 +79,7 @@ public class JwtUtil {
         return (username.equals(userDetails.getUsername()) && !isTokenExpired(token));
     }
 
-    // Validate refresh token (you may want to add additional checks)
+    // Validate refresh token
     public Boolean validateRefreshToken(String token) {
         return !isTokenExpired(token);
     }

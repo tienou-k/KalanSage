@@ -1,6 +1,6 @@
 <div class="card-grid-container">
   <!--  -->
-  <mat-toolbar class="toolbar">
+  <mat-toolbar class="toolbar container">
     <span class="module-title">Listes des Modules</span>
     <span class="spacer"></span>
     <button mat-raised-button color="primary" class="add-button" (click)="openCreateDialog()">
@@ -20,7 +20,7 @@
         </div>
         <p class="card-description">{{ item.description }}</p>
       </mat-card-content>
-      
+
       <mat-card-actions>
       <!-- Stop click propagation to prevent opening the module details -->
       <button mat-icon-button [matMenuTriggerFor]="menu" (click)="$event.stopPropagation()">
