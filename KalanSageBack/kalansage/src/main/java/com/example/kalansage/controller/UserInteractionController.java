@@ -190,13 +190,10 @@ public class UserInteractionController {
     @PostMapping("/abonnement/{userId}/{abonnementId}")
     @PreAuthorize("hasRole('ROLE_USER')")
     public ResponseEntity<?> enrollUserInAbonnement(@PathVariable Long userId, @PathVariable Long abonnementId) {
-        try {
-            userInteractionService.sAbonner(userId, abonnementId);
-            return ResponseEntity.ok("Courage 💪 vous avez desormais l'abonnement " + abonnementId + "!");
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
-        }
+        return userInteractionService.sAbonner(userId, abonnementId);
     }
+
+    // list abonnement
     @GetMapping("/list-abonnements")
     public ResponseEntity<List<Abonnement>> listerAbonnements() {
         return ResponseEntity.ok(abonnementService.listerAbonnements());

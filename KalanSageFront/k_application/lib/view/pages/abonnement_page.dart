@@ -79,26 +79,42 @@ class _AbonnementPage extends State<AbonnementPage> {
   }
 
   Future<void> _subscribeToAbonnement(Abonnement abonnement) async {
-    // Add logic to subscribe the user to the selected abonnement
     try {
       final userId = await _authService.getCurrentUserId();
       if (userId != null) {
-        await userService.subscribeToAbonnement(
+        // Call the function and capture any error message
+        final errorMessage = await userService.subscribeToAbonnement(
             userId, abonnement.idAbonnement);
-        // Optionally refetch the user's abonnements to reflect the change
-        _fetchUserAbonnement();
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text('Abonnement ajouté avec succès!'),
-            duration: Duration(seconds: 2),
-          ),
-        );
+
+        if (errorMessage == null) {
+          // Success message
+          _fetchUserAbonnement();
+          ScaffoldMessenger.of(context).showSnackBar(
+            const SnackBar(
+              content: Text(
+                'Abonnement ajouté avec succès!',
+              ),
+              duration: Duration(seconds: 2),
+              backgroundColor: Colors.green,
+            ),
+          );
+        } else {
+          // Display backend error message
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(errorMessage),
+              duration: Duration(seconds: 2),
+              backgroundColor: secondaryColor,
+            ),
+          );
+        }
       }
     } catch (error) {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text('Erreur lors de l\'abonnement : $error'),
           duration: Duration(seconds: 2),
+          backgroundColor: Colors.red,
         ),
       );
     }
@@ -212,8 +228,11 @@ class _AbonnementPage extends State<AbonnementPage> {
                         ...snapshot.data!.asMap().entries.map((entry) {
                           int index = entry.key;
                           Abonnement subscription = entry.value;
-                          Color borderColor = (index % 2 == 0) ? Colors.white : Colors.amber;
-                          Color textColor = (index % 2 == 0) ? Colors.white : Colors.amber[400]!;
+                          Color borderColor =
+                              (index % 2 == 0) ? Colors.white : Colors.amber;
+                          Color textColor = (index % 2 == 0)
+                              ? Colors.white
+                              : Colors.amber[400]!;
 
                           return GestureDetector(
                             onTap: () {
@@ -225,17 +244,21 @@ class _AbonnementPage extends State<AbonnementPage> {
                                 Container(
                                   padding: const EdgeInsets.all(15),
                                   decoration: BoxDecoration(
-                                    border: Border.all(color: borderColor, width: 1),
+                                    border: Border.all(
+                                        color: borderColor, width: 1),
                                     borderRadius: BorderRadius.circular(8),
                                     color: Colors.transparent,
                                   ),
                                   child: Column(
-                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
                                     children: [
                                       Row(
                                         children: [
                                           Text(
-                                            EncodingUtils.decode(subscription.typeAbonnement.toUpperCase()),
+                                            EncodingUtils.decode(subscription
+                                                .typeAbonnement
+                                                .toUpperCase()),
                                             style: TextStyle(
                                               color: textColor,
                                               fontSize: 18,
@@ -244,10 +267,13 @@ class _AbonnementPage extends State<AbonnementPage> {
                                           ),
                                           const Spacer(),
                                           Container(
-                                            padding: const EdgeInsets.symmetric(horizontal: 10.0, vertical: 4.0),
+                                            padding: const EdgeInsets.symmetric(
+                                                horizontal: 10.0,
+                                                vertical: 4.0),
                                             decoration: BoxDecoration(
                                               color: const Color(0xFFF4B13D),
-                                              borderRadius: BorderRadius.circular(4),
+                                              borderRadius:
+                                                  BorderRadius.circular(4),
                                             ),
                                             child: const Text(
                                               'Promo 0%',
@@ -269,7 +295,8 @@ class _AbonnementPage extends State<AbonnementPage> {
                                       ),
                                       const SizedBox(height: 6),
                                       Text(
-                                        EncodingUtils.decode(subscription.description),
+                                        EncodingUtils.decode(
+                                            subscription.description),
                                         style: TextStyle(
                                           color: Colors.white,
                                           fontSize: 14,
@@ -300,7 +327,8 @@ class _AbonnementPage extends State<AbonnementPage> {
                             );
                           },
                           style: ElevatedButton.styleFrom(
-                            padding: const EdgeInsets.symmetric(vertical: 15, horizontal: 30),
+                            padding: const EdgeInsets.symmetric(
+                                vertical: 15, horizontal: 30),
                             backgroundColor: const Color(0xFFF4B13D),
                             shape: RoundedRectangleBorder(
                               borderRadius: BorderRadius.circular(8),

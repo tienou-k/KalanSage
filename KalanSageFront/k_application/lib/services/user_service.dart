@@ -341,7 +341,8 @@ class UserService {
   }
 
   // Subscribe to an abonnement
-  Future<void> subscribeToAbonnement(int userId, int abonnementId) async {
+  // Subscribe to an abonnement
+  Future<String?> subscribeToAbonnement(int userId, int abonnementId) async {
     final token = await getToken();
     final response = await http.post(
       Uri.parse('$apiUrl/user/abonnement/$userId/$abonnementId'),
@@ -352,8 +353,9 @@ class UserService {
     );
 
     if (response.statusCode != 200) {
-      throw Exception('Failed to subscribe to abonnement: ${response.body}');
+      return response.body;
     }
+    return null;
   }
 
   // Submit course evaluation

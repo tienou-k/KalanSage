@@ -9,6 +9,8 @@ import com.example.kalansage.model.userAction.*;
 import com.example.kalansage.repository.*;
 import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -150,25 +152,35 @@ public class UserInteractionService {
     }
 
     // Gérer l'interaction avec l'abonnement
-    public UserAbonnement sAbonner(Long userId, Long abonnementId) {
+    public ResponseEntity<?> sAbonner(Long userId, Long abonnementId) {
         Optional<User> user = userRepository.findById(userId);
         Optional<Abonnement> abonnement = abonnementRepository.findById(abonnementId);
 
         if (user.isEmpty() || abonnement.isEmpty()) {
-            throw new IllegalArgumentException("Utilisateur ou Abonnement introuvable.");
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(
+                    "L'utilisateur ou l'abonnement spécifié est introuvable. Veuillez vérifier les informations et réessayer."
+            );
         }
-        Optional<UserAbonnement> existingSubscription = userAbonnementRepository.findByUser_IdAndAbonnement_IdAbonnement(userId, abonnementId);
+
+        Optional<UserAbonnement> existingSubscription = userAbonnementRepository
+                .findByUser_IdAndAbonnement_IdAbonnement(userId, abonnementId);
         if (existingSubscription.isPresent()) {
-            throw new IllegalStateException("Vous avez déjà cet abonnement ! 🤗.");
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(
+                    "Vous êtes déjà abonné à ce service ! 😊."
+            );
         }
+
         UserAbonnement userAbonnement = new UserAbonnement();
         userAbonnement.setUser(user.get());
         userAbonnement.setAbonnement(abonnement.get());
         userAbonnement.setStartDate(new Date());
 
-        return userAbonnementRepository.save(userAbonnement);
-    }
+        userAbonnementRepository.save(userAbonnement);
 
+        return ResponseEntity.ok(
+                "Félicitations ! 💪 Vous êtes maintenant abonné à " + abonnement.get().getTypeAbonnement() + ". Profitez-en !"
+        );
+    }
 
     public long countAbonnements() {
         return userAbonnementRepository.count();
